@@ -578,7 +578,7 @@ async function loadTasks(){
 
 function renderTasks(produktId){
   const list = tasks[produktId] || [];
-  if(list.length===0) return '<div style="font-family:\\'IBM Plex Mono\\',monospace;font-size:10.5px;color:var(--text-faint);">Keine Aufgaben.</div>';
+  if(list.length===0) return '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;color:var(--text-faint);">Keine Aufgaben.</div>';
   return list.map(t => `
     <div class="taskrow">
       <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}','${produktId}')">${t.done?'✓':''}</div>
