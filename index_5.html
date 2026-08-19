@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAICC</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#10151F;
+  --panel:#161D2B;
+  --panel-raised:#1B2333;
+  --line:#2A3448;
+  --line-bright:#3C4A66;
+
+  --text:#E8ECF4;
+  --text-dim:#8792A8;
+  --text-faint:#5B6579;
+
+  --accent:#4E80C9;
+  --accent-bright:#7FA6E0;
+
+  --status-a:#C9922E;
+  --status-b:#4E80C9;
+  --status-c:#4EA37A;
+
+  font-family:'IBM Plex Sans',sans-serif;
+}
+
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 20px 90px;}
+
+::selection{background:var(--accent);color:#fff;}
+
+/* ===== HEADER STRIP ===== */
+.header-strip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  padding-bottom:18px;
+  margin-bottom:22px;
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:baseline;gap:10px;}
+.brand-mark{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--accent-bright);
+  letter-spacing:0.12em;
+  border:1px solid var(--accent);
+  padding:2px 7px;
+}
+.brand-name{
+  font-family:'Manrope',sans-serif;
+  font-weight:800;
+  font-size:17px;
+  letter-spacing:0.01em;
+}
+.readout{
+  display:flex;
+  gap:0;
+  font-family:'IBM Plex Mono',monospace;
+  border:1px solid var(--line);
+}
+.readout-cell{
+  padding:8px 16px;
+  text-align:center;
+  border-right:1px solid var(--line);
+}
+.readout-cell:last-child{border-right:none;}
+.readout-num{
+  font-size:22px;
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+  line-height:1;
+}
+.readout-label{
+  font-size:9px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-faint);
+  margin-top:5px;
+}
+.readout-cell.a .readout-num{color:var(--status-a);}
+.readout-cell.b .readout-num{color:var(--status-b);}
+.readout-cell.c .readout-num{color:var(--status-c);}
+
+/* ===== CREW / ROLES ===== */
+.crew{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  margin-bottom:28px;
+}
+.crew-slot{
+  background:var(--panel);
+  padding:16px 16px 18px;
+  position:relative;
+}
+.crew-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.1em;
+  color:var(--text-faint);
+  text-transform:uppercase;
+}
+.crew-role{
+  font-family:'Manrope',sans-serif;
+  font-weight:700;
+  font-size:14.5px;
+  margin:4px 0 8px;
+}
+.crew-slot.director .crew-role{color:var(--accent-bright);}
+.crew-slot.engineer .crew-role{color:var(--text);}
+.crew-slot.controller .crew-role{color:var(--accent);}
+.crew-desc{font-size:12px;color:var(--text-dim);line-height:1.5;}
+
+/* ===== SECTION LABEL ===== */
+.section-label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:30px 0 10px;
+}
+.section-label h2{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin:0;
+}
+.btn{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.03em;
+  background:transparent;
+  color:var(--accent-bright);
+  border:1px solid var(--accent);
+  padding:6px 12px;
+  cursor:pointer;
+}
+
+.btn:hover{background:var(--accent);color:#fff;}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:0;margin-bottom:26px;border:1px solid var(--line);}
+.tab{
+  flex:1;text-align:center;padding:10px 12px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--text-dim);border-right:1px solid var(--line);background:var(--panel);
+}
+.tab:last-child{border-right:none;}
+.tab.active{background:var(--accent);color:#fff;}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;}
+
+/* ===== CREW SETUP ===== */
+.crewrow{
+  display:grid;grid-template-columns:1fr 1fr auto;gap:8px;
+  border:1px solid var(--line);border-top:none;padding:10px 12px;background:var(--panel);
+  align-items:center;
+}
+.crewrow:first-of-type{border-top:1px solid var(--line);}
+.crewrow input{
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);
+  background:var(--bg);border:1px solid var(--line);padding:7px 9px;width:100%;
+}
+.crewrow input:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.crewrow input.vorname{font-weight:600;}
+.crew-hint{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);margin-bottom:8px;
+}
+
+/* ===== TASKS ===== */
+.tasklist{margin-top:14px;}
+.taskrow{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 0;border-bottom:1px solid var(--line);
+}
+.taskrow:last-child{border-bottom:none;}
+.task-check{
+  width:14px;height:14px;border:1px solid var(--line-bright);
+  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--status-c);
+}
+.task-check.done{background:var(--status-c);border-color:var(--status-c);color:#0C1A12;}
+.task-text{
+  flex:1;font-size:12.5px;font-family:'IBM Plex Sans',sans-serif;
+  background:transparent;border:none;color:var(--text);padding:2px 0;
+}
+.task-text.done{color:var(--text-faint);text-decoration:line-through;}
+.task-text:focus{outline:none;}
+.task-del{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);cursor:pointer;}
+.task-del:hover{color:var(--status-a);}
+.task-add{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent-bright);
+  cursor:pointer;margin-top:6px;
+}
+.task-add:hover{color:var(--accent);}
+
+/* ===== REACTIONS ===== */
+.reactions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.reaction-btn{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  border:1px solid var(--line);background:var(--bg);color:var(--text-dim);
+  padding:2px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;
+}
+.reaction-btn:hover{border-color:var(--accent);}
+.reaction-btn .count{color:var(--accent-bright);}
+
+/* ===== IDENTITY ===== */
+.identity{
+  display:flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);
+}
+.identity input{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);
+  background:var(--panel);border:1px solid var(--line);padding:5px 8px;width:120px;
+}
+.identity input:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+
+/* ===== TASK ASSIGNEE + COMMENTS ===== */
+.task-meta{display:flex;align-items:center;gap:8px;margin-top:2px;padding-left:22px;}
+.task-assignee{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);
+  background:transparent;border:none;border-bottom:1px dotted var(--line-bright);
+  padding:1px 2px;width:90px;
+}
+.task-assignee:focus{outline:none;border-bottom-color:var(--accent);}
+.task-comment-toggle{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent-bright);cursor:pointer;
+}
+.task-comment-toggle:hover{color:var(--accent);}
+.task-comments{
+  padding-left:22px;margin:6px 0 10px;border-left:1px solid var(--line);padding-left:14px;margin-left:7px;
+}
+.comment{
+  font-size:11.5px;padding:4px 0;
+}
+.comment-author{color:var(--accent-bright);font-family:'IBM Plex Mono',monospace;font-size:10px;margin-right:6px;}
+.comment-text{color:var(--text);}
+.comment-add{display:flex;gap:6px;margin-top:6px;}
+.comment-add input{
+  flex:1;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--text);
+  background:var(--bg);border:1px solid var(--line);padding:5px 8px;
+}
+.comment-add input:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.comment-add button{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent-bright);
+  background:transparent;border:1px solid var(--accent);padding:4px 10px;cursor:pointer;
+}
+.comment-add button:hover{background:var(--accent);color:#fff;}
+
+
+
+
+/* ===== CONSOLE PANELS (products) ===== */
+.console{
+  border:1px solid var(--line);
+  border-top:none;
+  background:var(--panel);
+}
+.console:first-of-type{border-top:1px solid var(--line);}
+
+.console-head{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 16px;
+  cursor:pointer;
+}
+.status-light{
+  width:9px;height:9px;
+  flex-shrink:0;
+  border:1px solid var(--line-bright);
+}
+.status-light.a{background:var(--status-a);border-color:var(--status-a);}
+.status-light.b{background:var(--status-b);border-color:var(--status-b);}
+.status-light.c{background:var(--status-c);border-color:var(--status-c);}
+
+.console-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--text-faint);
+  width:22px;
+}
+.console-name{
+  font-family:'Manrope',sans-serif;
+  font-weight:700;
+  font-size:14px;
+  flex:1;
+  min-width:100px;
+}
+.console-controller{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--text-dim);
+  min-width:100px;
+}
+.phase-readout{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.05em;
+  white-space:nowrap;
+  padding:3px 8px;
+  border:1px solid var(--line-bright);
+}
+.phase-readout.a{color:var(--status-a);border-color:var(--status-a);}
+.phase-readout.b{color:var(--status-b);border-color:var(--status-b);}
+.phase-readout.c{color:var(--status-c);border-color:var(--status-c);}
+.caret{color:var(--text-faint);font-size:10px;font-family:'IBM Plex Mono',monospace;transition:transform 0.12s;}
+.console.open .caret{transform:rotate(90deg);}
+
+.console-body{
+  display:none;
+  padding:2px 16px 18px;
+  border-top:1px solid var(--line);
+}
+.console.open .console-body{display:block;}
+.field{margin-top:14px;}
+.field label{
+  display:block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--text-faint);
+  margin-bottom:5px;
+}
+.field input, .field textarea{
+  width:100%;
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:13px;
+  color:var(--text);
+  background:var(--bg);
+  border:1px solid var(--line);
+  padding:8px 10px;
+  resize:vertical;
+}
+.field input:focus, .field textarea:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.field textarea{min-height:44px;}
+.phase-row{display:flex;gap:0;margin-top:14px;border:1px solid var(--line);}
+.phase-btn{
+  flex:1;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:0.04em;
+  text-align:center;
+  padding:8px 4px;
+  background:var(--bg);
+  color:var(--text-dim);
+  cursor:pointer;
+  border-right:1px solid var(--line);
+}
+.phase-btn:last-child{border-right:none;}
+.phase-btn.active.a{background:var(--status-a);color:#12140C;}
+.phase-btn.active.b{background:var(--status-b);color:#0C1420;}
+.phase-btn.active.c{background:var(--status-c);color:#0C1A12;}
+.row-actions{display:flex;justify-content:flex-end;margin-top:14px;}
+.remove-link{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;
+  color:var(--text-faint);
+  cursor:pointer;
+}
+.remove-link:hover{color:var(--status-a);}
+
+/* ===== LOG ===== */
+.log-entry{
+  border:1px solid var(--line);
+  border-top:none;
+  padding:10px 16px;
+  background:var(--panel);
+}
+.log-entry:first-of-type{border-top:1px solid var(--line);}
+.log-date{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:var(--accent-bright);
+}
+.log-text{font-size:12.5px;margin-top:4px;line-height:1.5;color:var(--text);}
+.log-add{
+  border:1px solid var(--line);
+  padding:14px 16px;
+  margin-top:8px;
+  background:var(--panel-raised);
+}
+.log-add label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9.5px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--text-faint);
+  display:block;
+  margin-bottom:6px;
+}
+.log-add textarea{
+  width:100%;
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:13px;
+  border:1px solid var(--line);
+  padding:8px 10px;
+  min-height:50px;
+  background:var(--bg);
+  color:var(--text);
+}
+.log-add textarea:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.log-add-row{display:flex;justify-content:flex-end;margin-top:8px;}
+
+.empty{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--text-faint);
+  padding:16px 2px;
+  border:1px dashed var(--line);
+  text-align:center;
+}
+.status-note{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:var(--text-faint);
+  text-align:center;
+  margin-top:40px;
+  letter-spacing:0.03em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header-strip">
+    <div class="brand">
+      <span class="brand-mark">AAICC</span>
+      <span class="brand-name">Agile AI Control Center</span>
+    </div>
+    <div class="identity">
+      <span>Ich bin:</span>
+      <input id="identityInput" placeholder="Name" oninput="saveIdentity(this.value)">
+    </div>
+    <div class="readout">
+      <div class="readout-cell a"><div class="readout-num" id="tallyA">0</div><div class="readout-label">Übergabe</div></div>
+      <div class="readout-cell b"><div class="readout-num" id="tallyB">0</div><div class="readout-label">Begleitet</div></div>
+      <div class="readout-cell c"><div class="readout-num" id="tallyC">0</div><div class="readout-label">Eigenständig</div></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="control" onclick="switchTab('control')">Control Center</div>
+    <div class="tab" data-tab="crew" onclick="switchTab('crew')">Crew Setup</div>
+  </div>
+
+  <div class="tabpanel active" id="tabpanel-control">
+
+  <div class="crew">
+    <div class="crew-slot engineer">
+      <div class="crew-tag">Mastermind</div>
+      <div class="crew-role">Mastermind</div>
+      <div class="crew-desc">Trägt die fachliche Tiefe. Übergibt Wissen, reviewt kritische Entscheidungen, steigt pro Produkt aus, sobald der Owner reif ist.</div>
+    </div>
+    <div class="crew-slot controller">
+      <div class="crew-tag">Owner 01–10</div>
+      <div class="crew-role">Owner</div>
+      <div class="crew-desc">Ein Kopf pro Produkt. Volle Verantwortung bis zur Kundenimplementierung, eigenständig ab Phase C.</div>
+    </div>
+    <div class="crew-slot director">
+      <div class="crew-tag">Lead</div>
+      <div class="crew-role">Lead</div>
+      <div class="crew-desc">Struktur, Übergabe-Freigaben, Cross-Produkt-Koordination. Kein operatives Tracking — führt die Transformation.</div>
+    </div>
+  </div>
+
+  <div class="section-label">
+    <h2>Produkt-Konsolen</h2>
+    <button class="btn" onclick="addProduct()">+ Konsole anlegen</button>
+  </div>
+  <div id="productList"></div>
+
+  <div class="section-label">
+    <h2>Lead Log</h2>
+  </div>
+  <div id="logList"></div>
+  <div class="log-add">
+    <label>Neuer Eintrag</label>
+    <textarea id="logInput" placeholder="z.B. Produkt 3: Exit-Kriterium erreicht, Owner übernimmt, weil ..."></textarea>
+    <div class="log-add-row"><button class="btn" onclick="addLog()">Eintragen</button></div>
+  </div>
+
+  </div>
+
+  <div class="tabpanel" id="tabpanel-crew">
+    <div class="section-label">
+      <h2>Crew Namen — Nachnamen ergänzen</h2>
+      <button class="btn" onclick="addCrewRow()">+ Zeile</button>
+    </div>
+    <div class="crew-hint">Nachname eintragen — speichert automatisch. Fehlende Personen unten mit "+ Zeile" ergänzen.</div>
+    <div id="crewRowList"></div>
+  </div>
+
+  <div class="status-note" id="statusNote">wird geladen …</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL = 'https://comsmmvejfjpqvpkiytt.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvbXNtbXZlamZqcHF2cGtpeXR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NDQwMTUsImV4cCI6MjEwMjEyMDAxNX0.25E7J6WKCtYs1t-cJ5ks_Iq5wUP5gkMoEj5QD8a2SDQ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let products = [];
+let log = [];
+let tasks = {};
+let reactions = {};
+let comments = {};
+
+function getIdentity(){
+  return localStorage.getItem('aaicc_identity') || '';
+}
+function saveIdentity(value){
+  localStorage.setItem('aaicc_identity', value);
+}
+function initIdentity(){
+  const el = document.getElementById('identityInput');
+  el.value = getIdentity();
+}
+
+async function loadComments(){
+  const { data, error } = await sb.from('task_comments').select('*').order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Kommentare: '+error.message); return; }
+  comments = {};
+  (data||[]).forEach(c => {
+    if(!comments[c.task_id]) comments[c.task_id] = [];
+    comments[c.task_id].push(c);
+  });
+}
+
+function toggleComments(taskId, produktId){
+  const t = tasks[produktId].find(x=>x.id===taskId);
+  t._commentsOpen = !t._commentsOpen;
+  renderProducts();
+}
+
+async function addComment(taskId, produktId){
+  const input = document.getElementById('commentInput-'+taskId);
+  const text = input.value.trim();
+  if(!text) return;
+  const author = getIdentity() || 'Anonym';
+  const { data, error } = await sb.from('task_comments').insert({ task_id:taskId, author, text }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  if(!comments[taskId]) comments[taskId] = [];
+  comments[taskId].push(data);
+  renderProducts();
+}
+
+async function updateTaskAssignee(id, produktId, value){
+  const t = tasks[produktId].find(x=>x.id===id);
+  t.assignee = value;
+  const { error } = await sb.from('tasks').update({ assignee:value }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
+}
+
+async function loadTasks(){
+  const { data, error } = await sb.from('tasks').select('*').order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Tasks: '+error.message); return; }
+  tasks = {};
+  (data||[]).forEach(t => {
+    if(!tasks[t.produkt_id]) tasks[t.produkt_id] = [];
+    tasks[t.produkt_id].push(t);
+  });
+}
+
+function renderTasks(produktId){
+  const list = tasks[produktId] || [];
+  if(list.length===0) return '<div style="font-family:\\'IBM Plex Mono\\',monospace;font-size:10.5px;color:var(--text-faint);">Keine Aufgaben.</div>';
+  return list.map(t => `
+    <div class="taskrow">
+      <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}','${produktId}')">${t.done?'✓':''}</div>
+      <input class="task-text ${t.done?'done':''}" value="${escapeAttr(t.text)}" oninput="updateTaskText('${t.id}','${produktId}',this.value)">
+      <div class="task-del" onclick="deleteTask('${t.id}','${produktId}')">×</div>
+    </div>
+  `).join('');
+}
+
+async function addTask(produktId){
+  const { data, error } = await sb.from('tasks').insert({ produkt_id:produktId, text:'Neue Aufgabe', done:false }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  if(!tasks[produktId]) tasks[produktId] = [];
+  tasks[produktId].push(data);
+  renderProducts();
+}
+
+async function toggleTask(id, produktId){
+  const t = tasks[produktId].find(x=>x.id===id);
+  t.done = !t.done;
+  const { error } = await sb.from('tasks').update({ done:t.done }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); }
+  renderProducts();
+}
+
+async function updateTaskText(id, produktId, value){
+  const t = tasks[produktId].find(x=>x.id===id);
+  t.text = value;
+  const { error } = await sb.from('tasks').update({ text:value }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
+}
+
+async function deleteTask(id, produktId){
+  const { error } = await sb.from('tasks').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  tasks[produktId] = tasks[produktId].filter(t=>t.id!==id);
+  renderProducts();
+}
+
+async function loadReactions(){
+  const { data, error } = await sb.from('log_reactions').select('*');
+  if(error){ setStatus('Ladefehler Reactions: '+error.message); return; }
+  reactions = {};
+  (data||[]).forEach(r => {
+    if(!reactions[r.log_id]) reactions[r.log_id] = {};
+    reactions[r.log_id][r.emoji] = (reactions[r.log_id][r.emoji]||0) + 1;
+  });
+}
+
+async function addReaction(logId, emoji){
+  const { error } = await sb.from('log_reactions').insert({ log_id:logId, emoji });
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  if(!reactions[logId]) reactions[logId] = {};
+  reactions[logId][emoji] = (reactions[logId][emoji]||0) + 1;
+  renderLog();
+}
+
+async function loadAll(){
+  const { data: prodData, error: prodErr } = await sb.from('produkte').select('*').order('num', {ascending:true});
+  if(prodErr){ setStatus('Ladefehler: '+prodErr.message); }
+  products = prodData || [];
+
+  const { data: logData, error: logErr } = await sb.from('log').select('*').order('entry_date', {ascending:false});
+  if(logErr){ setStatus('Ladefehler: '+logErr.message); }
+  log = (logData || []).map(e => ({
+    id:e.id,
+    ts:new Date(e.entry_date).getTime(),
+    date:new Date(e.entry_date).toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + new Date(e.entry_date).toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'}),
+    text:e.text,
+    author:e.author
+  }));
+
+  if(products.length === 0){
+    const seed = Array.from({length:10}).map((_,i)=>({
+      num:i+1, name:'Produkt '+(i+1), po:'', phase:'a', task:'', notes:''
+    }));
+    const { data: inserted, error: insErr } = await sb.from('produkte').insert(seed).select();
+    if(insErr){ setStatus('Fehler beim Anlegen: '+insErr.message); }
+    products = inserted || [];
+  }
+  render();
+  setStatus('Agile AI Control Center — läuft auf Supabase');
+}
+
+async function saveProduct(p){
+  const { error } = await sb.from('produkte').update({
+    name:p.name, po:p.po, phase:p.phase, task:p.task, notes:p.notes, updated_at:new Date().toISOString()
+  }).eq('id', p.id);
+  if(error){ setStatus('Speichern fehlgeschlagen: '+error.message); }
+  else{ setStatus('gespeichert'); }
+}
+
+function setStatus(t){
+  const el = document.getElementById('statusNote');
+  el.textContent = t;
+  setTimeout(()=>{ el.textContent = 'Agile AI Control Center — läuft auf Supabase'; }, 1500);
+}
+
+function render(){
+  renderTally();
+  renderProducts();
+  renderLog();
+}
+
+function renderTally(){
+  document.getElementById('tallyA').textContent = products.filter(p=>p.phase==='a').length;
+  document.getElementById('tallyB').textContent = products.filter(p=>p.phase==='b').length;
+  document.getElementById('tallyC').textContent = products.filter(p=>p.phase==='c').length;
+}
+
+function phaseLabel(ph){
+  return ph==='a' ? 'ÜBERGABE' : ph==='b' ? 'BEGLEITET' : 'EIGENSTÄNDIG';
+}
+
+function renderProducts(){
+  const list = document.getElementById('productList');
+  if(products.length===0){
+    list.innerHTML = '<div class="empty">Keine Konsolen aktiv.</div>';
+    return;
+  }
+  list.innerHTML = products.map(p => `
+    <div class="console ${p._open?'open':''}" data-id="${p.id}">
+      <div class="console-head" onclick="toggleOpen('${p.id}')">
+        <div class="status-light ${p.phase}"></div>
+        <div class="console-num">${String(p.num).padStart(2,'0')}</div>
+        <div class="console-name">${escapeHtml(p.name)||'(ohne Namen)'}</div>
+        <div class="console-controller">${escapeHtml(p.po)||'— kein Owner —'}</div>
+        <div class="phase-readout ${p.phase}">${phaseLabel(p.phase)}</div>
+        <div class="caret">▶</div>
+      </div>
+      <div class="console-body">
+        <div class="field">
+          <label>Produktname</label>
+          <input value="${escapeAttr(p.name)}" oninput="updateField('${p.id}','name',this.value)">
+        </div>
+        <div class="field">
+          <label>Owner</label>
+          <input value="${escapeAttr(p.po)}" oninput="updateField('${p.id}','po',this.value)" placeholder="Name eintragen">
+        </div>
+        <div class="field">
+          <label>Phase</label>
+          <div class="phase-row">
+            <div class="phase-btn ${p.phase==='a'?'active a':''}" onclick="setPhase('${p.id}','a')">Übergabe</div>
+            <div class="phase-btn ${p.phase==='b'?'active b':''}" onclick="setPhase('${p.id}','b')">Begleitet</div>
+            <div class="phase-btn ${p.phase==='c'?'active c':''}" onclick="setPhase('${p.id}','c')">Eigenständig</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>24h-Auftrag (aktuell)</label>
+          <textarea oninput="updateField('${p.id}','task',this.value)" placeholder="Wer macht bis morgen was">${escapeHtml(p.task)}</textarea>
+        </div>
+        <div class="field">
+          <label>Notiz</label>
+          <textarea oninput="updateField('${p.id}','notes',this.value)" placeholder="Blockaden, Kontext, offene Punkte">${escapeHtml(p.notes)}</textarea>
+        </div>
+        <div class="field">
+          <label>Mini-Aufgaben</label>
+          <div class="tasklist">${renderTasks(p.id)}</div>
+          <div class="task-add" onclick="addTask('${p.id}')">+ Aufgabe</div>
+        </div>
+        <div class="row-actions">
+          <span class="remove-link" onclick="removeProduct('${p.id}')">Konsole entfernen</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderLog(){
+  const list = document.getElementById('logList');
+  if(log.length===0){
+    list.innerHTML = '<div class="empty">Noch keine Einträge.</div>';
+    return;
+  }
+  const sorted = [...log].sort((a,b)=> b.ts - a.ts);
+  list.innerHTML = sorted.map(e => `
+    <div class="log-entry">
+      <div class="log-date">${e.date}${e.author ? ' · <span style="color:var(--accent-bright);">'+escapeHtml(e.author)+'</span>' : ''}</div>
+      <div class="log-text">${escapeHtml(e.text)}</div>
+      <div class="reactions">
+        ${['🔥','👍','🎉'].map(emo => `<div class="reaction-btn" onclick="addReaction('${e.id}','${emo}')">${emo} <span class="count">${(reactions[e.id]&&reactions[e.id][emo])||0}</span></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleOpen(id){
+  const p = products.find(x=>x.id===id);
+  p._open = !p._open;
+  renderProducts();
+}
+
+function updateField(id, field, value){
+  const p = products.find(x=>x.id===id);
+  p[field] = value;
+  saveProduct(p);
+}
+
+function setPhase(id, phase){
+  const p = products.find(x=>x.id===id);
+  p.phase = phase;
+  saveProduct(p);
+  renderTally();
+  renderProducts();
+}
+
+async function addProduct(){
+  const nextNum = products.length ? Math.max(...products.map(p=>p.num))+1 : 1;
+  const { data, error } = await sb.from('produkte').insert({
+    num:nextNum, name:'Neues Produkt', po:'', phase:'a', task:'', notes:''
+  }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  data._open = true;
+  products.push(data);
+  renderProducts();
+  renderTally();
+}
+
+async function removeProduct(id){
+  const { error } = await sb.from('produkte').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  products = products.filter(p=>p.id!==id);
+  renderProducts();
+  renderTally();
+}
+
+async function addLog(){
+  const el = document.getElementById('logInput');
+  const text = el.value.trim();
+  if(!text) return;
+  const author = getIdentity() || '';
+  const { data, error } = await sb.from('log').insert({ text, author }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  const now = new Date(data.entry_date);
+  log.push({
+    id:data.id,
+    ts: now.getTime(),
+    date: now.toLocaleDateString('de-AT', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'}),
+    text,
+    author
+  });
+  el.value='';
+  renderLog();
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escapeAttr(str){
+  if(!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.getElementById('tabpanel-control').classList.toggle('active', name === 'control');
+  document.getElementById('tabpanel-crew').classList.toggle('active', name === 'crew');
+}
+
+let crewRows = [];
+
+async function loadCrew(){
+  const { data, error } = await sb.from('crew_candidates').select('*').order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Crew: '+error.message); return; }
+  crewRows = data || [];
+  renderCrew();
+}
+
+function renderCrew(){
+  const list = document.getElementById('crewRowList');
+  if(crewRows.length===0){
+    list.innerHTML = '<div class="empty">Keine Namen erfasst.</div>';
+    return;
+  }
+  list.innerHTML = crewRows.map(r => `
+    <div class="crewrow" data-id="${r.id}">
+      <input class="vorname" value="${escapeAttr(r.vorname)}" placeholder="Vorname" oninput="updateCrew('${r.id}','vorname',this.value)">
+      <input value="${escapeAttr(r.nachname)}" placeholder="Nachname" oninput="updateCrew('${r.id}','nachname',this.value)">
+      <span class="remove-link" onclick="removeCrewRow('${r.id}')">entfernen</span>
+    </div>
+  `).join('');
+}
+
+async function updateCrew(id, field, value){
+  const r = crewRows.find(x=>x.id===id);
+  r[field] = value;
+  const { error } = await sb.from('crew_candidates').update({ [field]: value }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); }
+  else{ setStatus('gespeichert'); }
+}
+
+async function addCrewRow(){
+  const { data, error } = await sb.from('crew_candidates').insert({ vorname:'', nachname:'' }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  crewRows.push(data);
+  renderCrew();
+}
+
+async function removeCrewRow(id){
+  const { error } = await sb.from('crew_candidates').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  crewRows = crewRows.filter(r=>r.id!==id);
+  renderCrew();
+}
+
+initIdentity();
+loadAll();
+loadCrew();
+loadTasks().then(() => { renderProducts(); loadComments().then(renderProducts); });
+loadReactions().then(renderLog);
+</script>
+</body>
+</html>
