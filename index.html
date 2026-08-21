@@ -683,6 +683,9 @@ body{margin:0;background:var(--bg);color:var(--text);}
           </select>
           <button class="btn" onclick="addAppUser()">+ Hinzufügen</button>
         </div>
+        <label style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-faint);margin-bottom:10px;">
+          <input type="checkbox" id="teamIsAdmin" style="width:auto;"> zusätzlich Admin (darf Team verwalten, unabhängig von der Rolle)
+        </label>
         <div id="teamList"></div>
       </div>
 
@@ -1282,8 +1285,8 @@ async function handleAuthChange(){
   }
   gate.style.display = 'none';
   app.style.display = 'block';
-  document.getElementById('ticketsMe').textContent = (currentAppUser.name || currentAppUser.email) + ' · ' + GLOBAL_ROLE_LABEL[currentAppUser.global_role];
-  document.getElementById('teamAdminBox').style.display = currentAppUser.global_role === 'mastermind' ? 'block' : 'none';
+  document.getElementById('ticketsMe').textContent = (currentAppUser.name || currentAppUser.email) + ' · ' + GLOBAL_ROLE_LABEL[currentAppUser.global_role] + (currentAppUser.is_admin ? ' · Admin' : '');
+  document.getElementById('teamAdminBox').style.display = (currentAppUser.is_admin || currentAppUser.global_role === 'mastermind') ? 'block' : 'none';
   document.getElementById('newTicketBtn').style.display = currentAppUser.global_role === 'sales' ? 'none' : '';
 
   if(!appBooted){
@@ -1328,11 +1331,13 @@ async function addAppUser(){
   const email = document.getElementById('teamEmail').value.trim();
   const name = document.getElementById('teamName').value.trim();
   const global_role = document.getElementById('teamRole').value;
+  const is_admin = document.getElementById('teamIsAdmin').checked;
   if(!email) return;
-  const { error } = await sb.from('app_users').insert({ email, name, global_role, invited_by: currentAppUser.id });
+  const { error } = await sb.from('app_users').insert({ email, name, global_role, is_admin, invited_by: currentAppUser.id });
   if(error){ setStatus('Fehler: '+error.message); return; }
   document.getElementById('teamEmail').value = '';
   document.getElementById('teamName').value = '';
+  document.getElementById('teamIsAdmin').checked = false;
   await loadAppUsers();
   renderTeamList();
   populateTicketModalSelects();
@@ -1352,7 +1357,7 @@ function renderTeamList(){
   list.innerHTML = appUsers.map(u => `
     <div class="teamrow">
       <span>${escapeHtml(u.name || '—')} <span style="color:var(--text-faint);">(${escapeHtml(u.email)})</span></span>
-      <span>${GLOBAL_ROLE_LABEL[u.global_role] || u.global_role}</span>
+      <span>${GLOBAL_ROLE_LABEL[u.global_role] || u.global_role}${u.is_admin ? ' · Admin' : ''}</span>
       <span class="${u.auth_user_id ? 'linked' : 'pending'}">${u.auth_user_id ? 'registriert' : 'ausstehend'}</span>
       <span class="remove-link" onclick="removeAppUser('${u.id}')">entfernen</span>
     </div>
