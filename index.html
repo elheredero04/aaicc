@@ -1278,14 +1278,16 @@ async function submitInvite(){
   const name = document.getElementById('inviteNameInput').value.trim();
   const msg = document.getElementById('inviteMsg');
   if(!password || password.length < 6){ msg.textContent = 'Passwort braucht mind. 6 Zeichen.'; return; }
-  const { data, error } = await sb.auth.signUp({ email: inviteInfo.email, password, options: { data: { name } } });
+  const { data: fnData, error: fnError } = await sb.functions.invoke('complete-invite', {
+    body: { token: inviteToken, password, name }
+  });
+  if(fnError || (fnData && fnData.error)){ msg.textContent = (fnData && fnData.error) || fnError.message; return; }
+  const { data: signInData, error } = await sb.auth.signInWithPassword({ email: inviteInfo.email, password });
   if(error){ msg.textContent = error.message; return; }
-  if(!data.session){
-    msg.textContent = 'Konto angelegt, aber Email-Bestätigung ist noch aktiv — bitte Mastermind bitten, das in Supabase abzuschalten.';
-    return;
-  }
   msg.textContent = '';
   history.replaceState(null, '', location.pathname);
+  authSession = signInData.session;
+  await handleAuthChange();
 }
 
 async function signOut(){
