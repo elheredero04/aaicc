@@ -557,7 +557,32 @@ body{margin:0;background:var(--bg);color:var(--text);}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="authGate">
+  <div class="auth-box">
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-mode="login" onclick="setAuthMode('login')">Login</div>
+      <div class="auth-tab" data-mode="signup" onclick="setAuthMode('signup')">Registrieren</div>
+    </div>
+    <div class="field" id="authNameField" style="display:none;">
+      <label>Name</label>
+      <input id="authName" placeholder="Vor- und Nachname">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input id="authEmail" type="email" placeholder="name@firma.at">
+    </div>
+    <div class="field">
+      <label>Passwort</label>
+      <input id="authPassword" type="password" placeholder="Mind. 6 Zeichen">
+    </div>
+    <div class="log-add-row">
+      <button class="btn" onclick="submitAuth()" id="authSubmitBtn">Einloggen</button>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
+  </div>
+</div>
+
+<div class="wrap" id="appGate" style="display:none;">
 
   <div class="header-strip">
     <div class="brand">
@@ -568,6 +593,8 @@ body{margin:0;background:var(--bg);color:var(--text);}
       <span>Ich bin:</span>
       <input id="identityInput" placeholder="Name" oninput="saveIdentity(this.value)">
     </div>
+    <div class="tickets-me" id="ticketsMe"></div>
+    <span class="remove-link" onclick="signOut()">Ausloggen</span>
     <div class="readout">
       <div class="readout-cell a"><div class="readout-num" id="tallyA">0</div><div class="readout-label">Übergabe</div></div>
       <div class="readout-cell b"><div class="readout-num" id="tallyB">0</div><div class="readout-label">Begleitet</div></div>
@@ -635,37 +662,10 @@ body{margin:0;background:var(--bg);color:var(--text);}
 
   <div class="tabpanel" id="tabpanel-tickets">
 
-    <div id="authGate">
-      <div class="auth-box">
-        <div class="auth-tabs">
-          <div class="auth-tab active" data-mode="login" onclick="setAuthMode('login')">Login</div>
-          <div class="auth-tab" data-mode="signup" onclick="setAuthMode('signup')">Registrieren</div>
-        </div>
-        <div class="field" id="authNameField" style="display:none;">
-          <label>Name</label>
-          <input id="authName" placeholder="Vor- und Nachname">
-        </div>
-        <div class="field">
-          <label>Email</label>
-          <input id="authEmail" type="email" placeholder="name@firma.at">
-        </div>
-        <div class="field">
-          <label>Passwort</label>
-          <input id="authPassword" type="password" placeholder="Mind. 6 Zeichen">
-        </div>
-        <div class="log-add-row">
-          <button class="btn" onclick="submitAuth()" id="authSubmitBtn">Einloggen</button>
-        </div>
-        <div class="auth-msg" id="authMsg"></div>
-      </div>
-    </div>
-
-    <div id="ticketsApp" style="display:none;">
+    <div id="ticketsApp">
       <div class="tickets-topbar">
-        <div class="tickets-me" id="ticketsMe"></div>
         <select id="ticketProductFilter" onchange="renderKanban()"><option value="">Alle Projekte</option></select>
         <button class="btn" id="newTicketBtn" onclick="openTicketModal(null)">+ Ticket</button>
-        <span class="remove-link" onclick="signOut()">Ausloggen</span>
       </div>
 
       <div id="teamAdminBox" style="display:none;">
@@ -1260,13 +1260,16 @@ async function signOut(){
   await sb.auth.signOut();
 }
 
+let appBooted = false;
+
 async function handleAuthChange(){
   const gate = document.getElementById('authGate');
-  const app = document.getElementById('ticketsApp');
+  const app = document.getElementById('appGate');
   if(!authSession){
     gate.style.display = 'block';
     app.style.display = 'none';
     currentAppUser = null;
+    appBooted = false;
     return;
   }
   await loadAppUsers();
@@ -1282,6 +1285,17 @@ async function handleAuthChange(){
   document.getElementById('ticketsMe').textContent = (currentAppUser.name || currentAppUser.email) + ' · ' + GLOBAL_ROLE_LABEL[currentAppUser.global_role];
   document.getElementById('teamAdminBox').style.display = currentAppUser.global_role === 'mastermind' ? 'block' : 'none';
   document.getElementById('newTicketBtn').style.display = currentAppUser.global_role === 'sales' ? 'none' : '';
+
+  if(!appBooted){
+    appBooted = true;
+    initIdentity();
+    await loadProjectRoles();
+    await loadAll();
+    await loadCrew();
+    loadTasks().then(() => { renderProducts(); loadComments().then(renderProducts); });
+    loadReactions().then(renderLog);
+  }
+
   populateProductFilter();
   populateTicketModalSelects();
   renderTeamList();
@@ -1534,11 +1548,6 @@ function initTicketsAuth(){
   });
 }
 
-initIdentity();
-loadProjectRoles().then(loadAll);
-loadCrew();
-loadTasks().then(() => { renderProducts(); loadComments().then(renderProducts); });
-loadReactions().then(renderLog);
 initTicketsAuth();
 </script>
 </body>
