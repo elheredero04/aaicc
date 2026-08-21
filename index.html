@@ -25,6 +25,13 @@
   --status-b:#4E80C9;
   --status-c:#4EA37A;
 
+  --role-mm:#D9636B;
+  --role-po:#7FA6E0;
+  --role-edt:#C77FD1;
+  --role-pm:#4E80C9;
+  --role-sales:#5FA8D3;
+  --role-infra:#C9922E;
+
   font-family:'IBM Plex Sans',sans-serif;
 }
 
@@ -263,6 +270,38 @@ body{margin:0;background:var(--bg);color:var(--text);}
 
 
 
+/* ===== PRIORITY MATRIX ===== */
+.matrix-wrap{overflow-x:auto;border:1px solid var(--line);margin-bottom:26px;background:var(--panel);}
+.matrix{width:100%;border-collapse:collapse;min-width:640px;}
+.matrix th, .matrix td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:middle;}
+.matrix thead th{
+  background:var(--panel-raised);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);
+  white-space:nowrap;
+}
+.matrix td.role-label{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:0.05em;white-space:nowrap;background:var(--panel-raised);
+}
+.matrix td.role-label.role-mm{color:var(--role-mm);}
+.matrix td.role-label.role-po{color:var(--role-po);}
+.matrix td.role-label.role-edt{color:var(--role-edt);}
+.matrix td.role-label.role-pm{color:var(--role-pm);}
+.matrix td.role-label.role-sales{color:var(--role-sales);}
+.matrix td.role-label.role-infra{color:var(--role-infra);}
+.matrix td.empty-cell{color:var(--text-faint);font-family:'IBM Plex Mono',monospace;font-size:11px;}
+.matrix input.role-person{
+  width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--text);
+  background:transparent;border:none;padding:2px;
+}
+.matrix input.role-person:focus{outline:1px solid var(--accent);}
+.prio-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.05em;
+  padding:2px 6px;border:1px solid var(--accent-bright);color:var(--accent-bright);
+  white-space:nowrap;
+}
+
 /* ===== CONSOLE PANELS (products) ===== */
 .console{
   border:1px solid var(--line);
@@ -479,6 +518,11 @@ body{margin:0;background:var(--bg);color:var(--text);}
   </div>
 
   <div class="section-label">
+    <h2>Prioritäts-Matrix</h2>
+  </div>
+  <div id="roleMatrixWrap"></div>
+
+  <div class="section-label">
     <h2>Produkt-Konsolen</h2>
     <button class="btn" onclick="addProduct()">+ Konsole anlegen</button>
   </div>
@@ -519,6 +563,11 @@ let log = [];
 let tasks = {};
 let reactions = {};
 let comments = {};
+let projectRoles = {};
+
+const ROLE_ORDER = ['MM','PO','EDT','PM','SALES','INFRA','INFRA_BU'];
+const ROLE_LABEL = {MM:'MM',PO:'PO',EDT:'EDT',PM:'PM',SALES:'Sales',INFRA:'Infra',INFRA_BU:'Infra BU'};
+const ROLE_CLASS = {MM:'role-mm',PO:'role-po',EDT:'role-edt',PM:'role-pm',SALES:'role-sales',INFRA:'role-infra',INFRA_BU:'role-infra'};
 
 function getIdentity(){
   return localStorage.getItem('aaicc_identity') || '';
@@ -636,6 +685,55 @@ async function addReaction(logId, emoji){
   renderLog();
 }
 
+async function loadProjectRoles(){
+  const { data, error } = await sb.from('project_roles').select('*').order('sort_order', {ascending:true});
+  if(error){ setStatus('Ladefehler Rollen: '+error.message); return; }
+  projectRoles = {};
+  (data||[]).forEach(r => {
+    if(!projectRoles[r.produkt_id]) projectRoles[r.produkt_id] = {};
+    projectRoles[r.produkt_id][r.role_code] = r;
+  });
+}
+
+function renderRoleMatrix(){
+  const wrap = document.getElementById('roleMatrixWrap');
+  const prioProducts = products.filter(p=>p.priority_order!=null).sort((a,b)=>a.priority_order-b.priority_order);
+  if(prioProducts.length===0){
+    wrap.innerHTML = '<div class="empty">Keine priorisierten Projekte.</div>';
+    return;
+  }
+  const rolesPresent = ROLE_ORDER.filter(code => prioProducts.some(p => projectRoles[p.id] && projectRoles[p.id][code]));
+  wrap.innerHTML = `
+    <div class="matrix-wrap">
+    <table class="matrix">
+      <thead><tr><th></th>${prioProducts.map(p=>`<th>${escapeHtml(p.name)}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${rolesPresent.map(code => `
+          <tr>
+            <td class="role-label ${ROLE_CLASS[code]}">${ROLE_LABEL[code]}</td>
+            ${prioProducts.map(p => {
+              const r = projectRoles[p.id] && projectRoles[p.id][code];
+              if(!r) return '<td class="empty-cell">—</td>';
+              return `<td><input class="role-person" value="${escapeAttr(r.person)}" oninput="updateRolePerson('${r.id}',this.value)"></td>`;
+            }).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    </div>
+  `;
+}
+
+async function updateRolePerson(id, value){
+  outer: for(const pid in projectRoles){
+    for(const code in projectRoles[pid]){
+      if(projectRoles[pid][code].id === id){ projectRoles[pid][code].person = value; break outer; }
+    }
+  }
+  const { error } = await sb.from('project_roles').update({ person:value }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
+}
+
 async function loadAll(){
   const { data: prodData, error: prodErr } = await sb.from('produkte').select('*').order('num', {ascending:true});
   if(prodErr){ setStatus('Ladefehler: '+prodErr.message); }
@@ -679,8 +777,18 @@ function setStatus(t){
 
 function render(){
   renderTally();
+  renderRoleMatrix();
   renderProducts();
   renderLog();
+}
+
+function sortedProducts(){
+  return [...products].sort((a,b) => {
+    if(a.priority_order!=null && b.priority_order!=null) return a.priority_order-b.priority_order;
+    if(a.priority_order!=null) return -1;
+    if(b.priority_order!=null) return 1;
+    return a.num-b.num;
+  });
 }
 
 function renderTally(){
@@ -699,12 +807,13 @@ function renderProducts(){
     list.innerHTML = '<div class="empty">Keine Konsolen aktiv.</div>';
     return;
   }
-  list.innerHTML = products.map(p => `
+  list.innerHTML = sortedProducts().map(p => `
     <div class="console ${p._open?'open':''}" data-id="${p.id}">
       <div class="console-head" onclick="toggleOpen('${p.id}')">
         <div class="status-light ${p.phase}"></div>
         <div class="console-num">${String(p.num).padStart(2,'0')}</div>
         <div class="console-name">${escapeHtml(p.name)||'(ohne Namen)'}</div>
+        ${p.priority_order!=null ? `<div class="prio-badge">PRIO ${p.priority_order}</div>` : ''}
         <div class="console-controller">${escapeHtml(p.po)||'— kein Owner —'}</div>
         <div class="phase-readout ${p.phase}">${phaseLabel(p.phase)}</div>
         <div class="caret">▶</div>
@@ -886,7 +995,7 @@ async function removeCrewRow(id){
 }
 
 initIdentity();
-loadAll();
+loadProjectRoles().then(loadAll);
 loadCrew();
 loadTasks().then(() => { renderProducts(); loadComments().then(renderProducts); });
 loadReactions().then(renderLog);
