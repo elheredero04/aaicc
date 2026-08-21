@@ -558,27 +558,38 @@ body{margin:0;background:var(--bg);color:var(--text);}
 </head>
 <body>
 <div id="authGate">
-  <div class="auth-box">
-    <div class="auth-tabs">
-      <div class="auth-tab active" data-mode="login" onclick="setAuthMode('login')">Login</div>
-      <div class="auth-tab" data-mode="signup" onclick="setAuthMode('signup')">Registrieren</div>
-    </div>
-    <div class="field" id="authNameField" style="display:none;">
-      <label>Name</label>
-      <input id="authName" placeholder="Vor- und Nachname">
-    </div>
+  <div class="auth-box" id="loginBox">
     <div class="field">
       <label>Email</label>
       <input id="authEmail" type="email" placeholder="name@firma.at">
     </div>
     <div class="field">
       <label>Passwort</label>
-      <input id="authPassword" type="password" placeholder="Mind. 6 Zeichen">
+      <input id="authPassword" type="password" placeholder="Passwort">
     </div>
     <div class="log-add-row">
-      <button class="btn" onclick="submitAuth()" id="authSubmitBtn">Einloggen</button>
+      <button class="btn" onclick="submitAuth()">Einloggen</button>
     </div>
     <div class="auth-msg" id="authMsg"></div>
+  </div>
+
+  <div class="auth-box" id="inviteBox" style="display:none;">
+    <div class="field">
+      <label>Einladung für</label>
+      <div id="inviteEmail" style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-bright);"></div>
+    </div>
+    <div class="field">
+      <label>Name</label>
+      <input id="inviteNameInput" placeholder="Vor- und Nachname">
+    </div>
+    <div class="field">
+      <label>Passwort setzen</label>
+      <input id="invitePassword" type="password" placeholder="Mind. 6 Zeichen">
+    </div>
+    <div class="log-add-row">
+      <button class="btn" onclick="submitInvite()">Passwort setzen &amp; einloggen</button>
+    </div>
+    <div class="auth-msg" id="inviteMsg"></div>
   </div>
 </div>
 
@@ -1228,35 +1239,53 @@ const GLOBAL_ROLE_LABEL = {mastermind:'Mastermind', po:'PO', dev:'Dev', pm:'PM',
 const FORMAT_LABEL = {feature:'Feature', bug:'Bug', research:'Research', design:'Design', docs:'Docs', debt:'Tech Debt', integration:'Integration'};
 
 let authSession = null;
-let authMode = 'login';
 let appUsers = [];
+let invites = [];
 let currentAppUser = null;
 let ticketsList = [];
 let activeTicketId = null;
-
-function setAuthMode(mode){
-  authMode = mode;
-  document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
-  document.getElementById('authNameField').style.display = mode === 'signup' ? 'block' : 'none';
-  document.getElementById('authSubmitBtn').textContent = mode === 'signup' ? 'Registrieren' : 'Einloggen';
-  document.getElementById('authMsg').textContent = '';
-}
+let inviteToken = null;
+let inviteInfo = null;
 
 async function submitAuth(){
   const email = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
   const msg = document.getElementById('authMsg');
   if(!email || !password){ msg.textContent = 'Email und Passwort ausfüllen.'; return; }
-  if(authMode === 'signup'){
-    const name = document.getElementById('authName').value.trim();
-    const { data, error } = await sb.auth.signUp({ email, password, options: { data: { name } } });
-    if(error){ msg.textContent = error.message; return; }
-    if(!data.session){ setAuthMode('login'); msg.textContent = 'Registrierung ok — bitte Email bestätigen und dann einloggen.'; return; }
-  } else {
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    if(error){ msg.textContent = error.message; return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){ msg.textContent = error.message; return; }
+  msg.textContent = '';
+}
+
+async function checkInvite(){
+  const token = new URLSearchParams(location.search).get('invite');
+  if(!token) return;
+  const { data, error } = await sb.rpc('get_invite', { p_token: token });
+  if(error || !data || data.length === 0){
+    document.getElementById('authMsg').textContent = 'Dieser Einladungslink ist ungültig oder wurde bereits verwendet.';
+    return;
+  }
+  inviteToken = token;
+  inviteInfo = data[0];
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('inviteBox').style.display = 'block';
+  document.getElementById('inviteEmail').textContent = inviteInfo.email;
+  document.getElementById('inviteNameInput').value = inviteInfo.name || '';
+}
+
+async function submitInvite(){
+  const password = document.getElementById('invitePassword').value;
+  const name = document.getElementById('inviteNameInput').value.trim();
+  const msg = document.getElementById('inviteMsg');
+  if(!password || password.length < 6){ msg.textContent = 'Passwort braucht mind. 6 Zeichen.'; return; }
+  const { data, error } = await sb.auth.signUp({ email: inviteInfo.email, password, options: { data: { name } } });
+  if(error){ msg.textContent = error.message; return; }
+  if(!data.session){
+    msg.textContent = 'Konto angelegt, aber Email-Bestätigung ist noch aktiv — bitte Mastermind bitten, das in Supabase abzuschalten.';
+    return;
   }
   msg.textContent = '';
+  history.replaceState(null, '', location.pathname);
 }
 
 async function signOut(){
@@ -1279,6 +1308,8 @@ async function handleAuthChange(){
   currentAppUser = appUsers.find(u => u.auth_user_id === authSession.user.id) || null;
   if(!currentAppUser){
     gate.style.display = 'block';
+    document.getElementById('loginBox').style.display = 'block';
+    document.getElementById('inviteBox').style.display = 'none';
     app.style.display = 'none';
     document.getElementById('authMsg').textContent = 'Kein Zugang für ' + authSession.user.email + ' — bitte Mastermind um Freischaltung bitten.';
     return;
@@ -1301,6 +1332,7 @@ async function handleAuthChange(){
 
   populateProductFilter();
   populateTicketModalSelects();
+  await loadInvites();
   renderTeamList();
   await loadTickets();
 }
@@ -1327,18 +1359,28 @@ async function loadAppUsers(){
   appUsers = data || [];
 }
 
+async function loadInvites(){
+  if(!currentAppUser || !(currentAppUser.is_admin || currentAppUser.global_role === 'mastermind')){ invites = []; return; }
+  const { data, error } = await sb.from('invites').select('*');
+  if(error){ setStatus('Ladefehler Einladungen: '+error.message); return; }
+  invites = data || [];
+}
+
 async function addAppUser(){
   const email = document.getElementById('teamEmail').value.trim();
   const name = document.getElementById('teamName').value.trim();
   const global_role = document.getElementById('teamRole').value;
   const is_admin = document.getElementById('teamIsAdmin').checked;
   if(!email) return;
-  const { error } = await sb.from('app_users').insert({ email, name, global_role, is_admin, invited_by: currentAppUser.id });
+  const { data, error } = await sb.from('app_users').insert({ email, name, global_role, is_admin, invited_by: currentAppUser.id }).select().single();
   if(error){ setStatus('Fehler: '+error.message); return; }
+  const { error: inviteErr } = await sb.from('invites').insert({ app_user_id: data.id });
+  if(inviteErr){ setStatus('Fehler beim Einladungslink: '+inviteErr.message); }
   document.getElementById('teamEmail').value = '';
   document.getElementById('teamName').value = '';
   document.getElementById('teamIsAdmin').checked = false;
   await loadAppUsers();
+  await loadInvites();
   renderTeamList();
   populateTicketModalSelects();
 }
@@ -1347,8 +1389,19 @@ async function removeAppUser(id){
   const { error } = await sb.from('app_users').delete().eq('id', id);
   if(error){ setStatus('Fehler: '+error.message); return; }
   await loadAppUsers();
+  await loadInvites();
   renderTeamList();
   populateTicketModalSelects();
+}
+
+function copyInviteLink(appUserId){
+  const inv = invites.find(i => i.app_user_id === appUserId);
+  if(!inv){ setStatus('Kein Einladungslink vorhanden.'); return; }
+  const link = location.origin + location.pathname + '?invite=' + inv.token;
+  navigator.clipboard.writeText(link).then(
+    () => setStatus('Einladungslink kopiert'),
+    () => setStatus('Konnte nicht kopieren — Link: ' + link)
+  );
 }
 
 function renderTeamList(){
@@ -1359,7 +1412,10 @@ function renderTeamList(){
       <span>${escapeHtml(u.name || '—')} <span style="color:var(--text-faint);">(${escapeHtml(u.email)})</span></span>
       <span>${GLOBAL_ROLE_LABEL[u.global_role] || u.global_role}${u.is_admin ? ' · Admin' : ''}</span>
       <span class="${u.auth_user_id ? 'linked' : 'pending'}">${u.auth_user_id ? 'registriert' : 'ausstehend'}</span>
-      <span class="remove-link" onclick="removeAppUser('${u.id}')">entfernen</span>
+      <span>
+        ${!u.auth_user_id ? `<span class="remove-link" onclick="copyInviteLink('${u.id}')">Link kopieren</span> · ` : ''}
+        <span class="remove-link" onclick="removeAppUser('${u.id}')">entfernen</span>
+      </span>
     </div>
   `).join('');
 }
@@ -1554,6 +1610,7 @@ function initTicketsAuth(){
 }
 
 initTicketsAuth();
+checkInvite();
 </script>
 </body>
 </html>
