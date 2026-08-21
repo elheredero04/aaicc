@@ -575,19 +575,19 @@ body{margin:0;background:var(--bg);color:var(--text);}
 
   <div class="auth-box" id="inviteBox" style="display:none;">
     <div class="field">
-      <label>Einladung für</label>
+      <label id="inviteLabel">Einladung für</label>
       <div id="inviteEmail" style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-bright);"></div>
     </div>
-    <div class="field">
+    <div class="field" id="inviteNameField">
       <label>Name</label>
       <input id="inviteNameInput" placeholder="Vor- und Nachname">
     </div>
     <div class="field">
-      <label>Passwort setzen</label>
+      <label id="invitePasswordLabel">Passwort setzen</label>
       <input id="invitePassword" type="password" placeholder="Mind. 6 Zeichen">
     </div>
     <div class="log-add-row">
-      <button class="btn" onclick="submitInvite()">Passwort setzen &amp; einloggen</button>
+      <button class="btn" onclick="submitInvite()" id="inviteSubmitBtn">Passwort setzen &amp; einloggen</button>
     </div>
     <div class="auth-msg" id="inviteMsg"></div>
   </div>
@@ -1267,10 +1267,15 @@ async function checkInvite(){
   }
   inviteToken = token;
   inviteInfo = data[0];
+  const isReset = inviteInfo.purpose === 'reset';
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('inviteBox').style.display = 'block';
   document.getElementById('inviteEmail').textContent = inviteInfo.email;
   document.getElementById('inviteNameInput').value = inviteInfo.name || '';
+  document.getElementById('inviteLabel').textContent = isReset ? 'Passwort zurücksetzen für' : 'Einladung für';
+  document.getElementById('inviteNameField').style.display = isReset ? 'none' : 'block';
+  document.getElementById('invitePasswordLabel').textContent = isReset ? 'Neues Passwort' : 'Passwort setzen';
+  document.getElementById('inviteSubmitBtn').textContent = isReset ? 'Neues Passwort setzen & einloggen' : 'Passwort setzen & einloggen';
 }
 
 async function submitInvite(){
@@ -1310,10 +1315,12 @@ async function handleAuthChange(){
   currentAppUser = appUsers.find(u => u.auth_user_id === authSession.user.id) || null;
   if(!currentAppUser){
     gate.style.display = 'block';
-    document.getElementById('loginBox').style.display = 'block';
-    document.getElementById('inviteBox').style.display = 'none';
     app.style.display = 'none';
-    document.getElementById('authMsg').textContent = 'Kein Zugang für ' + authSession.user.email + ' — bitte Mastermind um Freischaltung bitten.';
+    if(!inviteToken){
+      document.getElementById('loginBox').style.display = 'block';
+      document.getElementById('inviteBox').style.display = 'none';
+      document.getElementById('authMsg').textContent = 'Kein Zugang für ' + authSession.user.email + ' — bitte Mastermind um Freischaltung bitten.';
+    }
     return;
   }
   gate.style.display = 'none';
@@ -1396,14 +1403,25 @@ async function removeAppUser(id){
   populateTicketModalSelects();
 }
 
-function copyInviteLink(appUserId){
-  const inv = invites.find(i => i.app_user_id === appUserId);
-  if(!inv){ setStatus('Kein Einladungslink vorhanden.'); return; }
-  const link = location.origin + location.pathname + '?invite=' + inv.token;
+function copyLinkToClipboard(token, okMsg){
+  const link = location.origin + location.pathname + '?invite=' + token;
   navigator.clipboard.writeText(link).then(
-    () => setStatus('Einladungslink kopiert'),
+    () => setStatus(okMsg),
     () => setStatus('Konnte nicht kopieren — Link: ' + link)
   );
+}
+
+function copyInviteLink(appUserId){
+  const inv = invites.find(i => i.app_user_id === appUserId && i.purpose === 'invite' && !i.used_at);
+  if(!inv){ setStatus('Kein Einladungslink vorhanden.'); return; }
+  copyLinkToClipboard(inv.token, 'Einladungslink kopiert');
+}
+
+async function createResetLink(appUserId){
+  const { data, error } = await sb.from('invites').insert({ app_user_id: appUserId, purpose: 'reset' }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  await loadInvites();
+  copyLinkToClipboard(data.token, 'Reset-Link kopiert');
 }
 
 function renderTeamList(){
@@ -1415,7 +1433,9 @@ function renderTeamList(){
       <span>${GLOBAL_ROLE_LABEL[u.global_role] || u.global_role}${u.is_admin ? ' · Admin' : ''}</span>
       <span class="${u.auth_user_id ? 'linked' : 'pending'}">${u.auth_user_id ? 'registriert' : 'ausstehend'}</span>
       <span>
-        ${!u.auth_user_id ? `<span class="remove-link" onclick="copyInviteLink('${u.id}')">Link kopieren</span> · ` : ''}
+        ${!u.auth_user_id
+          ? `<span class="remove-link" onclick="copyInviteLink('${u.id}')">Link kopieren</span> · `
+          : `<span class="remove-link" onclick="createResetLink('${u.id}')">Passwort zurücksetzen</span> · `}
         <span class="remove-link" onclick="removeAppUser('${u.id}')">entfernen</span>
       </span>
     </div>
