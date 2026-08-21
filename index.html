@@ -302,6 +302,89 @@ body{margin:0;background:var(--bg);color:var(--text);}
   white-space:nowrap;
 }
 
+/* ===== TICKETS / AUTH ===== */
+.auth-box{max-width:360px;margin:20px auto;border:1px solid var(--line);background:var(--panel);padding:18px;}
+.auth-tabs{display:flex;border:1px solid var(--line);margin-bottom:16px;}
+.auth-tab{flex:1;text-align:center;padding:8px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);border-right:1px solid var(--line);}
+.auth-tab:last-child{border-right:none;}
+.auth-tab.active{background:var(--accent);color:#fff;}
+.auth-msg{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);margin-top:10px;text-align:center;min-height:14px;}
+.tickets-topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
+.tickets-me{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent-bright);}
+.tickets-topbar select{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);
+  background:var(--panel);border:1px solid var(--line);padding:6px 8px;
+}
+.tickets-topbar .remove-link{margin-left:auto;}
+
+/* ===== TEAM ADMIN ===== */
+.team-add-row{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;margin-bottom:8px;}
+.team-add-row input, .team-add-row select{
+  font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--text);
+  background:var(--bg);border:1px solid var(--line);padding:7px 9px;width:100%;
+}
+.teamrow{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;align-items:center;
+  border:1px solid var(--line);border-top:none;padding:8px 10px;background:var(--panel);
+  font-size:12.5px;
+}
+.teamrow:first-of-type{border-top:1px solid var(--line);}
+.teamrow .pending{color:var(--text-faint);font-family:'IBM Plex Mono',monospace;font-size:10px;}
+.teamrow .linked{color:var(--status-c);font-family:'IBM Plex Mono',monospace;font-size:10px;}
+
+/* ===== KANBAN ===== */
+.kanban-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;}
+.kanban-col{flex:0 0 240px;border:1px solid var(--line);background:var(--panel);min-height:120px;}
+.kanban-col-head{
+  padding:10px 12px;border-bottom:1px solid var(--line);
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;
+  color:var(--text-dim);display:flex;justify-content:space-between;
+}
+.kanban-col-body{padding:8px;min-height:80px;}
+.kanban-col-body.dragover{background:var(--panel-raised);outline:1px dashed var(--accent-bright);outline-offset:-4px;}
+.ticket-card{
+  border:1px solid var(--line);background:var(--panel-raised);padding:10px;margin-bottom:8px;
+  cursor:pointer;font-family:'IBM Plex Sans',sans-serif;
+}
+.ticket-card:hover{border-color:var(--accent);}
+.ticket-card-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;}
+.ticket-id{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-faint);}
+.priority-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 6px;border:1px solid;letter-spacing:0.04em;}
+.priority-badge.P0{color:#E05A5A;border-color:#E05A5A;}
+.priority-badge.P1{color:var(--status-a);border-color:var(--status-a);}
+.priority-badge.P2{color:var(--status-b);border-color:var(--status-b);}
+.priority-badge.P3{color:var(--text-faint);border-color:var(--line-bright);}
+.ticket-title{font-size:12.5px;font-weight:600;margin-bottom:4px;}
+.ticket-desc{font-size:11px;color:var(--text-dim);margin-bottom:6px;line-height:1.4;}
+.ticket-meta{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);}
+.ticket-timeline{height:4px;background:var(--line);margin-top:6px;overflow:hidden;}
+.ticket-timeline-fill{height:100%;}
+.ticket-timeline-fill.ontrack{background:var(--status-c);}
+.ticket-timeline-fill.atrisk{background:var(--status-a);}
+.ticket-timeline-fill.overdue{background:#E05A5A;}
+
+/* ===== TICKET MODAL ===== */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(8,10,16,0.72);
+  z-index:50;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:var(--panel);border:1px solid var(--line-bright);max-width:560px;width:100%;
+  padding:22px;
+}
+.modal-close{float:right;cursor:pointer;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;}
+.modal-close:hover{color:var(--status-a);}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.modal-grid .field{margin-top:0;}
+.field select{
+  width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);
+  background:var(--bg);border:1px solid var(--line);padding:8px 10px;
+}
+.notes-list{margin-top:6px;}
+.note-item{border-top:1px solid var(--line);padding:8px 0;font-size:12px;}
+.note-author{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent-bright);margin-right:6px;}
+
 /* ===== CONSOLE PANELS (products) ===== */
 .console{
   border:1px solid var(--line);
@@ -495,6 +578,7 @@ body{margin:0;background:var(--bg);color:var(--text);}
   <div class="tabs">
     <div class="tab active" data-tab="control" onclick="switchTab('control')">Control Center</div>
     <div class="tab" data-tab="crew" onclick="switchTab('crew')">Crew Setup</div>
+    <div class="tab" data-tab="tickets" onclick="switchTab('tickets')">Tickets</div>
   </div>
 
   <div class="tabpanel active" id="tabpanel-control">
@@ -549,7 +633,135 @@ body{margin:0;background:var(--bg);color:var(--text);}
     <div id="crewRowList"></div>
   </div>
 
+  <div class="tabpanel" id="tabpanel-tickets">
+
+    <div id="authGate">
+      <div class="auth-box">
+        <div class="auth-tabs">
+          <div class="auth-tab active" data-mode="login" onclick="setAuthMode('login')">Login</div>
+          <div class="auth-tab" data-mode="signup" onclick="setAuthMode('signup')">Registrieren</div>
+        </div>
+        <div class="field" id="authNameField" style="display:none;">
+          <label>Name</label>
+          <input id="authName" placeholder="Vor- und Nachname">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input id="authEmail" type="email" placeholder="name@firma.at">
+        </div>
+        <div class="field">
+          <label>Passwort</label>
+          <input id="authPassword" type="password" placeholder="Mind. 6 Zeichen">
+        </div>
+        <div class="log-add-row">
+          <button class="btn" onclick="submitAuth()" id="authSubmitBtn">Einloggen</button>
+        </div>
+        <div class="auth-msg" id="authMsg"></div>
+      </div>
+    </div>
+
+    <div id="ticketsApp" style="display:none;">
+      <div class="tickets-topbar">
+        <div class="tickets-me" id="ticketsMe"></div>
+        <select id="ticketProductFilter" onchange="renderKanban()"><option value="">Alle Projekte</option></select>
+        <button class="btn" id="newTicketBtn" onclick="openTicketModal(null)">+ Ticket</button>
+        <span class="remove-link" onclick="signOut()">Ausloggen</span>
+      </div>
+
+      <div id="teamAdminBox" style="display:none;">
+        <div class="section-label"><h2>Team verwalten</h2></div>
+        <div class="crew-hint">Rolle vor Registrierung zuweisen — Person meldet sich danach mit dieser Email selbst an.</div>
+        <div class="team-add-row">
+          <input id="teamEmail" placeholder="Email">
+          <input id="teamName" placeholder="Name">
+          <select id="teamRole">
+            <option value="mastermind">Mastermind</option>
+            <option value="po">Product Owner</option>
+            <option value="dev" selected>Entwickler</option>
+            <option value="pm">Project Manager</option>
+            <option value="sales">Sales</option>
+          </select>
+          <button class="btn" onclick="addAppUser()">+ Hinzufügen</button>
+        </div>
+        <div id="teamList"></div>
+      </div>
+
+      <div class="section-label"><h2>Kanban</h2></div>
+      <div class="kanban-wrap" id="kanbanWrap"></div>
+    </div>
+
+  </div>
+
   <div class="status-note" id="statusNote">wird geladen …</div>
+</div>
+
+<div class="modal-overlay" id="ticketModalOverlay" onclick="if(event.target===this) closeTicketModal()">
+  <div class="modal-box">
+    <span class="modal-close" onclick="closeTicketModal()">✕ schließen</span>
+    <h2 id="ticketModalTitle" style="font-family:'Manrope',sans-serif;margin:0 0 16px;">Ticket</h2>
+    <div class="field">
+      <label>Titel</label>
+      <input id="tmTitle" class="tm-field">
+    </div>
+    <div class="modal-grid">
+      <div class="field">
+        <label>Projekt</label>
+        <select id="tmProdukt" class="tm-field"></select>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select id="tmStatus" class="tm-field"></select>
+      </div>
+      <div class="field">
+        <label>Format</label>
+        <select id="tmFormat" class="tm-field"></select>
+      </div>
+      <div class="field">
+        <label>Priorität</label>
+        <select id="tmPriority" class="tm-field"><option>P0</option><option>P1</option><option selected>P2</option><option>P3</option></select>
+      </div>
+      <div class="field">
+        <label>Rolle</label>
+        <select id="tmRole" class="tm-field"></select>
+      </div>
+      <div class="field">
+        <label>Person</label>
+        <select id="tmAssignee" class="tm-field"><option value="">— niemand —</option></select>
+      </div>
+      <div class="field">
+        <label>Start</label>
+        <input id="tmStart" type="date" class="tm-field">
+      </div>
+      <div class="field">
+        <label>Fällig</label>
+        <input id="tmDue" type="date" class="tm-field">
+      </div>
+      <div class="field">
+        <label>Geplante Stunden</label>
+        <input id="tmEstimate" type="number" min="0" step="0.5" class="tm-field">
+      </div>
+      <div class="field">
+        <label>Erledigte Stunden</label>
+        <input id="tmElapsed" type="number" min="0" step="0.5" class="tm-field">
+      </div>
+    </div>
+    <div class="field">
+      <label>Beschreibung</label>
+      <textarea id="tmDescription" class="tm-field" style="min-height:70px;"></textarea>
+    </div>
+    <div class="row-actions" style="justify-content:space-between;">
+      <span class="remove-link" id="tmDeleteBtn" onclick="deleteTicket()">Ticket löschen</span>
+      <button class="btn" id="tmSaveBtn" onclick="saveTicket()">Speichern</button>
+    </div>
+    <div id="tmNotesSection" style="margin-top:18px;">
+      <div class="field"><label>Notizen</label></div>
+      <div class="notes-list" id="tmNotesList"></div>
+      <div class="log-add" style="margin-top:8px;">
+        <textarea id="tmNoteInput" placeholder="Notiz hinzufügen…" style="min-height:40px;"></textarea>
+        <div class="log-add-row"><button class="btn" id="tmNoteAddBtn" onclick="addTicketNote()">Hinzufügen</button></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -780,6 +992,11 @@ function render(){
   renderRoleMatrix();
   renderProducts();
   renderLog();
+  if(typeof currentAppUser !== 'undefined' && currentAppUser){
+    populateProductFilter();
+    populateTicketModalSelects();
+    renderKanban();
+  }
 }
 
 function sortedProducts(){
@@ -946,6 +1163,7 @@ function switchTab(name){
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.getElementById('tabpanel-control').classList.toggle('active', name === 'control');
   document.getElementById('tabpanel-crew').classList.toggle('active', name === 'crew');
+  document.getElementById('tabpanel-tickets').classList.toggle('active', name === 'tickets');
 }
 
 let crewRows = [];
@@ -994,11 +1212,334 @@ async function removeCrewRow(id){
   renderCrew();
 }
 
+/* ===== TICKETS MODULE ===== */
+const KANBAN_COLUMNS = [
+  {code:'backlog', label:'Backlog'},
+  {code:'design', label:'Design'},
+  {code:'development', label:'Development'},
+  {code:'testing', label:'Testing'},
+  {code:'review', label:'Review'},
+  {code:'deployed', label:'Deployed'}
+];
+const GLOBAL_ROLE_LABEL = {mastermind:'Mastermind', po:'PO', dev:'Dev', pm:'PM', sales:'Sales'};
+const FORMAT_LABEL = {feature:'Feature', bug:'Bug', research:'Research', design:'Design', docs:'Docs', debt:'Tech Debt', integration:'Integration'};
+
+let authSession = null;
+let authMode = 'login';
+let appUsers = [];
+let currentAppUser = null;
+let ticketsList = [];
+let activeTicketId = null;
+
+function setAuthMode(mode){
+  authMode = mode;
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  document.getElementById('authNameField').style.display = mode === 'signup' ? 'block' : 'none';
+  document.getElementById('authSubmitBtn').textContent = mode === 'signup' ? 'Registrieren' : 'Einloggen';
+  document.getElementById('authMsg').textContent = '';
+}
+
+async function submitAuth(){
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const msg = document.getElementById('authMsg');
+  if(!email || !password){ msg.textContent = 'Email und Passwort ausfüllen.'; return; }
+  if(authMode === 'signup'){
+    const name = document.getElementById('authName').value.trim();
+    const { data, error } = await sb.auth.signUp({ email, password, options: { data: { name } } });
+    if(error){ msg.textContent = error.message; return; }
+    if(!data.session){ setAuthMode('login'); msg.textContent = 'Registrierung ok — bitte Email bestätigen und dann einloggen.'; return; }
+  } else {
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){ msg.textContent = error.message; return; }
+  }
+  msg.textContent = '';
+}
+
+async function signOut(){
+  await sb.auth.signOut();
+}
+
+async function handleAuthChange(){
+  const gate = document.getElementById('authGate');
+  const app = document.getElementById('ticketsApp');
+  if(!authSession){
+    gate.style.display = 'block';
+    app.style.display = 'none';
+    currentAppUser = null;
+    return;
+  }
+  await loadAppUsers();
+  currentAppUser = appUsers.find(u => u.auth_user_id === authSession.user.id) || null;
+  if(!currentAppUser){
+    gate.style.display = 'block';
+    app.style.display = 'none';
+    document.getElementById('authMsg').textContent = 'Kein Zugang für ' + authSession.user.email + ' — bitte Mastermind um Freischaltung bitten.';
+    return;
+  }
+  gate.style.display = 'none';
+  app.style.display = 'block';
+  document.getElementById('ticketsMe').textContent = (currentAppUser.name || currentAppUser.email) + ' · ' + GLOBAL_ROLE_LABEL[currentAppUser.global_role];
+  document.getElementById('teamAdminBox').style.display = currentAppUser.global_role === 'mastermind' ? 'block' : 'none';
+  document.getElementById('newTicketBtn').style.display = currentAppUser.global_role === 'sales' ? 'none' : '';
+  populateProductFilter();
+  populateTicketModalSelects();
+  renderTeamList();
+  await loadTickets();
+}
+
+function populateProductFilter(){
+  const sel = document.getElementById('ticketProductFilter');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Alle Projekte</option>' + products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  sel.value = prev;
+}
+
+function populateTicketModalSelects(){
+  document.getElementById('tmProdukt').innerHTML = products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+  document.getElementById('tmStatus').innerHTML = KANBAN_COLUMNS.map(c => `<option value="${c.code}">${c.label}</option>`).join('');
+  document.getElementById('tmFormat').innerHTML = Object.entries(FORMAT_LABEL).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
+  document.getElementById('tmRole').innerHTML = '<option value="">—</option>' + Object.entries(GLOBAL_ROLE_LABEL).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
+  document.getElementById('tmAssignee').innerHTML = '<option value="">— niemand —</option>' + appUsers.map(u => `<option value="${u.id}">${escapeHtml(u.name || u.email)}</option>`).join('');
+}
+
+/* --- Team admin (Mastermind pre-provisioning) --- */
+async function loadAppUsers(){
+  const { data, error } = await sb.from('app_users').select('*').order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Team: '+error.message); return; }
+  appUsers = data || [];
+}
+
+async function addAppUser(){
+  const email = document.getElementById('teamEmail').value.trim();
+  const name = document.getElementById('teamName').value.trim();
+  const global_role = document.getElementById('teamRole').value;
+  if(!email) return;
+  const { error } = await sb.from('app_users').insert({ email, name, global_role, invited_by: currentAppUser.id });
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  document.getElementById('teamEmail').value = '';
+  document.getElementById('teamName').value = '';
+  await loadAppUsers();
+  renderTeamList();
+  populateTicketModalSelects();
+}
+
+async function removeAppUser(id){
+  const { error } = await sb.from('app_users').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  await loadAppUsers();
+  renderTeamList();
+  populateTicketModalSelects();
+}
+
+function renderTeamList(){
+  const list = document.getElementById('teamList');
+  if(appUsers.length === 0){ list.innerHTML = '<div class="empty">Noch niemand eingetragen.</div>'; return; }
+  list.innerHTML = appUsers.map(u => `
+    <div class="teamrow">
+      <span>${escapeHtml(u.name || '—')} <span style="color:var(--text-faint);">(${escapeHtml(u.email)})</span></span>
+      <span>${GLOBAL_ROLE_LABEL[u.global_role] || u.global_role}</span>
+      <span class="${u.auth_user_id ? 'linked' : 'pending'}">${u.auth_user_id ? 'registriert' : 'ausstehend'}</span>
+      <span class="remove-link" onclick="removeAppUser('${u.id}')">entfernen</span>
+    </div>
+  `).join('');
+}
+
+/* --- Tickets / Kanban --- */
+async function loadTickets(){
+  const { data, error } = await sb.from('tickets').select('*').order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Tickets: '+error.message); return; }
+  ticketsList = data || [];
+  renderKanban();
+}
+
+function ticketTimeline(t){
+  if(!t.estimated_hours || t.estimated_hours <= 0) return null;
+  const pct = Math.min(100, Math.round((t.elapsed_hours / t.estimated_hours) * 100));
+  let cls = 'ontrack';
+  const overdue = t.due_date && new Date(t.due_date) < new Date(new Date().toDateString());
+  if(overdue) cls = 'overdue';
+  else if(pct >= 75) cls = 'atrisk';
+  return { pct, cls };
+}
+
+function canEditTicket(t){
+  if(!currentAppUser) return false;
+  const r = currentAppUser.global_role;
+  if(r === 'mastermind' || r === 'pm') return true;
+  if(r === 'po') return t.created_by === currentAppUser.id;
+  if(r === 'dev') return t.assigned_user_id === currentAppUser.id || t.created_by === currentAppUser.id;
+  return false;
+}
+
+function renderKanban(){
+  const wrap = document.getElementById('kanbanWrap');
+  if(!wrap) return;
+  const filterId = document.getElementById('ticketProductFilter').value;
+  const filtered = filterId ? ticketsList.filter(t => t.produkt_id === filterId) : ticketsList;
+  wrap.innerHTML = KANBAN_COLUMNS.map(col => {
+    const colTickets = filtered.filter(t => t.status === col.code);
+    return `
+      <div class="kanban-col">
+        <div class="kanban-col-head"><span>${col.label}</span><span>${colTickets.length}</span></div>
+        <div class="kanban-col-body" ondragover="event.preventDefault(); this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="onTicketDrop(event,'${col.code}')">
+          ${colTickets.map(t => renderTicketCard(t)).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTicketCard(t){
+  const prod = products.find(p => p.id === t.produkt_id);
+  const tl = ticketTimeline(t);
+  const assignee = appUsers.find(u => u.id === t.assigned_user_id);
+  const desc = (t.description || '').slice(0, 60);
+  return `
+    <div class="ticket-card" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${t.id}')" onclick="openTicketModal('${t.id}')">
+      <div class="ticket-card-top">
+        <span class="ticket-id">#${t.id.slice(0,8).toUpperCase()}</span>
+        <span class="priority-badge ${t.priority}">${t.priority}</span>
+      </div>
+      <div class="ticket-title">${escapeHtml(t.title) || '(ohne Titel)'}</div>
+      ${desc ? `<div class="ticket-desc">${escapeHtml(desc)}${t.description.length>60?'…':''}</div>` : ''}
+      <div class="ticket-meta">
+        <span>${prod ? escapeHtml(prod.name) : ''}</span>
+        <span>${assignee ? escapeHtml(assignee.name || assignee.email) : (t.assigned_role ? GLOBAL_ROLE_LABEL[t.assigned_role] : '—')}</span>
+      </div>
+      ${tl ? `<div class="ticket-timeline"><div class="ticket-timeline-fill ${tl.cls}" style="width:${tl.pct}%;"></div></div>` : ''}
+    </div>
+  `;
+}
+
+async function onTicketDrop(ev, statusCode){
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('dragover');
+  const id = ev.dataTransfer.getData('text/plain');
+  const t = ticketsList.find(x => x.id === id);
+  if(!t || t.status === statusCode) return;
+  if(!canEditTicket(t)){ setStatus('Keine Berechtigung für dieses Ticket.'); return; }
+  t.status = statusCode;
+  renderKanban();
+  const { error } = await sb.from('tickets').update({ status: statusCode, updated_at: new Date().toISOString() }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); await loadTickets(); } else { setStatus('gespeichert'); }
+}
+
+function openTicketModal(id){
+  activeTicketId = id;
+  const overlay = document.getElementById('ticketModalOverlay');
+  const isNew = !id;
+  const t = isNew ? null : ticketsList.find(x => x.id === id);
+  document.getElementById('ticketModalTitle').textContent = isNew ? 'Neues Ticket' : ('Ticket #' + t.id.slice(0,8).toUpperCase());
+  document.getElementById('tmTitle').value = t ? t.title : '';
+  document.getElementById('tmProdukt').value = t ? t.produkt_id : (document.getElementById('ticketProductFilter').value || (products[0] && products[0].id) || '');
+  document.getElementById('tmStatus').value = t ? t.status : 'backlog';
+  document.getElementById('tmFormat').value = t ? t.format_type : 'feature';
+  document.getElementById('tmPriority').value = t ? t.priority : 'P2';
+  document.getElementById('tmRole').value = t ? (t.assigned_role || '') : '';
+  document.getElementById('tmAssignee').value = t ? (t.assigned_user_id || '') : (currentAppUser.global_role === 'dev' ? currentAppUser.id : '');
+  document.getElementById('tmStart').value = t ? (t.start_date || '') : '';
+  document.getElementById('tmDue').value = t ? (t.due_date || '') : '';
+  document.getElementById('tmEstimate').value = t ? (t.estimated_hours ?? '') : '';
+  document.getElementById('tmElapsed').value = t ? (t.elapsed_hours ?? 0) : 0;
+  document.getElementById('tmDescription').value = t ? t.description : '';
+
+  const editable = isNew || canEditTicket(t);
+  document.querySelectorAll('.tm-field').forEach(el => el.disabled = !editable);
+  document.getElementById('tmSaveBtn').style.display = editable ? '' : 'none';
+  document.getElementById('tmDeleteBtn').style.display = (!isNew && currentAppUser.global_role === 'mastermind') ? '' : 'none';
+
+  const canNote = currentAppUser.global_role !== 'sales';
+  document.getElementById('tmNoteInput').disabled = !canNote;
+  document.getElementById('tmNoteAddBtn').style.display = canNote ? '' : 'none';
+
+  document.getElementById('tmNotesList').innerHTML = '';
+  document.getElementById('tmNotesSection').style.display = isNew ? 'none' : 'block';
+  if(!isNew) loadTicketNotes(id);
+
+  overlay.classList.add('open');
+}
+
+function closeTicketModal(){
+  document.getElementById('ticketModalOverlay').classList.remove('open');
+  activeTicketId = null;
+}
+
+async function saveTicket(){
+  const payload = {
+    title: document.getElementById('tmTitle').value.trim(),
+    produkt_id: document.getElementById('tmProdukt').value,
+    status: document.getElementById('tmStatus').value,
+    format_type: document.getElementById('tmFormat').value,
+    priority: document.getElementById('tmPriority').value,
+    assigned_role: document.getElementById('tmRole').value || null,
+    assigned_user_id: document.getElementById('tmAssignee').value || null,
+    start_date: document.getElementById('tmStart').value || null,
+    due_date: document.getElementById('tmDue').value || null,
+    estimated_hours: document.getElementById('tmEstimate').value || null,
+    elapsed_hours: document.getElementById('tmElapsed').value || 0,
+    description: document.getElementById('tmDescription').value
+  };
+  if(!payload.title){ setStatus('Titel fehlt.'); return; }
+  if(activeTicketId){
+    payload.updated_at = new Date().toISOString();
+    const { error } = await sb.from('tickets').update(payload).eq('id', activeTicketId);
+    if(error){ setStatus('Fehler: '+error.message); return; }
+  } else {
+    payload.created_by = currentAppUser.id;
+    const { error } = await sb.from('tickets').insert(payload);
+    if(error){ setStatus('Fehler: '+error.message); return; }
+  }
+  setStatus('gespeichert');
+  closeTicketModal();
+  await loadTickets();
+}
+
+async function deleteTicket(){
+  if(!activeTicketId) return;
+  const { error } = await sb.from('tickets').delete().eq('id', activeTicketId);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  closeTicketModal();
+  await loadTickets();
+}
+
+async function loadTicketNotes(ticketId){
+  const { data, error } = await sb.from('ticket_notes').select('*').eq('ticket_id', ticketId).order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Notizen: '+error.message); return; }
+  document.getElementById('tmNotesList').innerHTML = (data||[]).map(n => {
+    const author = appUsers.find(u => u.id === n.author_id);
+    return `<div class="note-item"><span class="note-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span>${escapeHtml(n.content)}</div>`;
+  }).join('') || '<div class="empty">Noch keine Notizen.</div>';
+}
+
+async function addTicketNote(){
+  if(!activeTicketId || !currentAppUser) return;
+  const input = document.getElementById('tmNoteInput');
+  const content = input.value.trim();
+  if(!content) return;
+  const { error } = await sb.from('ticket_notes').insert({ ticket_id: activeTicketId, content, author_id: currentAppUser.id });
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  input.value = '';
+  loadTicketNotes(activeTicketId);
+}
+
+function initTicketsAuth(){
+  sb.auth.onAuthStateChange((_event, session) => {
+    authSession = session;
+    handleAuthChange();
+  });
+  sb.auth.getSession().then(({data}) => {
+    authSession = data.session;
+    handleAuthChange();
+  });
+}
+
 initIdentity();
 loadProjectRoles().then(loadAll);
 loadCrew();
 loadTasks().then(() => { renderProducts(); loadComments().then(renderProducts); });
 loadReactions().then(renderLog);
+initTicketsAuth();
 </script>
 </body>
 </html>
