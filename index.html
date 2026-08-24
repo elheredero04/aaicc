@@ -5,560 +5,402 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AAICC</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root{
-  --bg:#10151F;
-  --panel:#161D2B;
-  --panel-raised:#1B2333;
-  --line:#2A3448;
-  --line-bright:#3C4A66;
+  --bg:#F5F5F7;
+  --surface:#FFFFFF;
+  --surface-raised:#FFFFFF;
+  --border:#E5E5EA;
+  --border-strong:#D2D2D7;
 
-  --text:#E8ECF4;
-  --text-dim:#8792A8;
-  --text-faint:#5B6579;
+  --text:#1D1D1F;
+  --text-dim:#6E6E73;
+  --text-faint:#98989D;
 
-  --accent:#4E80C9;
-  --accent-bright:#7FA6E0;
+  --accent:#0071E3;
+  --accent-hover:#0077ED;
+  --accent-soft:#EAF3FE;
 
-  --status-a:#C9922E;
-  --status-b:#4E80C9;
-  --status-c:#4EA37A;
+  --status-a:#FF9F0A;
+  --status-b:#0071E3;
+  --status-c:#34C759;
+  --danger:#FF3B30;
 
-  --role-mm:#D9636B;
-  --role-po:#7FA6E0;
-  --role-edt:#C77FD1;
-  --role-pm:#4E80C9;
-  --role-sales:#5FA8D3;
-  --role-infra:#C9922E;
+  --role-mm:#FF3B30;
+  --role-po:#0071E3;
+  --role-edt:#AF52DE;
+  --role-pm:#0071E3;
+  --role-sales:#32ADE6;
+  --role-infra:#FF9F0A;
 
-  font-family:'IBM Plex Sans',sans-serif;
+  --radius:14px;
+  --radius-sm:9px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.04),0 1px 1px rgba(0,0,0,0.035);
+  --shadow-md:0 8px 24px rgba(0,0,0,0.08);
+
+  --font-sans:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:ui-monospace,'SF Mono','Menlo','Consolas',monospace;
+  --font-display:'Manrope',-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
+
+  font-family:var(--font-sans);
 }
 
 *{box-sizing:border-box;}
-body{margin:0;background:var(--bg);color:var(--text);}
-.wrap{max-width:1000px;margin:0 auto;padding:28px 20px 90px;}
-
+body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
 ::selection{background:var(--accent);color:#fff;}
 
-/* ===== HEADER STRIP ===== */
-.header-strip{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  flex-wrap:wrap;
-  padding-bottom:18px;
-  margin-bottom:22px;
-  border-bottom:1px solid var(--line);
+/* ===== APP SHELL ===== */
+.app-shell{display:flex;min-height:100vh;align-items:flex-start;}
+
+.sidebar{
+  width:248px;flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:20px 14px;
+  position:sticky;top:0;
+  height:100vh;overflow-y:auto;
+  display:flex;flex-direction:column;
+  gap:18px;
 }
-.brand{display:flex;align-items:baseline;gap:10px;}
-.brand-mark{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  color:var(--accent-bright);
-  letter-spacing:0.12em;
-  border:1px solid var(--accent);
-  padding:2px 7px;
+.sidebar-brand{
+  display:flex;align-items:center;gap:9px;
+  padding:0 6px;
 }
-.brand-name{
-  font-family:'Manrope',sans-serif;
-  font-weight:800;
-  font-size:17px;
-  letter-spacing:0.01em;
+.sidebar-brand .mark{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),#5AC8FA);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-family:var(--font-display);font-weight:800;font-size:13px;flex-shrink:0;
 }
-.readout{
-  display:flex;
-  gap:0;
-  font-family:'IBM Plex Mono',monospace;
-  border:1px solid var(--line);
+.sidebar-brand .name{font-family:var(--font-display);font-weight:800;font-size:15px;letter-spacing:-0.01em;}
+.sidebar-brand .sub{font-size:10.5px;color:var(--text-faint);margin-top:1px;}
+
+.sidebar-search{position:relative;}
+.sidebar-search input{
+  width:100%;font-family:var(--font-sans);font-size:13.5px;color:var(--text);
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:9px 12px 9px 32px;
 }
+.sidebar-search input:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px var(--accent-soft);}
+.sidebar-search::before{
+  content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  color:var(--text-faint);font-size:14px;pointer-events:none;
+}
+
+.sidebar-nav{display:flex;flex-direction:column;gap:2px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;
+  font-size:13.5px;font-weight:500;color:var(--text-dim);
+  transition:background 0.12s;
+}
+.nav-item:hover{background:var(--bg);color:var(--text);}
+.nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:600;}
+.nav-item .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.55;flex-shrink:0;}
+
+.sidebar-user{
+  margin-top:auto;padding:10px;border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:2px;
+}
+.sidebar-user .u-name{font-size:13px;font-weight:600;color:var(--text);}
+.sidebar-user .u-role{font-size:11.5px;color:var(--text-dim);}
+.sidebar-user .signout{font-size:11.5px;color:var(--accent);cursor:pointer;margin-top:6px;display:inline-block;}
+.sidebar-user .signout:hover{text-decoration:underline;}
+
+.main-content{flex:1;min-width:0;padding:32px 36px 90px;max-width:1080px;}
+
+@media (max-width:860px){
+  .app-shell{flex-direction:column;}
+  .sidebar{
+    width:100%;height:auto;position:relative;
+    flex-direction:row;align-items:center;flex-wrap:wrap;padding:12px 14px;
+  }
+  .sidebar-brand{flex:0 0 auto;}
+  .sidebar-search{flex:1 1 140px;}
+  .sidebar-nav{flex-direction:row;flex-wrap:wrap;flex:1 1 100%;order:3;}
+  .sidebar-user{margin-top:0;border-top:none;flex-direction:row;align-items:center;gap:10px;order:2;}
+  .main-content{padding:20px 16px 70px;}
+}
+
+/* ===== READOUT ===== */
+.readout{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
 .readout-cell{
-  padding:8px 16px;
-  text-align:center;
-  border-right:1px solid var(--line);
+  flex:1;min-width:110px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;box-shadow:var(--shadow-sm);
 }
-.readout-cell:last-child{border-right:none;}
-.readout-num{
-  font-size:22px;
-  font-weight:600;
-  font-variant-numeric:tabular-nums;
-  line-height:1;
-}
-.readout-label{
-  font-size:9px;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--text-faint);
-  margin-top:5px;
-}
+.readout-num{font-family:var(--font-display);font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+.readout-label{font-size:11.5px;color:var(--text-dim);margin-top:6px;font-weight:500;}
 .readout-cell.a .readout-num{color:var(--status-a);}
 .readout-cell.b .readout-num{color:var(--status-b);}
 .readout-cell.c .readout-num{color:var(--status-c);}
 
-/* ===== CREW / ROLES ===== */
-.crew{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:1px;
-  background:var(--line);
-  border:1px solid var(--line);
+.page-title{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-0.01em;margin:0 0 20px;}
+
+/* ===== ROLE CARDS ===== */
+.role-cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;
   margin-bottom:28px;
 }
-.crew-slot{
-  background:var(--panel);
-  padding:16px 16px 18px;
-  position:relative;
+.role-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;box-shadow:var(--shadow-sm);
 }
-.crew-tag{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9px;
-  letter-spacing:0.1em;
-  color:var(--text-faint);
-  text-transform:uppercase;
+.role-card .tag{
+  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:0.03em;
+  padding:2px 8px;border-radius:100px;margin-bottom:8px;
 }
-.crew-role{
-  font-family:'Manrope',sans-serif;
-  font-weight:700;
-  font-size:14.5px;
-  margin:4px 0 8px;
-}
-.crew-slot.director .crew-role{color:var(--accent-bright);}
-.crew-slot.engineer .crew-role{color:var(--text);}
-.crew-slot.controller .crew-role{color:var(--accent);}
-.crew-desc{font-size:12px;color:var(--text-dim);line-height:1.5;}
+.role-card .name{font-family:var(--font-display);font-weight:700;font-size:14.5px;margin-bottom:6px;}
+.role-card .desc{font-size:12px;color:var(--text-dim);line-height:1.5;}
 
 /* ===== SECTION LABEL ===== */
-.section-label{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin:30px 0 10px;
-}
-.section-label h2{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text-dim);
-  margin:0;
-}
+.section-label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:32px 0 12px;}
+.section-label h2{font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--text);margin:0;letter-spacing:-0.005em;}
 .btn{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  font-weight:500;
-  letter-spacing:0.03em;
-  background:transparent;
-  color:var(--accent-bright);
-  border:1px solid var(--accent);
-  padding:6px 12px;
-  cursor:pointer;
+  font-family:var(--font-sans);font-size:13px;font-weight:600;
+  background:var(--accent);color:#fff;border:none;border-radius:100px;
+  padding:8px 16px;cursor:pointer;transition:background 0.12s,transform 0.06s;
 }
-
-.btn:hover{background:var(--accent);color:#fff;}
-
-/* ===== TABS ===== */
-.tabs{display:flex;gap:0;margin-bottom:26px;border:1px solid var(--line);}
-.tab{
-  flex:1;text-align:center;padding:10px 12px;cursor:pointer;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
-  color:var(--text-dim);border-right:1px solid var(--line);background:var(--panel);
-}
-.tab:last-child{border-right:none;}
-.tab.active{background:var(--accent);color:#fff;}
-.tabpanel{display:none;}
-.tabpanel.active{display:block;}
+.btn:hover{background:var(--accent-hover);}
+.btn:active{transform:scale(0.97);}
+.btn.secondary{background:var(--surface);color:var(--accent);border:1px solid var(--border-strong);}
+.btn.secondary:hover{background:var(--accent-soft);}
 
 /* ===== CREW SETUP ===== */
 .crewrow{
-  display:grid;grid-template-columns:1fr 1fr auto;gap:8px;
-  border:1px solid var(--line);border-top:none;padding:10px 12px;background:var(--panel);
-  align-items:center;
+  display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:9px 12px;margin-bottom:8px;
 }
-.crewrow:first-of-type{border-top:1px solid var(--line);}
 .crewrow input{
-  font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);
-  background:var(--bg);border:1px solid var(--line);padding:7px 9px;width:100%;
+  font-family:var(--font-sans);font-size:13.5px;color:var(--text);
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;width:100%;
 }
-.crewrow input:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.crewrow input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
 .crewrow input.vorname{font-weight:600;}
-.crew-hint{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);margin-bottom:8px;
-}
+.crew-hint{font-size:12px;color:var(--text-faint);margin-bottom:10px;}
 
 /* ===== TASKS ===== */
 .tasklist{margin-top:14px;}
-.taskrow{
-  display:flex;align-items:center;gap:8px;
-  padding:6px 0;border-bottom:1px solid var(--line);
-}
+.taskrow{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
 .taskrow:last-child{border-bottom:none;}
 .task-check{
-  width:14px;height:14px;border:1px solid var(--line-bright);
+  width:17px;height:17px;border-radius:50%;border:1.5px solid var(--border-strong);
   cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--status-c);
+  font-size:10px;color:#fff;
 }
-.task-check.done{background:var(--status-c);border-color:var(--status-c);color:#0C1A12;}
-.task-text{
-  flex:1;font-size:12.5px;font-family:'IBM Plex Sans',sans-serif;
-  background:transparent;border:none;color:var(--text);padding:2px 0;
-}
+.task-check.done{background:var(--status-c);border-color:var(--status-c);}
+.task-text{flex:1;font-size:13px;font-family:var(--font-sans);background:transparent;border:none;color:var(--text);padding:2px 0;}
 .task-text.done{color:var(--text-faint);text-decoration:line-through;}
 .task-text:focus{outline:none;}
-.task-del{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);cursor:pointer;}
-.task-del:hover{color:var(--status-a);}
-.task-add{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent-bright);
-  cursor:pointer;margin-top:6px;
-}
-.task-add:hover{color:var(--accent);}
+.task-del{color:var(--text-faint);cursor:pointer;font-size:13px;}
+.task-del:hover{color:var(--danger);}
+.task-add{font-size:12.5px;color:var(--accent);cursor:pointer;margin-top:8px;font-weight:500;}
+.task-add:hover{text-decoration:underline;}
 
 /* ===== REACTIONS ===== */
-.reactions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.reactions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 .reaction-btn{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;
-  border:1px solid var(--line);background:var(--bg);color:var(--text-dim);
-  padding:2px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;
+  font-size:12px;border:1px solid var(--border);background:var(--bg);color:var(--text-dim);
+  border-radius:100px;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;
 }
 .reaction-btn:hover{border-color:var(--accent);}
-.reaction-btn .count{color:var(--accent-bright);}
-
-/* ===== IDENTITY ===== */
-.identity{
-  display:flex;align-items:center;gap:8px;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);
-}
-.identity input{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);
-  background:var(--panel);border:1px solid var(--line);padding:5px 8px;width:120px;
-}
-.identity input:focus{outline:1px solid var(--accent);border-color:var(--accent);}
+.reaction-btn .count{color:var(--accent);font-weight:600;}
 
 /* ===== TASK ASSIGNEE + COMMENTS ===== */
-.task-meta{display:flex;align-items:center;gap:8px;margin-top:2px;padding-left:22px;}
+.task-meta{display:flex;align-items:center;gap:8px;margin-top:2px;padding-left:26px;}
 .task-assignee{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);
-  background:transparent;border:none;border-bottom:1px dotted var(--line-bright);
-  padding:1px 2px;width:90px;
+  font-size:11.5px;color:var(--text-faint);
+  background:transparent;border:none;border-bottom:1px dotted var(--border-strong);padding:1px 2px;width:90px;
 }
 .task-assignee:focus{outline:none;border-bottom-color:var(--accent);}
-.task-comment-toggle{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent-bright);cursor:pointer;
-}
-.task-comment-toggle:hover{color:var(--accent);}
-.task-comments{
-  padding-left:22px;margin:6px 0 10px;border-left:1px solid var(--line);padding-left:14px;margin-left:7px;
-}
-.comment{
-  font-size:11.5px;padding:4px 0;
-}
-.comment-author{color:var(--accent-bright);font-family:'IBM Plex Mono',monospace;font-size:10px;margin-right:6px;}
+.task-comment-toggle{font-size:11.5px;color:var(--accent);cursor:pointer;}
+.task-comments{padding-left:14px;margin:6px 0 10px 15px;border-left:2px solid var(--border);}
+.comment{font-size:12.5px;padding:5px 0;}
+.comment-author{color:var(--accent);font-weight:600;font-size:11.5px;margin-right:6px;}
 .comment-text{color:var(--text);}
 .comment-add{display:flex;gap:6px;margin-top:6px;}
 .comment-add input{
-  flex:1;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--text);
-  background:var(--bg);border:1px solid var(--line);padding:5px 8px;
+  flex:1;font-size:12.5px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 9px;
 }
-.comment-add input:focus{outline:1px solid var(--accent);border-color:var(--accent);}
 .comment-add button{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent-bright);
-  background:transparent;border:1px solid var(--accent);padding:4px 10px;cursor:pointer;
+  font-size:11.5px;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:100px;padding:5px 12px;cursor:pointer;
 }
 .comment-add button:hover{background:var(--accent);color:#fff;}
 
-
-
-
 /* ===== PRIORITY MATRIX ===== */
-.matrix-wrap{overflow-x:auto;border:1px solid var(--line);margin-bottom:26px;background:var(--panel);}
+.matrix-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:26px;background:var(--surface);box-shadow:var(--shadow-sm);}
 .matrix{width:100%;border-collapse:collapse;min-width:640px;}
-.matrix th, .matrix td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:middle;}
-.matrix thead th{
-  background:var(--panel-raised);
-  font-family:'IBM Plex Mono',monospace;font-size:10px;
-  text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);
-  white-space:nowrap;
-}
-.matrix td.role-label{
-  font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
-  letter-spacing:0.05em;white-space:nowrap;background:var(--panel-raised);
-}
+.matrix th,.matrix td{border-bottom:1px solid var(--border);padding:11px 14px;text-align:left;vertical-align:middle;}
+.matrix th{border-right:1px solid var(--border);}
+.matrix td{border-right:1px solid var(--border);}
+.matrix th:last-child,.matrix td:last-child{border-right:none;}
+.matrix thead th{background:var(--bg);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-dim);white-space:nowrap;}
+.matrix td.role-label{font-size:12.5px;font-weight:700;white-space:nowrap;background:var(--bg);}
 .matrix td.role-label.role-mm{color:var(--role-mm);}
 .matrix td.role-label.role-po{color:var(--role-po);}
 .matrix td.role-label.role-edt{color:var(--role-edt);}
 .matrix td.role-label.role-pm{color:var(--role-pm);}
 .matrix td.role-label.role-sales{color:var(--role-sales);}
 .matrix td.role-label.role-infra{color:var(--role-infra);}
-.matrix td.empty-cell{color:var(--text-faint);font-family:'IBM Plex Mono',monospace;font-size:11px;}
-.matrix input.role-person{
-  width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--text);
-  background:transparent;border:none;padding:2px;
-}
-.matrix input.role-person:focus{outline:1px solid var(--accent);}
+.matrix td.empty-cell{color:var(--text-faint);font-size:12.5px;}
+.matrix input.role-person{width:100%;font-size:13px;color:var(--text);background:transparent;border:none;padding:2px;}
+.matrix input.role-person:focus{outline:none;}
 .prio-badge{
-  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.05em;
-  padding:2px 6px;border:1px solid var(--accent-bright);color:var(--accent-bright);
-  white-space:nowrap;
+  font-size:10.5px;font-weight:700;letter-spacing:0.02em;
+  padding:2px 9px;border-radius:100px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;
 }
 
-/* ===== TICKETS / AUTH ===== */
-.auth-box{max-width:360px;margin:20px auto;border:1px solid var(--line);background:var(--panel);padding:18px;}
-.auth-tabs{display:flex;border:1px solid var(--line);margin-bottom:16px;}
-.auth-tab{flex:1;text-align:center;padding:8px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-dim);border-right:1px solid var(--line);}
-.auth-tab:last-child{border-right:none;}
-.auth-tab.active{background:var(--accent);color:#fff;}
-.auth-msg{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);margin-top:10px;text-align:center;min-height:14px;}
-.tickets-topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
-.tickets-me{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent-bright);}
-.tickets-topbar select{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);
-  background:var(--panel);border:1px solid var(--line);padding:6px 8px;
+/* ===== AUTH ===== */
+.auth-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}
+.auth-box{max-width:380px;width:100%;background:var(--surface);border-radius:20px;box-shadow:var(--shadow-md);padding:32px 28px;}
+.auth-box .mark{
+  width:44px;height:44px;border-radius:13px;margin:0 auto 18px;
+  background:linear-gradient(135deg,var(--accent),#5AC8FA);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:17px;
 }
-.tickets-topbar .remove-link{margin-left:auto;}
+.auth-box h1{font-family:var(--font-display);font-size:19px;font-weight:800;text-align:center;margin:0 0 22px;letter-spacing:-0.01em;}
+.auth-msg{font-size:12.5px;color:var(--text-faint);margin-top:12px;text-align:center;min-height:14px;}
+.auth-msg.error{color:var(--danger);}
+
+/* ===== TICKETS TOPBAR / PROJECT CHIPS ===== */
+.tickets-topbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-bottom:18px;}
+.chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px;}
+.chip{
+  flex:0 0 auto;font-size:13px;font-weight:600;color:var(--text-dim);
+  background:var(--surface);border:1px solid var(--border);border-radius:100px;
+  padding:8px 16px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;
+}
+.chip:hover{border-color:var(--border-strong);}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.chip .n{font-size:11px;opacity:0.75;}
+.chip .prio-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.6;}
 
 /* ===== TEAM ADMIN ===== */
-.team-add-row{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;margin-bottom:8px;}
-.team-add-row input, .team-add-row select{
-  font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--text);
-  background:var(--bg);border:1px solid var(--line);padding:7px 9px;width:100%;
+.team-add-row{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;margin-bottom:10px;}
+.team-add-row input,.team-add-row select{
+  font-family:var(--font-sans);font-size:13px;color:var(--text);
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;width:100%;
 }
 .teamrow{
   display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;align-items:center;
-  border:1px solid var(--line);border-top:none;padding:8px 10px;background:var(--panel);
-  font-size:12.5px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:9px 12px;margin-bottom:8px;font-size:13px;
 }
-.teamrow:first-of-type{border-top:1px solid var(--line);}
-.teamrow .pending{color:var(--text-faint);font-family:'IBM Plex Mono',monospace;font-size:10px;}
-.teamrow .linked{color:var(--status-c);font-family:'IBM Plex Mono',monospace;font-size:10px;}
+.teamrow .pending{color:var(--text-faint);font-size:11px;}
+.teamrow .linked{color:var(--status-c);font-size:11px;font-weight:600;}
 
 /* ===== KANBAN ===== */
 .kanban-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;}
-.kanban-col{flex:0 0 240px;border:1px solid var(--line);background:var(--panel);min-height:120px;}
+.kanban-col{flex:0 0 250px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-height:120px;box-shadow:var(--shadow-sm);}
 .kanban-col-head{
-  padding:10px 12px;border-bottom:1px solid var(--line);
-  font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;
+  padding:12px 14px;border-bottom:1px solid var(--border);
+  font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;
   color:var(--text-dim);display:flex;justify-content:space-between;
 }
-.kanban-col-body{padding:8px;min-height:80px;}
-.kanban-col-body.dragover{background:var(--panel-raised);outline:1px dashed var(--accent-bright);outline-offset:-4px;}
+.kanban-col-body{padding:9px;min-height:80px;}
+.kanban-col-body.dragover{background:var(--accent-soft);}
 .ticket-card{
-  border:1px solid var(--line);background:var(--panel-raised);padding:10px;margin-bottom:8px;
-  cursor:pointer;font-family:'IBM Plex Sans',sans-serif;
+  border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);
+  padding:11px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);
 }
 .ticket-card:hover{border-color:var(--accent);}
-.ticket-card-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;}
-.ticket-id{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--text-faint);}
-.priority-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:1px 6px;border:1px solid;letter-spacing:0.04em;}
-.priority-badge.P0{color:#E05A5A;border-color:#E05A5A;}
-.priority-badge.P1{color:var(--status-a);border-color:var(--status-a);}
-.priority-badge.P2{color:var(--status-b);border-color:var(--status-b);}
-.priority-badge.P3{color:var(--text-faint);border-color:var(--line-bright);}
-.ticket-title{font-size:12.5px;font-weight:600;margin-bottom:4px;}
-.ticket-desc{font-size:11px;color:var(--text-dim);margin-bottom:6px;line-height:1.4;}
-.ticket-meta{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-faint);}
-.ticket-timeline{height:4px;background:var(--line);margin-top:6px;overflow:hidden;}
+.ticket-card-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:7px;}
+.ticket-id{font-family:var(--font-mono);font-size:10px;color:var(--text-faint);}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+.priority-badge.P0{color:#fff;background:var(--danger);}
+.priority-badge.P1{color:#fff;background:var(--status-a);}
+.priority-badge.P2{color:var(--accent);background:var(--accent-soft);}
+.priority-badge.P3{color:var(--text-faint);background:var(--bg);}
+.ticket-title{font-size:13px;font-weight:600;margin-bottom:5px;}
+.ticket-desc{font-size:11.5px;color:var(--text-dim);margin-bottom:7px;line-height:1.4;}
+.ticket-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text-faint);}
+.ticket-timeline{height:4px;background:var(--border);margin-top:8px;border-radius:2px;overflow:hidden;}
 .ticket-timeline-fill{height:100%;}
 .ticket-timeline-fill.ontrack{background:var(--status-c);}
 .ticket-timeline-fill.atrisk{background:var(--status-a);}
-.ticket-timeline-fill.overdue{background:#E05A5A;}
+.ticket-timeline-fill.overdue{background:var(--danger);}
 
 /* ===== TICKET MODAL ===== */
 .modal-overlay{
-  display:none;position:fixed;inset:0;background:rgba(8,10,16,0.72);
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);
   z-index:50;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;
 }
 .modal-overlay.open{display:flex;}
-.modal-box{
-  background:var(--panel);border:1px solid var(--line-bright);max-width:560px;width:100%;
-  padding:22px;
-}
-.modal-close{float:right;cursor:pointer;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;}
-.modal-close:hover{color:var(--status-a);}
+.modal-box{background:var(--surface);border-radius:20px;box-shadow:var(--shadow-md);max-width:580px;width:100%;padding:26px;}
+.modal-close{float:right;cursor:pointer;color:var(--text-faint);font-size:13px;}
+.modal-close:hover{color:var(--danger);}
 .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .modal-grid .field{margin-top:0;}
 .field select{
-  width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);
-  background:var(--bg);border:1px solid var(--line);padding:8px 10px;
+  width:100%;font-family:var(--font-sans);font-size:13.5px;color:var(--text);
+  background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 11px;
 }
 .notes-list{margin-top:6px;}
-.note-item{border-top:1px solid var(--line);padding:8px 0;font-size:12px;}
-.note-author{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent-bright);margin-right:6px;}
+.note-item{border-top:1px solid var(--border);padding:9px 0;font-size:12.5px;}
+.note-author{color:var(--accent);font-weight:600;font-size:11.5px;margin-right:6px;}
 
 /* ===== CONSOLE PANELS (products) ===== */
-.console{
-  border:1px solid var(--line);
-  border-top:none;
-  background:var(--panel);
-}
-.console:first-of-type{border-top:1px solid var(--line);}
-
-.console-head{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:12px 16px;
-  cursor:pointer;
-}
-.status-light{
-  width:9px;height:9px;
-  flex-shrink:0;
-  border:1px solid var(--line-bright);
-}
-.status-light.a{background:var(--status-a);border-color:var(--status-a);}
-.status-light.b{background:var(--status-b);border-color:var(--status-b);}
-.status-light.c{background:var(--status-c);border-color:var(--status-c);}
-
-.console-num{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  color:var(--text-faint);
-  width:22px;
-}
-.console-name{
-  font-family:'Manrope',sans-serif;
-  font-weight:700;
-  font-size:14px;
-  flex:1;
-  min-width:100px;
-}
-.console-controller{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11.5px;
-  color:var(--text-dim);
-  min-width:100px;
-}
-.phase-readout{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  letter-spacing:0.05em;
-  white-space:nowrap;
-  padding:3px 8px;
-  border:1px solid var(--line-bright);
-}
-.phase-readout.a{color:var(--status-a);border-color:var(--status-a);}
-.phase-readout.b{color:var(--status-b);border-color:var(--status-b);}
-.phase-readout.c{color:var(--status-c);border-color:var(--status-c);}
-.caret{color:var(--text-faint);font-size:10px;font-family:'IBM Plex Mono',monospace;transition:transform 0.12s;}
+.console{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--shadow-sm);overflow:hidden;}
+.console-head{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;}
+.status-light{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.status-light.a{background:var(--status-a);}
+.status-light.b{background:var(--status-b);}
+.status-light.c{background:var(--status-c);}
+.console-num{font-family:var(--font-mono);font-size:11px;color:var(--text-faint);width:22px;}
+.console-name{font-family:var(--font-display);font-weight:700;font-size:14.5px;flex:1;min-width:100px;}
+.console-controller{font-size:12.5px;color:var(--text-dim);min-width:100px;}
+.phase-readout{font-size:10.5px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;padding:4px 10px;border-radius:100px;}
+.phase-readout.a{color:var(--status-a);background:rgba(255,159,10,0.12);}
+.phase-readout.b{color:var(--status-b);background:var(--accent-soft);}
+.phase-readout.c{color:var(--status-c);background:rgba(52,199,89,0.12);}
+.caret{color:var(--text-faint);font-size:11px;transition:transform 0.12s;}
 .console.open .caret{transform:rotate(90deg);}
-
-.console-body{
-  display:none;
-  padding:2px 16px 18px;
-  border-top:1px solid var(--line);
-}
+.console-body{display:none;padding:2px 16px 20px;border-top:1px solid var(--border);}
 .console.open .console-body{display:block;}
 .field{margin-top:14px;}
-.field label{
-  display:block;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9.5px;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  color:var(--text-faint);
-  margin-bottom:5px;
+.field label{display:block;font-size:11.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
+.field input,.field textarea{
+  width:100%;font-family:var(--font-sans);font-size:13.5px;color:var(--text);
+  background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 11px;resize:vertical;
 }
-.field input, .field textarea{
-  width:100%;
-  font-family:'IBM Plex Sans',sans-serif;
-  font-size:13px;
-  color:var(--text);
-  background:var(--bg);
-  border:1px solid var(--line);
-  padding:8px 10px;
-  resize:vertical;
-}
-.field input:focus, .field textarea:focus{outline:1px solid var(--accent);border-color:var(--accent);}
-.field textarea{min-height:44px;}
-.phase-row{display:flex;gap:0;margin-top:14px;border:1px solid var(--line);}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.field textarea{min-height:48px;}
+.phase-row{display:flex;gap:6px;margin-top:14px;}
 .phase-btn{
-  flex:1;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10.5px;
-  letter-spacing:0.04em;
-  text-align:center;
-  padding:8px 4px;
-  background:var(--bg);
-  color:var(--text-dim);
-  cursor:pointer;
-  border-right:1px solid var(--line);
+  flex:1;font-size:12px;font-weight:600;text-align:center;padding:9px 4px;border-radius:9px;
+  background:var(--bg);color:var(--text-dim);cursor:pointer;border:1px solid var(--border);
 }
-.phase-btn:last-child{border-right:none;}
-.phase-btn.active.a{background:var(--status-a);color:#12140C;}
-.phase-btn.active.b{background:var(--status-b);color:#0C1420;}
-.phase-btn.active.c{background:var(--status-c);color:#0C1A12;}
+.phase-btn.active.a{background:var(--status-a);border-color:var(--status-a);color:#fff;}
+.phase-btn.active.b{background:var(--status-b);border-color:var(--status-b);color:#fff;}
+.phase-btn.active.c{background:var(--status-c);border-color:var(--status-c);color:#fff;}
 .row-actions{display:flex;justify-content:flex-end;margin-top:14px;}
-.remove-link{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10.5px;
-  color:var(--text-faint);
-  cursor:pointer;
-}
-.remove-link:hover{color:var(--status-a);}
+.remove-link{font-size:12px;color:var(--text-faint);cursor:pointer;}
+.remove-link:hover{color:var(--danger);}
 
 /* ===== LOG ===== */
-.log-entry{
-  border:1px solid var(--line);
-  border-top:none;
-  padding:10px 16px;
-  background:var(--panel);
-}
-.log-entry:first-of-type{border-top:1px solid var(--line);}
-.log-date{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  color:var(--accent-bright);
-}
-.log-text{font-size:12.5px;margin-top:4px;line-height:1.5;color:var(--text);}
-.log-add{
-  border:1px solid var(--line);
-  padding:14px 16px;
-  margin-top:8px;
-  background:var(--panel-raised);
-}
-.log-add label{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:9.5px;
-  text-transform:uppercase;
-  letter-spacing:0.08em;
-  color:var(--text-faint);
-  display:block;
-  margin-bottom:6px;
-}
+.log-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.log-date{font-size:11px;color:var(--accent);font-weight:600;}
+.log-text{font-size:13px;margin-top:5px;line-height:1.5;color:var(--text);}
+.log-add{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:8px;box-shadow:var(--shadow-sm);}
+.log-add label{display:block;font-size:11.5px;font-weight:600;color:var(--text-dim);margin-bottom:8px;}
 .log-add textarea{
-  width:100%;
-  font-family:'IBM Plex Sans',sans-serif;
-  font-size:13px;
-  border:1px solid var(--line);
-  padding:8px 10px;
-  min-height:50px;
-  background:var(--bg);
-  color:var(--text);
+  width:100%;font-family:var(--font-sans);font-size:13.5px;border:1px solid var(--border);border-radius:9px;padding:9px 11px;min-height:54px;background:var(--bg);color:var(--text);
 }
-.log-add textarea:focus{outline:1px solid var(--accent);border-color:var(--accent);}
-.log-add-row{display:flex;justify-content:flex-end;margin-top:8px;}
+.log-add textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.log-add-row{display:flex;justify-content:flex-end;margin-top:10px;}
 
-.empty{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11.5px;
-  color:var(--text-faint);
-  padding:16px 2px;
-  border:1px dashed var(--line);
-  text-align:center;
-}
-.status-note{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;
-  color:var(--text-faint);
-  text-align:center;
-  margin-top:40px;
-  letter-spacing:0.03em;
-}
+.empty{font-size:13px;color:var(--text-faint);padding:20px;border:1px dashed var(--border-strong);border-radius:var(--radius);text-align:center;}
+.status-note{font-size:11px;color:var(--text-faint);text-align:center;margin-top:40px;}
 </style>
 </head>
 <body>
-<div id="authGate">
+
+<div class="auth-shell" id="authGate">
   <div class="auth-box" id="loginBox">
+    <div class="mark">AA</div>
+    <h1>Bei AAICC anmelden</h1>
     <div class="field">
       <label>Email</label>
       <input id="authEmail" type="email" placeholder="name@firma.at">
@@ -568,15 +410,16 @@ body{margin:0;background:var(--bg);color:var(--text);}
       <input id="authPassword" type="password" placeholder="Passwort">
     </div>
     <div class="log-add-row">
-      <button class="btn" onclick="submitAuth()">Einloggen</button>
+      <button class="btn" onclick="submitAuth()" style="width:100%;">Einloggen</button>
     </div>
     <div class="auth-msg" id="authMsg"></div>
   </div>
 
   <div class="auth-box" id="inviteBox" style="display:none;">
+    <div class="mark">AA</div>
     <div class="field">
       <label id="inviteLabel">Einladung für</label>
-      <div id="inviteEmail" style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-bright);"></div>
+      <div id="inviteEmail" style="font-size:14px;color:var(--accent);font-weight:600;"></div>
     </div>
     <div class="field" id="inviteNameField">
       <label>Name</label>
@@ -587,132 +430,129 @@ body{margin:0;background:var(--bg);color:var(--text);}
       <input id="invitePassword" type="password" placeholder="Mind. 6 Zeichen">
     </div>
     <div class="log-add-row">
-      <button class="btn" onclick="submitInvite()" id="inviteSubmitBtn">Passwort setzen &amp; einloggen</button>
+      <button class="btn" onclick="submitInvite()" id="inviteSubmitBtn" style="width:100%;">Passwort setzen &amp; einloggen</button>
     </div>
     <div class="auth-msg" id="inviteMsg"></div>
   </div>
 </div>
 
-<div class="wrap" id="appGate" style="display:none;">
+<div class="app-shell" id="appGate" style="display:none;">
 
-  <div class="header-strip">
-    <div class="brand">
-      <span class="brand-mark">AAICC</span>
-      <span class="brand-name">Agile AI Control Center</span>
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="mark">AA</div>
+      <div>
+        <div class="name">AAICC</div>
+        <div class="sub">Agile AI Control Center</div>
+      </div>
     </div>
-    <div class="identity">
-      <span>Ich bin:</span>
-      <input id="identityInput" placeholder="Name" oninput="saveIdentity(this.value)">
+
+    <div class="sidebar-search">
+      <input id="globalSearch" placeholder="Suchen…" oninput="onSearchInput(this.value)">
     </div>
-    <div class="tickets-me" id="ticketsMe"></div>
-    <span class="remove-link" onclick="signOut()">Ausloggen</span>
-    <div class="readout">
-      <div class="readout-cell a"><div class="readout-num" id="tallyA">0</div><div class="readout-label">Übergabe</div></div>
-      <div class="readout-cell b"><div class="readout-num" id="tallyB">0</div><div class="readout-label">Begleitet</div></div>
-      <div class="readout-cell c"><div class="readout-num" id="tallyC">0</div><div class="readout-label">Eigenständig</div></div>
+
+    <div class="sidebar-nav">
+      <div class="nav-item active" data-tab="control" onclick="switchTab('control')"><span class="dot"></span>Control Center</div>
+      <div class="nav-item" data-tab="crew" onclick="switchTab('crew')"><span class="dot"></span>Crew Setup</div>
+      <div class="nav-item" data-tab="tickets" onclick="switchTab('tickets')"><span class="dot"></span>Tickets</div>
+      <div class="nav-item" data-tab="team" id="navTeam" style="display:none;" onclick="switchTab('team')"><span class="dot"></span>Team &amp; Zugriff</div>
     </div>
-  </div>
 
-  <div class="tabs">
-    <div class="tab active" data-tab="control" onclick="switchTab('control')">Control Center</div>
-    <div class="tab" data-tab="crew" onclick="switchTab('crew')">Crew Setup</div>
-    <div class="tab" data-tab="tickets" onclick="switchTab('tickets')">Tickets</div>
-  </div>
-
-  <div class="tabpanel active" id="tabpanel-control">
-
-  <div class="crew">
-    <div class="crew-slot engineer">
-      <div class="crew-tag">Mastermind</div>
-      <div class="crew-role">Mastermind</div>
-      <div class="crew-desc">Trägt die fachliche Tiefe. Übergibt Wissen, reviewt kritische Entscheidungen, steigt pro Produkt aus, sobald der Owner reif ist.</div>
+    <div class="sidebar-user">
+      <div class="u-name" id="sidebarUserName"></div>
+      <div class="u-role" id="sidebarUserRole"></div>
+      <span class="signout" onclick="signOut()">Ausloggen</span>
     </div>
-    <div class="crew-slot controller">
-      <div class="crew-tag">Owner 01–10</div>
-      <div class="crew-role">Owner</div>
-      <div class="crew-desc">Ein Kopf pro Produkt. Volle Verantwortung bis zur Kundenimplementierung, eigenständig ab Phase C.</div>
-    </div>
-    <div class="crew-slot director">
-      <div class="crew-tag">Lead</div>
-      <div class="crew-role">Lead</div>
-      <div class="crew-desc">Struktur, Übergabe-Freigaben, Cross-Produkt-Koordination. Kein operatives Tracking — führt die Transformation.</div>
-    </div>
-  </div>
+  </nav>
 
-  <div class="section-label">
-    <h2>Prioritäts-Matrix</h2>
-  </div>
-  <div id="roleMatrixWrap"></div>
+  <main class="main-content">
 
-  <div class="section-label">
-    <h2>Produkt-Konsolen</h2>
-    <button class="btn" onclick="addProduct()">+ Konsole anlegen</button>
-  </div>
-  <div id="productList"></div>
+    <div class="tabpanel active" id="tabpanel-control">
+      <h1 class="page-title">Control Center</h1>
 
-  <div class="section-label">
-    <h2>Lead Log</h2>
-  </div>
-  <div id="logList"></div>
-  <div class="log-add">
-    <label>Neuer Eintrag</label>
-    <textarea id="logInput" placeholder="z.B. Produkt 3: Exit-Kriterium erreicht, Owner übernimmt, weil ..."></textarea>
-    <div class="log-add-row"><button class="btn" onclick="addLog()">Eintragen</button></div>
-  </div>
-
-  </div>
-
-  <div class="tabpanel" id="tabpanel-crew">
-    <div class="section-label">
-      <h2>Crew Namen — Nachnamen ergänzen</h2>
-      <button class="btn" onclick="addCrewRow()">+ Zeile</button>
-    </div>
-    <div class="crew-hint">Nachname eintragen — speichert automatisch. Fehlende Personen unten mit "+ Zeile" ergänzen.</div>
-    <div id="crewRowList"></div>
-  </div>
-
-  <div class="tabpanel" id="tabpanel-tickets">
-
-    <div id="ticketsApp">
-      <div class="tickets-topbar">
-        <select id="ticketProductFilter" onchange="renderKanban()"><option value="">Alle Projekte</option></select>
-        <button class="btn" id="newTicketBtn" onclick="openTicketModal(null)">+ Ticket</button>
+      <div class="readout">
+        <div class="readout-cell a"><div class="readout-num" id="tallyA">0</div><div class="readout-label">Übergabe</div></div>
+        <div class="readout-cell b"><div class="readout-num" id="tallyB">0</div><div class="readout-label">Begleitet</div></div>
+        <div class="readout-cell c"><div class="readout-num" id="tallyC">0</div><div class="readout-label">Eigenständig</div></div>
       </div>
 
-      <div id="teamAdminBox" style="display:none;">
-        <div class="section-label"><h2>Team verwalten</h2></div>
-        <div class="crew-hint">Rolle vor Registrierung zuweisen — Person meldet sich danach mit dieser Email selbst an.</div>
-        <div class="team-add-row">
-          <input id="teamEmail" placeholder="Email">
-          <input id="teamName" placeholder="Name">
-          <select id="teamRole">
-            <option value="mastermind">Mastermind</option>
-            <option value="po">Product Owner</option>
-            <option value="dev" selected>Entwickler</option>
-            <option value="pm">Project Manager</option>
-            <option value="sales">Sales</option>
-          </select>
-          <button class="btn" onclick="addAppUser()">+ Hinzufügen</button>
+      <div class="role-cards" id="roleCards"></div>
+
+      <div class="section-label">
+        <h2>Prioritäts-Matrix</h2>
+      </div>
+      <div id="roleMatrixWrap"></div>
+
+      <div class="section-label">
+        <h2>Produkt-Konsolen</h2>
+        <button class="btn" onclick="addProduct()">+ Konsole anlegen</button>
+      </div>
+      <div id="productList"></div>
+
+      <div class="section-label">
+        <h2>Lead Log</h2>
+      </div>
+      <div id="logList"></div>
+      <div class="log-add">
+        <label>Neuer Eintrag</label>
+        <textarea id="logInput" placeholder="z.B. Produkt 3: Exit-Kriterium erreicht, Owner übernimmt, weil ..."></textarea>
+        <div class="log-add-row"><button class="btn" onclick="addLog()">Eintragen</button></div>
+      </div>
+    </div>
+
+    <div class="tabpanel" id="tabpanel-crew">
+      <h1 class="page-title">Crew Setup</h1>
+      <div class="section-label">
+        <h2>Crew Namen — Nachnamen ergänzen</h2>
+        <button class="btn" onclick="addCrewRow()">+ Zeile</button>
+      </div>
+      <div class="crew-hint">Nachname eintragen — speichert automatisch. Fehlende Personen unten mit "+ Zeile" ergänzen.</div>
+      <div id="crewRowList"></div>
+    </div>
+
+    <div class="tabpanel" id="tabpanel-tickets">
+      <h1 class="page-title">Tickets</h1>
+
+      <div id="ticketsApp">
+        <div class="tickets-topbar">
+          <button class="btn" id="newTicketBtn" onclick="openTicketModal(null)">+ Ticket</button>
         </div>
-        <label style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-faint);margin-bottom:10px;">
-          <input type="checkbox" id="teamIsAdmin" style="width:auto;"> zusätzlich Admin (darf Team verwalten, unabhängig von der Rolle)
-        </label>
-        <div id="teamList"></div>
-      </div>
 
-      <div class="section-label"><h2>Kanban</h2></div>
-      <div class="kanban-wrap" id="kanbanWrap"></div>
+        <div class="chip-row" id="projectChipRow"></div>
+
+        <div class="kanban-wrap" id="kanbanWrap"></div>
+      </div>
     </div>
 
-  </div>
+    <div class="tabpanel" id="tabpanel-team">
+      <h1 class="page-title">Team &amp; Zugriff</h1>
+      <div class="crew-hint">Rolle vor Registrierung zuweisen — Person meldet sich danach mit dieser Email selbst an.</div>
+      <div class="team-add-row">
+        <input id="teamEmail" placeholder="Email">
+        <input id="teamName" placeholder="Name">
+        <select id="teamRole">
+          <option value="mastermind">Mastermind</option>
+          <option value="po">Product Owner</option>
+          <option value="dev" selected>Entwickler</option>
+          <option value="pm">Project Manager</option>
+          <option value="sales">Sales</option>
+        </select>
+        <button class="btn" onclick="addAppUser()">+ Hinzufügen</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-faint);margin-bottom:16px;">
+        <input type="checkbox" id="teamIsAdmin" style="width:auto;"> zusätzlich Admin (darf Team verwalten, unabhängig von der Rolle)
+      </label>
+      <div id="teamList"></div>
+    </div>
 
-  <div class="status-note" id="statusNote">wird geladen …</div>
+    <div class="status-note" id="statusNote">wird geladen …</div>
+  </main>
 </div>
 
 <div class="modal-overlay" id="ticketModalOverlay" onclick="if(event.target===this) closeTicketModal()">
   <div class="modal-box">
     <span class="modal-close" onclick="closeTicketModal()">✕ schließen</span>
-    <h2 id="ticketModalTitle" style="font-family:'Manrope',sans-serif;margin:0 0 16px;">Ticket</h2>
+    <h2 id="ticketModalTitle" style="font-family:var(--font-display);font-weight:800;margin:0 0 18px;">Ticket</h2>
     <div class="field">
       <label>Titel</label>
       <input id="tmTitle" class="tm-field">
@@ -790,20 +630,25 @@ let tasks = {};
 let reactions = {};
 let comments = {};
 let projectRoles = {};
+let searchQuery = '';
 
 const ROLE_ORDER = ['MM','PO','EDT','PM','SALES','INFRA','INFRA_BU'];
 const ROLE_LABEL = {MM:'MM',PO:'PO',EDT:'EDT',PM:'PM',SALES:'Sales',INFRA:'Infra',INFRA_BU:'Infra BU'};
 const ROLE_CLASS = {MM:'role-mm',PO:'role-po',EDT:'role-edt',PM:'role-pm',SALES:'role-sales',INFRA:'role-infra',INFRA_BU:'role-infra'};
 
-function getIdentity(){
-  return localStorage.getItem('aaicc_identity') || '';
-}
-function saveIdentity(value){
-  localStorage.setItem('aaicc_identity', value);
-}
-function initIdentity(){
-  const el = document.getElementById('identityInput');
-  el.value = getIdentity();
+const GLOBAL_ROLE_DESC = {
+  mastermind: {label:'Mastermind', desc:'Volle Kontrolle: erstellt, editiert und löscht überall, weist Rollen zu.'},
+  po: {label:'Product Owner', desc:'Erstellt und priorisiert Tickets für die eigenen Projekte, editiert eigene Tickets.'},
+  dev: {label:'Entwickler', desc:'Sieht zugewiesene Tickets, bewegt sie durch die Spalten, trackt geplante vs. erledigte Stunden.'},
+  pm: {label:'Project Manager', desc:'Timeline-Überblick über alle Projekte, kann überall eingreifen, kein Löschrecht.'},
+  sales: {label:'Sales', desc:'Nur-Lese-Zugriff auf Status und Timeline, kommentiert über den Chat.'}
+};
+
+function onSearchInput(value){
+  searchQuery = value.trim().toLowerCase();
+  renderProducts();
+  renderCrew();
+  renderKanban();
 }
 
 async function loadComments(){
@@ -826,7 +671,7 @@ async function addComment(taskId, produktId){
   const input = document.getElementById('commentInput-'+taskId);
   const text = input.value.trim();
   if(!text) return;
-  const author = getIdentity() || 'Anonym';
+  const author = currentAppUser ? (currentAppUser.name || currentAppUser.email) : 'Anonym';
   const { data, error } = await sb.from('task_comments').insert({ task_id:taskId, author, text }).select().single();
   if(error){ setStatus('Fehler: '+error.message); return; }
   if(!comments[taskId]) comments[taskId] = [];
@@ -853,7 +698,7 @@ async function loadTasks(){
 
 function renderTasks(produktId){
   const list = tasks[produktId] || [];
-  if(list.length===0) return '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;color:var(--text-faint);">Keine Aufgaben.</div>';
+  if(list.length===0) return '<div style="font-size:11.5px;color:var(--text-faint);">Keine Aufgaben.</div>';
   return list.map(t => `
     <div class="taskrow">
       <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}','${produktId}')">${t.done?'✓':''}</div>
@@ -919,6 +764,16 @@ async function loadProjectRoles(){
     if(!projectRoles[r.produkt_id]) projectRoles[r.produkt_id] = {};
     projectRoles[r.produkt_id][r.role_code] = r;
   });
+}
+
+function renderRoleCards(){
+  const wrap = document.getElementById('roleCards');
+  wrap.innerHTML = Object.entries(GLOBAL_ROLE_DESC).map(([code, r]) => `
+    <div class="role-card">
+      <span class="tag" style="background:var(--accent-soft);color:var(--accent);">${r.label}</span>
+      <div class="desc">${r.desc}</div>
+    </div>
+  `).join('');
 }
 
 function renderRoleMatrix(){
@@ -1003,11 +858,12 @@ function setStatus(t){
 
 function render(){
   renderTally();
+  renderRoleCards();
   renderRoleMatrix();
   renderProducts();
   renderLog();
   if(typeof currentAppUser !== 'undefined' && currentAppUser){
-    populateProductFilter();
+    renderProjectChips();
     populateTicketModalSelects();
     renderKanban();
   }
@@ -1034,11 +890,20 @@ function phaseLabel(ph){
 
 function renderProducts(){
   const list = document.getElementById('productList');
-  if(products.length===0){
-    list.innerHTML = '<div class="empty">Keine Konsolen aktiv.</div>';
+  let visible = sortedProducts();
+  if(searchQuery){
+    visible = visible.filter(p =>
+      (p.name||'').toLowerCase().includes(searchQuery) ||
+      (p.po||'').toLowerCase().includes(searchQuery) ||
+      (p.task||'').toLowerCase().includes(searchQuery) ||
+      (p.notes||'').toLowerCase().includes(searchQuery)
+    );
+  }
+  if(visible.length===0){
+    list.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Keine Konsolen aktiv.'}</div>`;
     return;
   }
-  list.innerHTML = sortedProducts().map(p => `
+  list.innerHTML = visible.map(p => `
     <div class="console ${p._open?'open':''}" data-id="${p.id}">
       <div class="console-head" onclick="toggleOpen('${p.id}')">
         <div class="status-light ${p.phase}"></div>
@@ -1096,7 +961,7 @@ function renderLog(){
   const sorted = [...log].sort((a,b)=> b.ts - a.ts);
   list.innerHTML = sorted.map(e => `
     <div class="log-entry">
-      <div class="log-date">${e.date}${e.author ? ' · <span style="color:var(--accent-bright);">'+escapeHtml(e.author)+'</span>' : ''}</div>
+      <div class="log-date">${e.date}${e.author ? ' · <span style="color:var(--accent);">'+escapeHtml(e.author)+'</span>' : ''}</div>
       <div class="log-text">${escapeHtml(e.text)}</div>
       <div class="reactions">
         ${['🔥','👍','🎉'].map(emo => `<div class="reaction-btn" onclick="addReaction('${e.id}','${emo}')">${emo} <span class="count">${(reactions[e.id]&&reactions[e.id][emo])||0}</span></div>`).join('')}
@@ -1149,7 +1014,7 @@ async function addLog(){
   const el = document.getElementById('logInput');
   const text = el.value.trim();
   if(!text) return;
-  const author = getIdentity() || '';
+  const author = currentAppUser ? (currentAppUser.name || currentAppUser.email) : '';
   const { data, error } = await sb.from('log').insert({ text, author }).select().single();
   if(error){ setStatus('Fehler: '+error.message); return; }
   const now = new Date(data.entry_date);
@@ -1174,10 +1039,11 @@ function escapeAttr(str){
 }
 
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.nav-item').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.getElementById('tabpanel-control').classList.toggle('active', name === 'control');
   document.getElementById('tabpanel-crew').classList.toggle('active', name === 'crew');
   document.getElementById('tabpanel-tickets').classList.toggle('active', name === 'tickets');
+  document.getElementById('tabpanel-team').classList.toggle('active', name === 'team');
 }
 
 let crewRows = [];
@@ -1191,11 +1057,18 @@ async function loadCrew(){
 
 function renderCrew(){
   const list = document.getElementById('crewRowList');
-  if(crewRows.length===0){
-    list.innerHTML = '<div class="empty">Keine Namen erfasst.</div>';
+  let visible = crewRows;
+  if(searchQuery){
+    visible = visible.filter(r =>
+      (r.vorname||'').toLowerCase().includes(searchQuery) ||
+      (r.nachname||'').toLowerCase().includes(searchQuery)
+    );
+  }
+  if(visible.length===0){
+    list.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Keine Namen erfasst.'}</div>`;
     return;
   }
-  list.innerHTML = crewRows.map(r => `
+  list.innerHTML = visible.map(r => `
     <div class="crewrow" data-id="${r.id}">
       <input class="vorname" value="${escapeAttr(r.vorname)}" placeholder="Vorname" oninput="updateCrew('${r.id}','vorname',this.value)">
       <input value="${escapeAttr(r.nachname)}" placeholder="Nachname" oninput="updateCrew('${r.id}','nachname',this.value)">
@@ -1246,15 +1119,16 @@ let ticketsList = [];
 let activeTicketId = null;
 let inviteToken = null;
 let inviteInfo = null;
+let selectedProjectId = '';
 
 async function submitAuth(){
   const email = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
   const msg = document.getElementById('authMsg');
-  if(!email || !password){ msg.textContent = 'Email und Passwort ausfüllen.'; return; }
+  if(!email || !password){ msg.textContent = 'Email und Passwort ausfüllen.'; msg.classList.add('error'); return; }
   const { error } = await sb.auth.signInWithPassword({ email, password });
-  if(error){ msg.textContent = error.message; return; }
-  msg.textContent = '';
+  if(error){ msg.textContent = error.message; msg.classList.add('error'); return; }
+  msg.textContent = ''; msg.classList.remove('error');
 }
 
 async function checkInvite(){
@@ -1263,6 +1137,7 @@ async function checkInvite(){
   const { data, error } = await sb.rpc('get_invite', { p_token: token });
   if(error || !data || data.length === 0){
     document.getElementById('authMsg').textContent = 'Dieser Einladungslink ist ungültig oder wurde bereits verwendet.';
+    document.getElementById('authMsg').classList.add('error');
     return;
   }
   inviteToken = token;
@@ -1282,14 +1157,14 @@ async function submitInvite(){
   const password = document.getElementById('invitePassword').value;
   const name = document.getElementById('inviteNameInput').value.trim();
   const msg = document.getElementById('inviteMsg');
-  if(!password || password.length < 6){ msg.textContent = 'Passwort braucht mind. 6 Zeichen.'; return; }
+  if(!password || password.length < 6){ msg.textContent = 'Passwort braucht mind. 6 Zeichen.'; msg.classList.add('error'); return; }
   const { data: fnData, error: fnError } = await sb.functions.invoke('complete-invite', {
     body: { token: inviteToken, password, name }
   });
-  if(fnError || (fnData && fnData.error)){ msg.textContent = (fnData && fnData.error) || fnError.message; return; }
+  if(fnError || (fnData && fnData.error)){ msg.textContent = (fnData && fnData.error) || fnError.message; msg.classList.add('error'); return; }
   const { data: signInData, error } = await sb.auth.signInWithPassword({ email: inviteInfo.email, password });
-  if(error){ msg.textContent = error.message; return; }
-  msg.textContent = '';
+  if(error){ msg.textContent = error.message; msg.classList.add('error'); return; }
+  msg.textContent = ''; msg.classList.remove('error');
   history.replaceState(null, '', location.pathname);
   authSession = signInData.session;
   await handleAuthChange();
@@ -1305,7 +1180,7 @@ async function handleAuthChange(){
   const gate = document.getElementById('authGate');
   const app = document.getElementById('appGate');
   if(!authSession){
-    gate.style.display = 'block';
+    gate.style.display = 'flex';
     app.style.display = 'none';
     currentAppUser = null;
     appBooted = false;
@@ -1314,24 +1189,27 @@ async function handleAuthChange(){
   await loadAppUsers();
   currentAppUser = appUsers.find(u => u.auth_user_id === authSession.user.id) || null;
   if(!currentAppUser){
-    gate.style.display = 'block';
+    gate.style.display = 'flex';
     app.style.display = 'none';
     if(!inviteToken){
       document.getElementById('loginBox').style.display = 'block';
       document.getElementById('inviteBox').style.display = 'none';
-      document.getElementById('authMsg').textContent = 'Kein Zugang für ' + authSession.user.email + ' — bitte Mastermind um Freischaltung bitten.';
+      const msg = document.getElementById('authMsg');
+      msg.textContent = 'Kein Zugang für ' + authSession.user.email + ' — bitte Mastermind um Freischaltung bitten.';
+      msg.classList.add('error');
     }
     return;
   }
   gate.style.display = 'none';
-  app.style.display = 'block';
-  document.getElementById('ticketsMe').textContent = (currentAppUser.name || currentAppUser.email) + ' · ' + GLOBAL_ROLE_LABEL[currentAppUser.global_role] + (currentAppUser.is_admin ? ' · Admin' : '');
-  document.getElementById('teamAdminBox').style.display = (currentAppUser.is_admin || currentAppUser.global_role === 'mastermind') ? 'block' : 'none';
+  app.style.display = 'flex';
+  document.getElementById('sidebarUserName').textContent = currentAppUser.name || currentAppUser.email;
+  document.getElementById('sidebarUserRole').textContent = GLOBAL_ROLE_LABEL[currentAppUser.global_role] + (currentAppUser.is_admin ? ' · Admin' : '');
+  const isAdmin = currentAppUser.is_admin || currentAppUser.global_role === 'mastermind';
+  document.getElementById('navTeam').style.display = isAdmin ? 'flex' : 'none';
   document.getElementById('newTicketBtn').style.display = currentAppUser.global_role === 'sales' ? 'none' : '';
 
   if(!appBooted){
     appBooted = true;
-    initIdentity();
     await loadProjectRoles();
     await loadAll();
     await loadCrew();
@@ -1339,18 +1217,31 @@ async function handleAuthChange(){
     loadReactions().then(renderLog);
   }
 
-  populateProductFilter();
+  renderProjectChips();
   populateTicketModalSelects();
-  await loadInvites();
-  renderTeamList();
+  if(isAdmin){ await loadInvites(); renderTeamList(); }
   await loadTickets();
 }
 
-function populateProductFilter(){
-  const sel = document.getElementById('ticketProductFilter');
-  const prev = sel.value;
-  sel.innerHTML = '<option value="">Alle Projekte</option>' + products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
-  sel.value = prev;
+function renderProjectChips(){
+  const wrap = document.getElementById('projectChipRow');
+  if(!wrap) return;
+  const list = sortedProducts();
+  const countFor = (id) => id ? ticketsList.filter(t=>t.produkt_id===id).length : ticketsList.length;
+  const chips = [{id:'', name:'Alle Projekte', priority_order:null}, ...list];
+  wrap.innerHTML = chips.map(p => `
+    <div class="chip ${selectedProjectId===p.id?'active':''}" onclick="selectProject('${p.id}')">
+      ${p.priority_order!=null ? '<span class="prio-dot"></span>' : ''}
+      ${escapeHtml(p.name)}
+      <span class="n">${countFor(p.id)}</span>
+    </div>
+  `).join('');
+}
+
+function selectProject(id){
+  selectedProjectId = id;
+  renderProjectChips();
+  renderKanban();
 }
 
 function populateTicketModalSelects(){
@@ -1426,6 +1317,7 @@ async function createResetLink(appUserId){
 
 function renderTeamList(){
   const list = document.getElementById('teamList');
+  if(!list) return;
   if(appUsers.length === 0){ list.innerHTML = '<div class="empty">Noch niemand eingetragen.</div>'; return; }
   list.innerHTML = appUsers.map(u => `
     <div class="teamrow">
@@ -1447,6 +1339,7 @@ async function loadTickets(){
   const { data, error } = await sb.from('tickets').select('*').order('created_at', {ascending:true});
   if(error){ setStatus('Ladefehler Tickets: '+error.message); return; }
   ticketsList = data || [];
+  renderProjectChips();
   renderKanban();
 }
 
@@ -1472,8 +1365,13 @@ function canEditTicket(t){
 function renderKanban(){
   const wrap = document.getElementById('kanbanWrap');
   if(!wrap) return;
-  const filterId = document.getElementById('ticketProductFilter').value;
-  const filtered = filterId ? ticketsList.filter(t => t.produkt_id === filterId) : ticketsList;
+  let filtered = selectedProjectId ? ticketsList.filter(t => t.produkt_id === selectedProjectId) : ticketsList;
+  if(searchQuery){
+    filtered = filtered.filter(t =>
+      (t.title||'').toLowerCase().includes(searchQuery) ||
+      (t.description||'').toLowerCase().includes(searchQuery)
+    );
+  }
   wrap.innerHTML = KANBAN_COLUMNS.map(col => {
     const colTickets = filtered.filter(t => t.status === col.code);
     return `
@@ -1529,7 +1427,7 @@ function openTicketModal(id){
   const t = isNew ? null : ticketsList.find(x => x.id === id);
   document.getElementById('ticketModalTitle').textContent = isNew ? 'Neues Ticket' : ('Ticket #' + t.id.slice(0,8).toUpperCase());
   document.getElementById('tmTitle').value = t ? t.title : '';
-  document.getElementById('tmProdukt').value = t ? t.produkt_id : (document.getElementById('ticketProductFilter').value || (products[0] && products[0].id) || '');
+  document.getElementById('tmProdukt').value = t ? t.produkt_id : (selectedProjectId || (products[0] && products[0].id) || '');
   document.getElementById('tmStatus').value = t ? t.status : 'backlog';
   document.getElementById('tmFormat').value = t ? t.format_type : 'feature';
   document.getElementById('tmPriority').value = t ? t.priority : 'P2';
