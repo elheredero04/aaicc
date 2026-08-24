@@ -63,10 +63,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
   display:flex;flex-direction:column;
   gap:18px;
 }
-.sidebar-brand{
-  display:flex;align-items:center;gap:9px;
-  padding:0 6px;
-}
+.sidebar-brand{display:flex;align-items:center;gap:9px;padding:0 6px;}
 .sidebar-brand .mark{
   width:30px;height:30px;border-radius:9px;
   background:linear-gradient(135deg,var(--accent),#5AC8FA);
@@ -99,10 +96,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:600;}
 .nav-item .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.55;flex-shrink:0;}
 
-.sidebar-user{
-  margin-top:auto;padding:10px;border-top:1px solid var(--border);
-  display:flex;flex-direction:column;gap:2px;
-}
+.sidebar-user{margin-top:auto;padding:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
 .sidebar-user .u-name{font-size:13px;font-weight:600;color:var(--text);}
 .sidebar-user .u-role{font-size:11.5px;color:var(--text-dim);}
 .sidebar-user .signout{font-size:11.5px;color:var(--accent);cursor:pointer;margin-top:6px;display:inline-block;}
@@ -115,10 +109,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 
 @media (max-width:860px){
   .app-shell{flex-direction:column;}
-  .sidebar{
-    width:100%;height:auto;position:relative;
-    flex-direction:row;align-items:center;flex-wrap:wrap;padding:12px 14px;
-  }
+  .sidebar{width:100%;height:auto;position:relative;flex-direction:row;align-items:center;flex-wrap:wrap;padding:12px 14px;}
   .sidebar-brand{flex:0 0 auto;}
   .sidebar-search{flex:1 1 140px;}
   .sidebar-nav{flex-direction:row;flex-wrap:wrap;flex:1 1 100%;order:3;}
@@ -128,11 +119,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 
 /* ===== READOUT ===== */
 .readout{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
-.readout-cell{
-  flex:1;min-width:110px;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:14px 16px;box-shadow:var(--shadow-sm);
-}
+.readout-cell{flex:1;min-width:110px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm);}
 .readout-num{font-family:var(--font-display);font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
 .readout-label{font-size:11.5px;color:var(--text-dim);margin-top:6px;font-weight:500;}
 .readout-cell.a .readout-num{color:var(--status-a);}
@@ -142,18 +129,9 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .page-title{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-0.01em;margin:0 0 20px;}
 
 /* ===== ROLE CARDS ===== */
-.role-cards{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;
-  margin-bottom:28px;
-}
-.role-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:16px;box-shadow:var(--shadow-sm);
-}
-.role-card .tag{
-  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:0.03em;
-  padding:2px 8px;border-radius:100px;margin-bottom:8px;
-}
+.role-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:28px;}
+.role-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);}
+.role-card .tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:0.03em;padding:2px 8px;border-radius:100px;margin-bottom:8px;}
 .role-card .name{font-family:var(--font-display);font-weight:700;font-size:14.5px;margin-bottom:6px;}
 .role-card .desc{font-size:12px;color:var(--text-dim);line-height:1.5;}
 
@@ -169,20 +147,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .btn:active{transform:scale(0.97);}
 .btn.secondary{background:var(--surface);color:var(--accent);border:1px solid var(--border-strong);}
 .btn.secondary:hover{background:var(--accent-soft);}
-
-/* ===== CREW SETUP ===== */
-.crewrow{
-  display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:9px 12px;margin-bottom:8px;
-}
-.crewrow input{
-  font-family:var(--font-sans);font-size:13.5px;color:var(--text);
-  background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;width:100%;
-}
-.crewrow input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
-.crewrow input.vorname{font-weight:600;}
-.crew-hint{font-size:12px;color:var(--text-faint);margin-bottom:10px;}
 
 /* ===== TASKS ===== */
 .tasklist{margin-top:14px;}
@@ -211,27 +175,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .reaction-btn:hover{border-color:var(--accent);}
 .reaction-btn .count{color:var(--accent);font-weight:600;}
 
-/* ===== TASK ASSIGNEE + COMMENTS ===== */
-.task-meta{display:flex;align-items:center;gap:8px;margin-top:2px;padding-left:26px;}
-.task-assignee{
-  font-size:11.5px;color:var(--text-faint);
-  background:transparent;border:none;border-bottom:1px dotted var(--border-strong);padding:1px 2px;width:90px;
-}
-.task-assignee:focus{outline:none;border-bottom-color:var(--accent);}
-.task-comment-toggle{font-size:11.5px;color:var(--accent);cursor:pointer;}
-.task-comments{padding-left:14px;margin:6px 0 10px 15px;border-left:2px solid var(--border);}
-.comment{font-size:12.5px;padding:5px 0;}
-.comment-author{color:var(--accent);font-weight:600;font-size:11.5px;margin-right:6px;}
-.comment-text{color:var(--text);}
-.comment-add{display:flex;gap:6px;margin-top:6px;}
-.comment-add input{
-  flex:1;font-size:12.5px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 9px;
-}
-.comment-add button{
-  font-size:11.5px;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:100px;padding:5px 12px;cursor:pointer;
-}
-.comment-add button:hover{background:var(--accent);color:#fff;}
-
 /* ===== PRIORITY MATRIX ===== */
 .matrix-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:26px;background:var(--surface);box-shadow:var(--shadow-sm);}
 .matrix{width:100%;border-collapse:collapse;min-width:640px;}
@@ -248,12 +191,8 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .matrix td.role-label.role-sales{color:var(--role-sales);}
 .matrix td.role-label.role-infra{color:var(--role-infra);}
 .matrix td.empty-cell{color:var(--text-faint);font-size:12.5px;}
-.matrix input.role-person{width:100%;font-size:13px;color:var(--text);background:transparent;border:none;padding:2px;}
-.matrix input.role-person:focus{outline:none;}
-.prio-badge{
-  font-size:10.5px;font-weight:700;letter-spacing:0.02em;
-  padding:2px 9px;border-radius:100px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;
-}
+.matrix td.person-cell{font-size:13px;color:var(--text);}
+.prio-badge{font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:2px 9px;border-radius:100px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;}
 
 /* ===== AUTH ===== */
 .auth-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}
@@ -267,47 +206,102 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .auth-msg{font-size:12.5px;color:var(--text-faint);margin-top:12px;text-align:center;min-height:14px;}
 .auth-msg.error{color:var(--danger);}
 
-/* ===== TICKETS TOPBAR / PROJECT CHIPS ===== */
-.tickets-topbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-bottom:18px;}
-.chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px;}
-.chip{
-  flex:0 0 auto;font-size:13px;font-weight:600;color:var(--text-dim);
-  background:var(--surface);border:1px solid var(--border);border-radius:100px;
-  padding:8px 16px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;
+.field{margin-top:14px;}
+.field label{display:block;font-size:11.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
+.field input,.field textarea,.field select{
+  width:100%;font-family:var(--font-sans);font-size:13.5px;color:var(--text);
+  background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 11px;resize:vertical;
 }
-.chip:hover{border-color:var(--border-strong);}
-.chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-.chip .n{font-size:11px;opacity:0.75;}
-.chip .prio-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.6;}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.field textarea{min-height:48px;}
 
-/* ===== TEAM ADMIN ===== */
-.team-add-row{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;margin-bottom:10px;}
-.team-add-row input,.team-add-row select{
-  font-family:var(--font-sans);font-size:13px;color:var(--text);
-  background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;width:100%;
+.log-add{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:8px;box-shadow:var(--shadow-sm);}
+.log-add label{display:block;font-size:11.5px;font-weight:600;color:var(--text-dim);margin-bottom:8px;}
+.log-add textarea{
+  width:100%;font-family:var(--font-sans);font-size:13.5px;border:1px solid var(--border);border-radius:9px;padding:9px 11px;min-height:54px;background:var(--bg);color:var(--text);
 }
-.teamrow{
-  display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;align-items:center;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:9px 12px;margin-bottom:8px;font-size:13px;
+.log-add textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.log-add-row{display:flex;justify-content:flex-end;margin-top:10px;}
+
+/* ===== LOG ===== */
+.log-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.log-date{font-size:11px;color:var(--accent);font-weight:600;}
+.log-text{font-size:13px;margin-top:5px;line-height:1.5;color:var(--text);}
+
+.empty{font-size:13px;color:var(--text-faint);padding:20px;border:1px dashed var(--border-strong);border-radius:var(--radius);text-align:center;}
+.status-note{font-size:11px;color:var(--text-faint);text-align:center;margin-top:40px;}
+
+/* ===== PROJECT LIST ===== */
+.project-card{
+  display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);
 }
-.teamrow .pending{color:var(--text-faint);font-size:11px;}
-.teamrow .linked{color:var(--status-c);font-size:11px;font-weight:600;}
+.project-card:hover{border-color:var(--accent);}
+.project-card .status-light{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.status-light.a{background:var(--status-a);}
+.status-light.b{background:var(--status-b);}
+.status-light.c{background:var(--status-c);}
+.project-num{font-family:var(--font-mono);font-size:11px;color:var(--text-faint);width:22px;flex-shrink:0;}
+.project-name{font-family:var(--font-display);font-weight:700;font-size:14.5px;flex:1;min-width:100px;}
+.project-owner{font-size:12.5px;color:var(--text-dim);min-width:100px;}
+.phase-readout{font-size:10.5px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;padding:4px 10px;border-radius:100px;}
+.phase-readout.a{color:var(--status-a);background:rgba(255,159,10,0.12);}
+.phase-readout.b{color:var(--status-b);background:var(--accent-soft);}
+.phase-readout.c{color:var(--status-c);background:rgba(52,199,89,0.12);}
+.project-ticket-count{font-size:11.5px;color:var(--text-faint);white-space:nowrap;}
+.caret-right{color:var(--text-faint);font-size:13px;}
+
+/* ===== PROJECT DETAIL ===== */
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--accent);cursor:pointer;margin-bottom:16px;font-weight:600;}
+.back-link:hover{text-decoration:underline;}
+.detail-header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+.detail-header input.name-input{
+  font-family:var(--font-display);font-weight:800;font-size:24px;border:none;background:transparent;
+  padding:2px 0;flex:1;min-width:180px;color:var(--text);
+}
+.detail-header input.name-input:focus{outline:none;border-bottom:2px solid var(--accent);}
+.detail-sub{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px;color:var(--text-dim);font-size:13px;}
+.phase-row{display:flex;gap:6px;}
+.phase-btn{font-size:12px;font-weight:600;text-align:center;padding:7px 12px;border-radius:100px;background:var(--bg);color:var(--text-dim);cursor:pointer;border:1px solid var(--border);}
+.phase-btn.active.a{background:var(--status-a);border-color:var(--status-a);color:#fff;}
+.phase-btn.active.b{background:var(--status-b);border-color:var(--status-b);color:#fff;}
+.phase-btn.active.c{background:var(--status-c);border-color:var(--status-c);color:#fff;}
+
+.subtabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.subtab{
+  font-size:13px;font-weight:600;color:var(--text-dim);padding:9px 14px;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.subtab:hover{color:var(--text);}
+.subtab.active{color:var(--accent);border-color:var(--accent);}
+
+.role-edit-row{display:grid;grid-template-columns:100px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
+.role-edit-row .rlabel{font-size:12.5px;font-weight:700;}
+.role-edit-row .rlabel.role-mm{color:var(--role-mm);}
+.role-edit-row .rlabel.role-po{color:var(--role-po);}
+.role-edit-row .rlabel.role-edt{color:var(--role-edt);}
+.role-edit-row .rlabel.role-pm{color:var(--role-pm);}
+.role-edit-row .rlabel.role-sales{color:var(--role-sales);}
+.role-edit-row .rlabel.role-infra{color:var(--role-infra);}
+.role-edit-row input{font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 9px;}
+.role-edit-row input:focus{outline:none;border-color:var(--accent);}
+.add-role-row{display:grid;grid-template-columns:140px 1fr auto;gap:10px;margin-top:12px;}
+.add-role-row select,.add-role-row input{
+  font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 10px;
+}
+.remove-link{font-size:12px;color:var(--text-faint);cursor:pointer;}
+.remove-link:hover{color:var(--danger);}
+
+/* ===== TICKETS TOPBAR ===== */
+.tickets-topbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-bottom:16px;}
 
 /* ===== KANBAN ===== */
 .kanban-wrap{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;}
 .kanban-col{flex:0 0 250px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-height:120px;box-shadow:var(--shadow-sm);}
-.kanban-col-head{
-  padding:12px 14px;border-bottom:1px solid var(--border);
-  font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;
-  color:var(--text-dim);display:flex;justify-content:space-between;
-}
+.kanban-col-head{padding:12px 14px;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:var(--text-dim);display:flex;justify-content:space-between;}
 .kanban-col-body{padding:9px;min-height:80px;}
 .kanban-col-body.dragover{background:var(--accent-soft);}
-.ticket-card{
-  border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);
-  padding:11px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);
-}
+.ticket-card{border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);padding:11px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);}
 .ticket-card:hover{border-color:var(--accent);}
 .ticket-card-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:7px;}
 .ticket-id{font-family:var(--font-mono);font-size:10px;color:var(--text-faint);}
@@ -336,66 +330,39 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .modal-close:hover{color:var(--danger);}
 .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .modal-grid .field{margin-top:0;}
-.field select{
-  width:100%;font-family:var(--font-sans);font-size:13.5px;color:var(--text);
-  background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 11px;
-}
 .notes-list{margin-top:6px;}
 .note-item{border-top:1px solid var(--border);padding:9px 0;font-size:12.5px;}
 .note-author{color:var(--accent);font-weight:600;font-size:11.5px;margin-right:6px;}
-
-/* ===== CONSOLE PANELS (products) ===== */
-.console{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;box-shadow:var(--shadow-sm);overflow:hidden;}
-.console-head{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;}
-.status-light{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.status-light.a{background:var(--status-a);}
-.status-light.b{background:var(--status-b);}
-.status-light.c{background:var(--status-c);}
-.console-num{font-family:var(--font-mono);font-size:11px;color:var(--text-faint);width:22px;}
-.console-name{font-family:var(--font-display);font-weight:700;font-size:14.5px;flex:1;min-width:100px;}
-.console-controller{font-size:12.5px;color:var(--text-dim);min-width:100px;}
-.phase-readout{font-size:10.5px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;padding:4px 10px;border-radius:100px;}
-.phase-readout.a{color:var(--status-a);background:rgba(255,159,10,0.12);}
-.phase-readout.b{color:var(--status-b);background:var(--accent-soft);}
-.phase-readout.c{color:var(--status-c);background:rgba(52,199,89,0.12);}
-.caret{color:var(--text-faint);font-size:11px;transition:transform 0.12s;}
-.console.open .caret{transform:rotate(90deg);}
-.console-body{display:none;padding:2px 16px 20px;border-top:1px solid var(--border);}
-.console.open .console-body{display:block;}
-.field{margin-top:14px;}
-.field label{display:block;font-size:11.5px;font-weight:600;color:var(--text-dim);margin-bottom:6px;}
-.field input,.field textarea{
-  width:100%;font-family:var(--font-sans);font-size:13.5px;color:var(--text);
-  background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:9px 11px;resize:vertical;
-}
-.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
-.field textarea{min-height:48px;}
-.phase-row{display:flex;gap:6px;margin-top:14px;}
-.phase-btn{
-  flex:1;font-size:12px;font-weight:600;text-align:center;padding:9px 4px;border-radius:9px;
-  background:var(--bg);color:var(--text-dim);cursor:pointer;border:1px solid var(--border);
-}
-.phase-btn.active.a{background:var(--status-a);border-color:var(--status-a);color:#fff;}
-.phase-btn.active.b{background:var(--status-b);border-color:var(--status-b);color:#fff;}
-.phase-btn.active.c{background:var(--status-c);border-color:var(--status-c);color:#fff;}
 .row-actions{display:flex;justify-content:flex-end;margin-top:14px;}
-.remove-link{font-size:12px;color:var(--text-faint);cursor:pointer;}
-.remove-link:hover{color:var(--danger);}
 
-/* ===== LOG ===== */
-.log-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
-.log-date{font-size:11px;color:var(--accent);font-weight:600;}
-.log-text{font-size:13px;margin-top:5px;line-height:1.5;color:var(--text);}
-.log-add{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:8px;box-shadow:var(--shadow-sm);}
-.log-add label{display:block;font-size:11.5px;font-weight:600;color:var(--text-dim);margin-bottom:8px;}
-.log-add textarea{
-  width:100%;font-family:var(--font-sans);font-size:13.5px;border:1px solid var(--border);border-radius:9px;padding:9px 11px;min-height:54px;background:var(--bg);color:var(--text);
+/* ===== CREW ===== */
+.crew-hint{font-size:12px;color:var(--text-faint);margin-bottom:16px;}
+.person-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
+.person-card-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.person-name{font-family:var(--font-display);font-weight:700;font-size:14.5px;}
+.person-email{font-size:12px;color:var(--text-faint);}
+.person-role-tag{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:100px;background:var(--accent-soft);color:var(--accent);}
+.person-assignments{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.assignment-tag{
+  font-size:11px;font-weight:600;padding:3px 9px;border-radius:100px;background:var(--bg);color:var(--text-dim);
+  border:1px solid var(--border);cursor:pointer;
 }
-.log-add textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
-.log-add-row{display:flex;justify-content:flex-end;margin-top:10px;}
+.assignment-tag:hover{border-color:var(--accent);color:var(--accent);}
+.no-assignments{font-size:12px;color:var(--text-faint);margin-top:10px;}
 
-.empty{font-size:13px;color:var(--text-faint);padding:20px;border:1px dashed var(--border-strong);border-radius:var(--radius);text-align:center;}
-.status-note{font-size:11px;color:var(--text-faint);text-align:center;margin-top:40px;}
+/* ===== TEAM ADMIN ===== */
+.team-add-row{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;margin-bottom:10px;}
+.team-add-row input,.team-add-row select{
+  font-family:var(--font-sans);font-size:13px;color:var(--text);
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;width:100%;
+}
+.teamrow{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:8px;align-items:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:9px 12px;margin-bottom:8px;font-size:13px;
+}
+.teamrow .pending{color:var(--text-faint);font-size:11px;}
+.teamrow .linked{color:var(--status-c);font-size:11px;font-weight:600;}
 </style>
 </head>
 <body>
@@ -455,9 +422,9 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
     </div>
 
     <div class="sidebar-nav">
-      <div class="nav-item active" data-tab="control" onclick="switchTab('control')"><span class="dot"></span>Control Center</div>
-      <div class="nav-item" data-tab="crew" onclick="switchTab('crew')"><span class="dot"></span>Crew Setup</div>
-      <div class="nav-item" data-tab="tickets" onclick="switchTab('tickets')"><span class="dot"></span>Tickets</div>
+      <div class="nav-item active" data-tab="control" onclick="switchTab('control')"><span class="dot"></span>Übersicht</div>
+      <div class="nav-item" data-tab="projekte" onclick="switchTab('projekte')"><span class="dot"></span>Projekte</div>
+      <div class="nav-item" data-tab="crew" onclick="switchTab('crew')"><span class="dot"></span>Crew</div>
       <div class="nav-item" data-tab="team" id="navTeam" style="display:none;" onclick="switchTab('team')"><span class="dot"></span>Team &amp; Zugriff</div>
     </div>
 
@@ -471,7 +438,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
   <main class="main-content">
 
     <div class="tabpanel active" id="tabpanel-control">
-      <h1 class="page-title">Control Center</h1>
+      <h1 class="page-title">Übersicht</h1>
 
       <div class="readout">
         <div class="readout-cell a"><div class="readout-num" id="tallyA">0</div><div class="readout-label">Übergabe</div></div>
@@ -487,12 +454,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
       <div id="roleMatrixWrap"></div>
 
       <div class="section-label">
-        <h2>Produkt-Konsolen</h2>
-        <button class="btn" onclick="addProduct()">+ Konsole anlegen</button>
-      </div>
-      <div id="productList"></div>
-
-      <div class="section-label">
         <h2>Lead Log</h2>
       </div>
       <div id="logList"></div>
@@ -503,28 +464,78 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
       </div>
     </div>
 
-    <div class="tabpanel" id="tabpanel-crew">
-      <h1 class="page-title">Crew Setup</h1>
-      <div class="section-label">
-        <h2>Crew Namen — Nachnamen ergänzen</h2>
-        <button class="btn" onclick="addCrewRow()">+ Zeile</button>
+    <div class="tabpanel" id="tabpanel-projekte">
+      <div id="projectListView">
+        <h1 class="page-title">Projekte</h1>
+        <div class="section-label" style="margin-top:0;">
+          <h2 id="projectListCount"></h2>
+          <button class="btn" onclick="addProduct()">+ Projekt anlegen</button>
+        </div>
+        <div id="projectList"></div>
       </div>
-      <div class="crew-hint">Nachname eintragen — speichert automatisch. Fehlende Personen unten mit "+ Zeile" ergänzen.</div>
-      <div id="crewRowList"></div>
-    </div>
 
-    <div class="tabpanel" id="tabpanel-tickets">
-      <h1 class="page-title">Tickets</h1>
-
-      <div id="ticketsApp">
-        <div class="tickets-topbar">
-          <button class="btn" id="newTicketBtn" onclick="openTicketModal(null)">+ Ticket</button>
+      <div id="projectDetailView" style="display:none;">
+        <span class="back-link" onclick="closeProjectDetail()">← Alle Projekte</span>
+        <div class="detail-header">
+          <input class="name-input" id="pdName" oninput="updateActiveField('name',this.value)">
+          <div class="phase-row" id="pdPhaseRow"></div>
+        </div>
+        <div class="detail-sub">
+          <span id="pdNumLabel"></span>
         </div>
 
-        <div class="chip-row" id="projectChipRow"></div>
+        <div class="subtabs">
+          <div class="subtab active" data-sub="uebersicht" onclick="switchProjectSubtab('uebersicht')">Übersicht</div>
+          <div class="subtab" data-sub="board" onclick="switchProjectSubtab('board')">Board</div>
+          <div class="subtab" data-sub="rollen" onclick="switchProjectSubtab('rollen')">Rollen</div>
+          <div class="subtab" data-sub="aufgaben" onclick="switchProjectSubtab('aufgaben')">Aufgaben</div>
+        </div>
 
-        <div class="kanban-wrap" id="kanbanWrap"></div>
+        <div class="subtabpanel" id="subtab-uebersicht">
+          <div class="field">
+            <label>Owner</label>
+            <input id="pdOwner" oninput="updateActiveField('po',this.value)" placeholder="Name eintragen">
+          </div>
+          <div class="field">
+            <label>24h-Auftrag (aktuell)</label>
+            <textarea id="pdTask" oninput="updateActiveField('task',this.value)" placeholder="Wer macht bis morgen was"></textarea>
+          </div>
+          <div class="field">
+            <label>Notiz</label>
+            <textarea id="pdNotes" oninput="updateActiveField('notes',this.value)" placeholder="Blockaden, Kontext, offene Punkte"></textarea>
+          </div>
+          <div class="row-actions">
+            <span class="remove-link" onclick="removeProduct(activeProjectId); closeProjectDetail();">Projekt entfernen</span>
+          </div>
+        </div>
+
+        <div class="subtabpanel" id="subtab-board" style="display:none;">
+          <div class="tickets-topbar">
+            <button class="btn" id="newTicketBtn" onclick="openTicketModal(null)">+ Ticket</button>
+          </div>
+          <div class="kanban-wrap" id="kanbanWrap"></div>
+        </div>
+
+        <div class="subtabpanel" id="subtab-rollen" style="display:none;">
+          <div id="pdRolesList"></div>
+          <div class="add-role-row">
+            <select id="pdNewRoleCode"></select>
+            <input id="pdNewRolePerson" placeholder="Name(n), z.B. Andi oder Dani M., Tobi Th.">
+            <button class="btn" onclick="addProjectRole()">+ Rolle</button>
+          </div>
+        </div>
+
+        <div class="subtabpanel" id="subtab-aufgaben" style="display:none;">
+          <div class="tasklist" id="pdTasklist"></div>
+          <div class="task-add" onclick="addTaskToActive()">+ Aufgabe</div>
+        </div>
       </div>
+    </div>
+
+    <div class="tabpanel" id="tabpanel-crew">
+      <h1 class="page-title">Crew</h1>
+      <div class="crew-hint">Wer an welchem Projekt in welcher Rolle arbeitet. Neue Personen legst du unter "Team &amp; Zugriff" an — jede Crew-Person hat einen Account.</div>
+      <div id="crewList"></div>
     </div>
 
     <div class="tabpanel" id="tabpanel-team">
@@ -561,10 +572,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
       <input id="tmTitle" class="tm-field">
     </div>
     <div class="modal-grid">
-      <div class="field">
-        <label>Projekt</label>
-        <select id="tmProdukt" class="tm-field"></select>
-      </div>
       <div class="field">
         <label>Status</label>
         <select id="tmStatus" class="tm-field"></select>
@@ -634,6 +641,8 @@ let reactions = {};
 let comments = {};
 let projectRoles = {};
 let searchQuery = '';
+let activeProjectId = null;
+let projectSubtab = 'uebersicht';
 
 const ROLE_ORDER = ['MM','PO','EDT','PM','SALES','INFRA','INFRA_BU'];
 const ROLE_LABEL = {MM:'MM',PO:'PO',EDT:'EDT',PM:'PM',SALES:'Sales',INFRA:'Infra',INFRA_BU:'Infra BU'};
@@ -649,8 +658,8 @@ const GLOBAL_ROLE_DESC = {
 
 function onSearchInput(value){
   searchQuery = value.trim().toLowerCase();
-  renderProducts();
-  renderCrew();
+  renderProjectList();
+  renderCrewList();
   renderKanban();
 }
 
@@ -664,31 +673,6 @@ async function loadComments(){
   });
 }
 
-function toggleComments(taskId, produktId){
-  const t = tasks[produktId].find(x=>x.id===taskId);
-  t._commentsOpen = !t._commentsOpen;
-  renderProducts();
-}
-
-async function addComment(taskId, produktId){
-  const input = document.getElementById('commentInput-'+taskId);
-  const text = input.value.trim();
-  if(!text) return;
-  const author = currentAppUser ? (currentAppUser.name || currentAppUser.email) : 'Anonym';
-  const { data, error } = await sb.from('task_comments').insert({ task_id:taskId, author, text }).select().single();
-  if(error){ setStatus('Fehler: '+error.message); return; }
-  if(!comments[taskId]) comments[taskId] = [];
-  comments[taskId].push(data);
-  renderProducts();
-}
-
-async function updateTaskAssignee(id, produktId, value){
-  const t = tasks[produktId].find(x=>x.id===id);
-  t.assignee = value;
-  const { error } = await sb.from('tasks').update({ assignee:value }).eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
-}
-
 async function loadTasks(){
   const { data, error } = await sb.from('tasks').select('*').order('created_at', {ascending:true});
   if(error){ setStatus('Ladefehler Tasks: '+error.message); return; }
@@ -699,24 +683,26 @@ async function loadTasks(){
   });
 }
 
-function renderTasks(produktId){
+function renderTasksList(produktId, targetEl){
   const list = tasks[produktId] || [];
-  if(list.length===0) return '<div style="font-size:11.5px;color:var(--text-faint);">Keine Aufgaben.</div>';
-  return list.map(t => `
-    <div class="taskrow">
-      <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}','${produktId}')">${t.done?'✓':''}</div>
-      <input class="task-text ${t.done?'done':''}" value="${escapeAttr(t.text)}" oninput="updateTaskText('${t.id}','${produktId}',this.value)">
-      <div class="task-del" onclick="deleteTask('${t.id}','${produktId}')">×</div>
-    </div>
-  `).join('');
+  targetEl.innerHTML = list.length===0
+    ? '<div class="empty">Keine Aufgaben.</div>'
+    : list.map(t => `
+      <div class="taskrow">
+        <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}','${produktId}')">${t.done?'✓':''}</div>
+        <input class="task-text ${t.done?'done':''}" value="${escapeAttr(t.text)}" oninput="updateTaskText('${t.id}','${produktId}',this.value)">
+        <div class="task-del" onclick="deleteTask('${t.id}','${produktId}')">×</div>
+      </div>
+    `).join('');
 }
 
-async function addTask(produktId){
-  const { data, error } = await sb.from('tasks').insert({ produkt_id:produktId, text:'Neue Aufgabe', done:false }).select().single();
+async function addTaskToActive(){
+  if(!activeProjectId) return;
+  const { data, error } = await sb.from('tasks').insert({ produkt_id:activeProjectId, text:'Neue Aufgabe', done:false }).select().single();
   if(error){ setStatus('Fehler: '+error.message); return; }
-  if(!tasks[produktId]) tasks[produktId] = [];
-  tasks[produktId].push(data);
-  renderProducts();
+  if(!tasks[activeProjectId]) tasks[activeProjectId] = [];
+  tasks[activeProjectId].push(data);
+  renderTasksList(activeProjectId, document.getElementById('pdTasklist'));
 }
 
 async function toggleTask(id, produktId){
@@ -724,7 +710,7 @@ async function toggleTask(id, produktId){
   t.done = !t.done;
   const { error } = await sb.from('tasks').update({ done:t.done }).eq('id', id);
   if(error){ setStatus('Fehler: '+error.message); }
-  renderProducts();
+  if(activeProjectId===produktId) renderTasksList(produktId, document.getElementById('pdTasklist'));
 }
 
 async function updateTaskText(id, produktId, value){
@@ -738,7 +724,7 @@ async function deleteTask(id, produktId){
   const { error } = await sb.from('tasks').delete().eq('id', id);
   if(error){ setStatus('Fehler: '+error.message); return; }
   tasks[produktId] = tasks[produktId].filter(t=>t.id!==id);
-  renderProducts();
+  if(activeProjectId===produktId) renderTasksList(produktId, document.getElementById('pdTasklist'));
 }
 
 async function loadReactions(){
@@ -798,7 +784,7 @@ function renderRoleMatrix(){
             ${prioProducts.map(p => {
               const r = projectRoles[p.id] && projectRoles[p.id][code];
               if(!r) return '<td class="empty-cell">—</td>';
-              return `<td><input class="role-person" value="${escapeAttr(r.person)}" oninput="updateRolePerson('${r.id}',this.value)"></td>`;
+              return `<td class="person-cell">${escapeHtml(r.person)}</td>`;
             }).join('')}
           </tr>
         `).join('')}
@@ -806,16 +792,6 @@ function renderRoleMatrix(){
     </table>
     </div>
   `;
-}
-
-async function updateRolePerson(id, value){
-  outer: for(const pid in projectRoles){
-    for(const code in projectRoles[pid]){
-      if(projectRoles[pid][code].id === id){ projectRoles[pid][code].person = value; break outer; }
-    }
-  }
-  const { error } = await sb.from('project_roles').update({ person:value }).eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
 }
 
 async function loadAll(){
@@ -863,12 +839,12 @@ function render(){
   renderTally();
   renderRoleCards();
   renderRoleMatrix();
-  renderProducts();
   renderLog();
+  renderProjectList();
   if(typeof currentAppUser !== 'undefined' && currentAppUser){
-    renderProjectChips();
     populateTicketModalSelects();
-    renderKanban();
+    renderCrewList();
+    if(activeProjectId) renderKanban();
   }
 }
 
@@ -891,8 +867,10 @@ function phaseLabel(ph){
   return ph==='a' ? 'ÜBERGABE' : ph==='b' ? 'BEGLEITET' : 'EIGENSTÄNDIG';
 }
 
-function renderProducts(){
-  const list = document.getElementById('productList');
+/* ===== PROJECTS: LIST ===== */
+function renderProjectList(){
+  const list = document.getElementById('projectList');
+  if(!list) return;
   let visible = sortedProducts();
   if(searchQuery){
     visible = visible.filter(p =>
@@ -902,57 +880,168 @@ function renderProducts(){
       (p.notes||'').toLowerCase().includes(searchQuery)
     );
   }
+  document.getElementById('projectListCount').textContent = visible.length + (visible.length===1 ? ' Projekt' : ' Projekte');
   if(visible.length===0){
-    list.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Keine Konsolen aktiv.'}</div>`;
+    list.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Keine Projekte angelegt.'}</div>`;
     return;
   }
-  list.innerHTML = visible.map(p => `
-    <div class="console ${p._open?'open':''}" data-id="${p.id}">
-      <div class="console-head" onclick="toggleOpen('${p.id}')">
-        <div class="status-light ${p.phase}"></div>
-        <div class="console-num">${String(p.num).padStart(2,'0')}</div>
-        <div class="console-name">${escapeHtml(p.name)||'(ohne Namen)'}</div>
-        ${p.priority_order!=null ? `<div class="prio-badge">PRIO ${p.priority_order}</div>` : ''}
-        <div class="console-controller">${escapeHtml(p.po)||'— kein Owner —'}</div>
-        <div class="phase-readout ${p.phase}">${phaseLabel(p.phase)}</div>
-        <div class="caret">▶</div>
-      </div>
-      <div class="console-body">
-        <div class="field">
-          <label>Produktname</label>
-          <input value="${escapeAttr(p.name)}" oninput="updateField('${p.id}','name',this.value)">
-        </div>
-        <div class="field">
-          <label>Owner</label>
-          <input value="${escapeAttr(p.po)}" oninput="updateField('${p.id}','po',this.value)" placeholder="Name eintragen">
-        </div>
-        <div class="field">
-          <label>Phase</label>
-          <div class="phase-row">
-            <div class="phase-btn ${p.phase==='a'?'active a':''}" onclick="setPhase('${p.id}','a')">Übergabe</div>
-            <div class="phase-btn ${p.phase==='b'?'active b':''}" onclick="setPhase('${p.id}','b')">Begleitet</div>
-            <div class="phase-btn ${p.phase==='c'?'active c':''}" onclick="setPhase('${p.id}','c')">Eigenständig</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>24h-Auftrag (aktuell)</label>
-          <textarea oninput="updateField('${p.id}','task',this.value)" placeholder="Wer macht bis morgen was">${escapeHtml(p.task)}</textarea>
-        </div>
-        <div class="field">
-          <label>Notiz</label>
-          <textarea oninput="updateField('${p.id}','notes',this.value)" placeholder="Blockaden, Kontext, offene Punkte">${escapeHtml(p.notes)}</textarea>
-        </div>
-        <div class="field">
-          <label>Mini-Aufgaben</label>
-          <div class="tasklist">${renderTasks(p.id)}</div>
-          <div class="task-add" onclick="addTask('${p.id}')">+ Aufgabe</div>
-        </div>
-        <div class="row-actions">
-          <span class="remove-link" onclick="removeProduct('${p.id}')">Konsole entfernen</span>
-        </div>
-      </div>
+  list.innerHTML = visible.map(p => {
+    const count = (typeof ticketsList !== 'undefined') ? ticketsList.filter(t=>t.produkt_id===p.id).length : 0;
+    return `
+    <div class="project-card" onclick="openProjectDetail('${p.id}')">
+      <div class="status-light ${p.phase}"></div>
+      <div class="project-num">${String(p.num).padStart(2,'0')}</div>
+      <div class="project-name">${escapeHtml(p.name)||'(ohne Namen)'}</div>
+      ${p.priority_order!=null ? `<div class="prio-badge">PRIO ${p.priority_order}</div>` : ''}
+      <div class="project-owner">${escapeHtml(p.po)||'— kein Owner —'}</div>
+      <div class="project-ticket-count">${count} Ticket${count===1?'':'s'}</div>
+      <div class="phase-readout ${p.phase}">${phaseLabel(p.phase)}</div>
+      <div class="caret-right">›</div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+}
+
+async function addProduct(){
+  const nextNum = products.length ? Math.max(...products.map(p=>p.num))+1 : 1;
+  const { data, error } = await sb.from('produkte').insert({
+    num:nextNum, name:'Neues Projekt', po:'', phase:'a', task:'', notes:''
+  }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  products.push(data);
+  renderProjectList();
+  renderTally();
+  openProjectDetail(data.id);
+}
+
+async function removeProduct(id){
+  const { error } = await sb.from('produkte').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  products = products.filter(p=>p.id!==id);
+  renderProjectList();
+  renderTally();
+}
+
+/* ===== PROJECTS: DETAIL ===== */
+function openProjectDetail(id){
+  activeProjectId = id;
+  projectSubtab = 'uebersicht';
+  document.getElementById('projectListView').style.display = 'none';
+  document.getElementById('projectDetailView').style.display = 'block';
+  renderProjectDetail();
+  switchProjectSubtab('uebersicht');
+}
+
+function closeProjectDetail(){
+  activeProjectId = null;
+  document.getElementById('projectListView').style.display = 'block';
+  document.getElementById('projectDetailView').style.display = 'none';
+  renderProjectList();
+}
+
+function renderProjectDetail(){
+  const p = products.find(x=>x.id===activeProjectId);
+  if(!p) return;
+  document.getElementById('pdName').value = p.name;
+  document.getElementById('pdOwner').value = p.po;
+  document.getElementById('pdTask').value = p.task;
+  document.getElementById('pdNotes').value = p.notes;
+  document.getElementById('pdNumLabel').textContent = 'Projekt #' + String(p.num).padStart(2,'0') + (p.priority_order!=null ? ' · PRIO '+p.priority_order : '');
+  document.getElementById('pdPhaseRow').innerHTML = `
+    <div class="phase-btn ${p.phase==='a'?'active a':''}" onclick="setPhase('${p.id}','a')">Übergabe</div>
+    <div class="phase-btn ${p.phase==='b'?'active b':''}" onclick="setPhase('${p.id}','b')">Begleitet</div>
+    <div class="phase-btn ${p.phase==='c'?'active c':''}" onclick="setPhase('${p.id}','c')">Eigenständig</div>
+  `;
+  renderTasksList(activeProjectId, document.getElementById('pdTasklist'));
+  renderProjectRolesEdit();
+}
+
+function switchProjectSubtab(name){
+  projectSubtab = name;
+  document.querySelectorAll('.subtab').forEach(t => t.classList.toggle('active', t.dataset.sub===name));
+  ['uebersicht','board','rollen','aufgaben'].forEach(s => {
+    document.getElementById('subtab-'+s).style.display = (s===name) ? 'block' : 'none';
+  });
+  if(name==='board') renderKanban();
+}
+
+function updateActiveField(field, value){
+  const p = products.find(x=>x.id===activeProjectId);
+  if(!p) return;
+  p[field] = value;
+  saveProduct(p);
+  if(field==='name') renderProjectList();
+}
+
+function setPhase(id, phase){
+  const p = products.find(x=>x.id===id);
+  p.phase = phase;
+  saveProduct(p);
+  renderTally();
+  renderProjectList();
+  if(activeProjectId===id) renderProjectDetail();
+}
+
+/* ===== PROJECTS: ROLES ===== */
+function renderProjectRolesEdit(){
+  const wrap = document.getElementById('pdRolesList');
+  const roles = projectRoles[activeProjectId] || {};
+  const present = ROLE_ORDER.filter(code => roles[code]);
+  wrap.innerHTML = present.length===0
+    ? '<div class="empty">Noch keine Rollen zugewiesen.</div>'
+    : present.map(code => {
+        const r = roles[code];
+        return `
+          <div class="role-edit-row">
+            <span class="rlabel ${ROLE_CLASS[code]}">${ROLE_LABEL[code]}</span>
+            <input value="${escapeAttr(r.person)}" oninput="updateRolePerson('${r.id}',this.value)">
+            <span class="remove-link" onclick="removeProjectRole('${r.id}')">entfernen</span>
+          </div>
+        `;
+      }).join('');
+  const sel = document.getElementById('pdNewRoleCode');
+  const missing = ROLE_ORDER.filter(code => !roles[code]);
+  sel.innerHTML = missing.map(code => `<option value="${code}">${ROLE_LABEL[code]}</option>`).join('') || '<option value="">— alle vergeben —</option>';
+}
+
+async function updateRolePerson(id, value){
+  outer: for(const pid in projectRoles){
+    for(const code in projectRoles[pid]){
+      if(projectRoles[pid][code].id === id){ projectRoles[pid][code].person = value; break outer; }
+    }
+  }
+  const { error } = await sb.from('project_roles').update({ person:value }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
+}
+
+async function addProjectRole(){
+  const code = document.getElementById('pdNewRoleCode').value;
+  const person = document.getElementById('pdNewRolePerson').value.trim();
+  if(!code || !person) return;
+  const { data, error } = await sb.from('project_roles').insert({
+    produkt_id: activeProjectId, role_code: code, role_label: ROLE_LABEL[code], person,
+    sort_order: ROLE_ORDER.indexOf(code)
+  }).select().single();
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  if(!projectRoles[activeProjectId]) projectRoles[activeProjectId] = {};
+  projectRoles[activeProjectId][code] = data;
+  document.getElementById('pdNewRolePerson').value = '';
+  renderProjectRolesEdit();
+  renderRoleMatrix();
+  renderCrewList();
+}
+
+async function removeProjectRole(id){
+  const { error } = await sb.from('project_roles').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  for(const pid in projectRoles){
+    for(const code in projectRoles[pid]){
+      if(projectRoles[pid][code].id === id){ delete projectRoles[pid][code]; }
+    }
+  }
+  renderProjectRolesEdit();
+  renderRoleMatrix();
+  renderCrewList();
 }
 
 function renderLog(){
@@ -971,46 +1060,6 @@ function renderLog(){
       </div>
     </div>
   `).join('');
-}
-
-function toggleOpen(id){
-  const p = products.find(x=>x.id===id);
-  p._open = !p._open;
-  renderProducts();
-}
-
-function updateField(id, field, value){
-  const p = products.find(x=>x.id===id);
-  p[field] = value;
-  saveProduct(p);
-}
-
-function setPhase(id, phase){
-  const p = products.find(x=>x.id===id);
-  p.phase = phase;
-  saveProduct(p);
-  renderTally();
-  renderProducts();
-}
-
-async function addProduct(){
-  const nextNum = products.length ? Math.max(...products.map(p=>p.num))+1 : 1;
-  const { data, error } = await sb.from('produkte').insert({
-    num:nextNum, name:'Neues Produkt', po:'', phase:'a', task:'', notes:''
-  }).select().single();
-  if(error){ setStatus('Fehler: '+error.message); return; }
-  data._open = true;
-  products.push(data);
-  renderProducts();
-  renderTally();
-}
-
-async function removeProduct(id){
-  const { error } = await sb.from('produkte').delete().eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); return; }
-  products = products.filter(p=>p.id!==id);
-  renderProducts();
-  renderTally();
 }
 
 async function addLog(){
@@ -1044,62 +1093,57 @@ function escapeAttr(str){
 function switchTab(name){
   document.querySelectorAll('.nav-item').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.getElementById('tabpanel-control').classList.toggle('active', name === 'control');
+  document.getElementById('tabpanel-projekte').classList.toggle('active', name === 'projekte');
   document.getElementById('tabpanel-crew').classList.toggle('active', name === 'crew');
-  document.getElementById('tabpanel-tickets').classList.toggle('active', name === 'tickets');
   document.getElementById('tabpanel-team').classList.toggle('active', name === 'team');
 }
 
-let crewRows = [];
-
-async function loadCrew(){
-  const { data, error } = await sb.from('crew_candidates').select('*').order('created_at', {ascending:true});
-  if(error){ setStatus('Ladefehler Crew: '+error.message); return; }
-  crewRows = data || [];
-  renderCrew();
+/* ===== CREW (built on app_users + project_roles) ===== */
+function personProjectAssignments(person){
+  const firstToken = (person.name || person.email.split('@')[0]).split(' ')[0].toLowerCase();
+  const out = [];
+  for(const pid in projectRoles){
+    for(const code in projectRoles[pid]){
+      const cell = projectRoles[pid][code];
+      if(cell.person && cell.person.toLowerCase().includes(firstToken)){
+        const prod = products.find(x=>x.id===pid);
+        if(prod) out.push({ produktId: pid, produktName: prod.name, code });
+      }
+    }
+  }
+  return out;
 }
 
-function renderCrew(){
-  const list = document.getElementById('crewRowList');
-  let visible = crewRows;
+function renderCrewList(){
+  const wrap = document.getElementById('crewList');
+  if(!wrap) return;
+  let visible = appUsers;
   if(searchQuery){
-    visible = visible.filter(r =>
-      (r.vorname||'').toLowerCase().includes(searchQuery) ||
-      (r.nachname||'').toLowerCase().includes(searchQuery)
+    visible = visible.filter(u =>
+      (u.name||'').toLowerCase().includes(searchQuery) ||
+      (u.email||'').toLowerCase().includes(searchQuery)
     );
   }
   if(visible.length===0){
-    list.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Keine Namen erfasst.'}</div>`;
+    wrap.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Noch niemand im Team.'}</div>`;
     return;
   }
-  list.innerHTML = visible.map(r => `
-    <div class="crewrow" data-id="${r.id}">
-      <input class="vorname" value="${escapeAttr(r.vorname)}" placeholder="Vorname" oninput="updateCrew('${r.id}','vorname',this.value)">
-      <input value="${escapeAttr(r.nachname)}" placeholder="Nachname" oninput="updateCrew('${r.id}','nachname',this.value)">
-      <span class="remove-link" onclick="removeCrewRow('${r.id}')">entfernen</span>
-    </div>
-  `).join('');
-}
-
-async function updateCrew(id, field, value){
-  const r = crewRows.find(x=>x.id===id);
-  r[field] = value;
-  const { error } = await sb.from('crew_candidates').update({ [field]: value }).eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); }
-  else{ setStatus('gespeichert'); }
-}
-
-async function addCrewRow(){
-  const { data, error } = await sb.from('crew_candidates').insert({ vorname:'', nachname:'' }).select().single();
-  if(error){ setStatus('Fehler: '+error.message); return; }
-  crewRows.push(data);
-  renderCrew();
-}
-
-async function removeCrewRow(id){
-  const { error } = await sb.from('crew_candidates').delete().eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); return; }
-  crewRows = crewRows.filter(r=>r.id!==id);
-  renderCrew();
+  wrap.innerHTML = visible.map(u => {
+    const assignments = personProjectAssignments(u);
+    return `
+      <div class="person-card">
+        <div class="person-card-head">
+          <span class="person-name">${escapeHtml(u.name || u.email)}</span>
+          <span class="person-email">${escapeHtml(u.email)}</span>
+          <span class="person-role-tag">${GLOBAL_ROLE_LABEL[u.global_role] || u.global_role}</span>
+        </div>
+        ${assignments.length === 0
+          ? '<div class="no-assignments">Noch keiner Projekt-Rolle zugeordnet.</div>'
+          : `<div class="person-assignments">${assignments.map(a => `<span class="assignment-tag" onclick="openProjectDetail('${a.produktId}'); switchTab('projekte');">${escapeHtml(a.produktName)} · ${ROLE_LABEL[a.code]}</span>`).join('')}</div>`
+        }
+      </div>
+    `;
+  }).join('');
 }
 
 /* ===== TICKETS MODULE ===== */
@@ -1122,7 +1166,6 @@ let ticketsList = [];
 let activeTicketId = null;
 let inviteToken = null;
 let inviteInfo = null;
-let selectedProjectId = '';
 
 async function submitAuth(){
   const email = document.getElementById('authEmail').value.trim();
@@ -1209,46 +1252,22 @@ async function handleAuthChange(){
   document.getElementById('sidebarUserRole').textContent = GLOBAL_ROLE_LABEL[currentAppUser.global_role] + (currentAppUser.is_admin ? ' · Admin' : '');
   const isAdmin = currentAppUser.is_admin || currentAppUser.global_role === 'mastermind';
   document.getElementById('navTeam').style.display = isAdmin ? 'flex' : 'none';
-  document.getElementById('newTicketBtn').style.display = currentAppUser.global_role === 'sales' ? 'none' : '';
 
   if(!appBooted){
     appBooted = true;
     await loadProjectRoles();
     await loadAll();
-    await loadCrew();
-    loadTasks().then(() => { renderProducts(); loadComments().then(renderProducts); });
+    loadTasks();
     loadReactions().then(renderLog);
   }
 
-  renderProjectChips();
   populateTicketModalSelects();
+  renderCrewList();
   if(isAdmin){ await loadInvites(); renderTeamList(); }
   await loadTickets();
 }
 
-function renderProjectChips(){
-  const wrap = document.getElementById('projectChipRow');
-  if(!wrap) return;
-  const list = sortedProducts();
-  const countFor = (id) => id ? ticketsList.filter(t=>t.produkt_id===id).length : ticketsList.length;
-  const chips = [{id:'', name:'Alle Projekte', priority_order:null}, ...list];
-  wrap.innerHTML = chips.map(p => `
-    <div class="chip ${selectedProjectId===p.id?'active':''}" onclick="selectProject('${p.id}')">
-      ${p.priority_order!=null ? '<span class="prio-dot"></span>' : ''}
-      ${escapeHtml(p.name)}
-      <span class="n">${countFor(p.id)}</span>
-    </div>
-  `).join('');
-}
-
-function selectProject(id){
-  selectedProjectId = id;
-  renderProjectChips();
-  renderKanban();
-}
-
 function populateTicketModalSelects(){
-  document.getElementById('tmProdukt').innerHTML = products.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
   document.getElementById('tmStatus').innerHTML = KANBAN_COLUMNS.map(c => `<option value="${c.code}">${c.label}</option>`).join('');
   document.getElementById('tmFormat').innerHTML = Object.entries(FORMAT_LABEL).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
   document.getElementById('tmRole').innerHTML = '<option value="">—</option>' + Object.entries(GLOBAL_ROLE_LABEL).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
@@ -1285,6 +1304,7 @@ async function addAppUser(){
   await loadAppUsers();
   await loadInvites();
   renderTeamList();
+  renderCrewList();
   populateTicketModalSelects();
 }
 
@@ -1294,6 +1314,7 @@ async function removeAppUser(id){
   await loadAppUsers();
   await loadInvites();
   renderTeamList();
+  renderCrewList();
   populateTicketModalSelects();
 }
 
@@ -1337,13 +1358,13 @@ function renderTeamList(){
   `).join('');
 }
 
-/* --- Tickets / Kanban --- */
+/* --- Tickets / Kanban (scoped to activeProjectId) --- */
 async function loadTickets(){
   const { data, error } = await sb.from('tickets').select('*').order('created_at', {ascending:true});
   if(error){ setStatus('Ladefehler Tickets: '+error.message); return; }
   ticketsList = data || [];
-  renderProjectChips();
-  renderKanban();
+  renderProjectList();
+  if(activeProjectId && projectSubtab==='board') renderKanban();
 }
 
 function ticketTimeline(t){
@@ -1367,8 +1388,8 @@ function canEditTicket(t){
 
 function renderKanban(){
   const wrap = document.getElementById('kanbanWrap');
-  if(!wrap) return;
-  let filtered = selectedProjectId ? ticketsList.filter(t => t.produkt_id === selectedProjectId) : ticketsList;
+  if(!wrap || !activeProjectId) return;
+  let filtered = ticketsList.filter(t => t.produkt_id === activeProjectId);
   if(searchQuery){
     filtered = filtered.filter(t =>
       (t.title||'').toLowerCase().includes(searchQuery) ||
@@ -1389,7 +1410,6 @@ function renderKanban(){
 }
 
 function renderTicketCard(t){
-  const prod = products.find(p => p.id === t.produkt_id);
   const tl = ticketTimeline(t);
   const assignee = appUsers.find(u => u.id === t.assigned_user_id);
   const desc = (t.description || '').slice(0, 60);
@@ -1402,7 +1422,6 @@ function renderTicketCard(t){
       <div class="ticket-title">${escapeHtml(t.title) || '(ohne Titel)'}</div>
       ${desc ? `<div class="ticket-desc">${escapeHtml(desc)}${t.description.length>60?'…':''}</div>` : ''}
       <div class="ticket-meta">
-        <span>${prod ? escapeHtml(prod.name) : ''}</span>
         <span>${assignee ? escapeHtml(assignee.name || assignee.email) : (t.assigned_role ? GLOBAL_ROLE_LABEL[t.assigned_role] : '—')}</span>
       </div>
       ${tl ? `<div class="ticket-timeline"><div class="ticket-timeline-fill ${tl.cls}" style="width:${tl.pct}%;"></div></div>` : ''}
@@ -1430,7 +1449,6 @@ function openTicketModal(id){
   const t = isNew ? null : ticketsList.find(x => x.id === id);
   document.getElementById('ticketModalTitle').textContent = isNew ? 'Neues Ticket' : ('Ticket #' + t.id.slice(0,8).toUpperCase());
   document.getElementById('tmTitle').value = t ? t.title : '';
-  document.getElementById('tmProdukt').value = t ? t.produkt_id : (selectedProjectId || (products[0] && products[0].id) || '');
   document.getElementById('tmStatus').value = t ? t.status : 'backlog';
   document.getElementById('tmFormat').value = t ? t.format_type : 'feature';
   document.getElementById('tmPriority').value = t ? t.priority : 'P2';
@@ -1466,7 +1484,7 @@ function closeTicketModal(){
 async function saveTicket(){
   const payload = {
     title: document.getElementById('tmTitle').value.trim(),
-    produkt_id: document.getElementById('tmProdukt').value,
+    produkt_id: activeProjectId,
     status: document.getElementById('tmStatus').value,
     format_type: document.getElementById('tmFormat').value,
     priority: document.getElementById('tmPriority').value,
