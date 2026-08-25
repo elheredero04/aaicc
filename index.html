@@ -294,20 +294,29 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .subtab:hover{color:var(--text);}
 .subtab.active{color:var(--accent);border-color:var(--accent);}
 
-.role-edit-row{display:grid;grid-template-columns:100px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
-.role-edit-row .rlabel{font-size:12.5px;font-weight:700;}
-.role-edit-row .rlabel.role-mm{color:var(--role-mm);}
-.role-edit-row .rlabel.role-po{color:var(--role-po);}
-.role-edit-row .rlabel.role-edt{color:var(--role-edt);}
-.role-edit-row .rlabel.role-pm{color:var(--role-pm);}
-.role-edit-row .rlabel.role-sales{color:var(--role-sales);}
-.role-edit-row .rlabel.role-infra{color:var(--role-infra);}
-.role-edit-row input{font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 9px;}
-.role-edit-row input:focus{outline:none;border-color:var(--accent);}
-.add-role-row{display:grid;grid-template-columns:140px 1fr auto;gap:10px;margin-top:12px;}
-.add-role-row select,.add-role-row input{
-  font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 10px;
+.role-assign-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;}
+.role-assign-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:9px;}
+.role-assign-label.role-mm{color:var(--role-mm);}
+.role-assign-label.role-po{color:var(--role-po);}
+.role-assign-label.role-edt{color:var(--role-edt);}
+.role-assign-label.role-pm{color:var(--role-pm);}
+.role-assign-label.role-sales{color:var(--role-sales);}
+.role-assign-label.role-infra{color:var(--role-infra);}
+.role-assign-chips{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
+.person-chip{
+  display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);
+  border-radius:100px;padding:5px 6px 5px 13px;font-size:12.5px;color:var(--text);
 }
+.person-chip .x{
+  cursor:pointer;color:var(--text-faint);width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;
+}
+.person-chip .x:hover{background:var(--danger);color:#fff;}
+.role-assign-add{
+  font-size:12.5px;color:var(--text-dim);background:transparent;border:1px dashed var(--border-strong);
+  border-radius:100px;padding:6px 11px;cursor:pointer;
+}
+.role-assign-add:focus{outline:none;border-color:var(--accent);color:var(--accent);}
 .remove-link{font-size:12px;color:var(--text-faint);cursor:pointer;}
 .remove-link:hover{color:var(--danger);}
 
@@ -538,11 +547,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 
         <div class="subtabpanel" id="subtab-rollen" style="display:none;">
           <div id="pdRolesList"></div>
-          <div class="add-role-row">
-            <select id="pdNewRoleCode"></select>
-            <input id="pdNewRolePerson" placeholder="Name(n), z.B. Andi oder Dani M., Tobi Th.">
-            <button class="btn" onclick="addProjectRole()">+ Rolle</button>
-          </div>
         </div>
 
         <div class="subtabpanel" id="subtab-aufgaben" style="display:none;">
@@ -861,13 +865,19 @@ async function addReaction(logId, emoji){
 }
 
 async function loadProjectRoles(){
-  const { data, error } = await sb.from('project_roles').select('*').order('sort_order', {ascending:true});
+  const { data, error } = await sb.from('project_assignments').select('*').order('sort_order', {ascending:true});
   if(error){ setStatus('Ladefehler Rollen: '+error.message); return; }
   projectRoles = {};
   (data||[]).forEach(r => {
     if(!projectRoles[r.produkt_id]) projectRoles[r.produkt_id] = {};
-    projectRoles[r.produkt_id][r.role_code] = r;
+    if(!projectRoles[r.produkt_id][r.role_code]) projectRoles[r.produkt_id][r.role_code] = [];
+    projectRoles[r.produkt_id][r.role_code].push(r);
   });
+}
+
+function personName(appUserId){
+  const u = appUsers.find(x=>x.id===appUserId);
+  return u ? (u.name || u.email) : '—';
 }
 
 function renderRoleCards(){
@@ -898,9 +908,9 @@ function renderRoleMatrix(){
           <tr>
             <td class="role-label ${ROLE_CLASS[code]}">${ROLE_LABEL[code]}</td>
             ${prioProducts.map(p => {
-              const r = projectRoles[p.id] && projectRoles[p.id][code];
-              if(!r) return '<td class="empty-cell">—</td>';
-              return `<td class="person-cell">${escapeHtml(r.person)}</td>`;
+              const rows = projectRoles[p.id] && projectRoles[p.id][code];
+              if(!rows || rows.length===0) return '<td class="empty-cell">—</td>';
+              return `<td class="person-cell">${rows.map(r=>escapeHtml(personName(r.app_user_id))).join(', ')}</td>`;
             }).join('')}
           </tr>
         `).join('')}
@@ -1094,57 +1104,47 @@ function setPhase(id, phase){
 function renderProjectRolesEdit(){
   const wrap = document.getElementById('pdRolesList');
   const roles = projectRoles[activeProjectId] || {};
-  const present = ROLE_ORDER.filter(code => roles[code]);
-  wrap.innerHTML = present.length===0
-    ? '<div class="empty">Noch keine Rollen zugewiesen.</div>'
-    : present.map(code => {
-        const r = roles[code];
-        return `
-          <div class="role-edit-row">
-            <span class="rlabel ${ROLE_CLASS[code]}">${ROLE_LABEL[code]}</span>
-            <input value="${escapeAttr(r.person)}" oninput="updateRolePerson('${r.id}',this.value)">
-            <span class="remove-link" onclick="removeProjectRole('${r.id}')">entfernen</span>
-          </div>
-        `;
-      }).join('');
-  const sel = document.getElementById('pdNewRoleCode');
-  const missing = ROLE_ORDER.filter(code => !roles[code]);
-  sel.innerHTML = missing.map(code => `<option value="${code}">${ROLE_LABEL[code]}</option>`).join('') || '<option value="">— alle vergeben —</option>';
+  wrap.innerHTML = ROLE_ORDER.map(code => {
+    const rows = roles[code] || [];
+    const assignedIds = rows.map(r=>r.app_user_id);
+    const available = appUsers.filter(u => !assignedIds.includes(u.id));
+    return `
+      <div class="role-assign-block">
+        <div class="role-assign-label ${ROLE_CLASS[code]}">${ROLE_LABEL[code]}</div>
+        <div class="role-assign-chips">
+          ${rows.map(r => `
+            <span class="person-chip">${escapeHtml(personName(r.app_user_id))}<span class="x" onclick="removeProjectAssignment('${r.id}')">×</span></span>
+          `).join('')}
+          <select class="role-assign-add" onchange="if(this.value){ addProjectAssignment('${code}', this.value); this.value=''; }">
+            <option value="">+ Person</option>
+            ${available.map(u => `<option value="${u.id}">${escapeHtml(u.name || u.email)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-async function updateRolePerson(id, value){
-  outer: for(const pid in projectRoles){
-    for(const code in projectRoles[pid]){
-      if(projectRoles[pid][code].id === id){ projectRoles[pid][code].person = value; break outer; }
-    }
-  }
-  const { error } = await sb.from('project_roles').update({ person:value }).eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
-}
-
-async function addProjectRole(){
-  const code = document.getElementById('pdNewRoleCode').value;
-  const person = document.getElementById('pdNewRolePerson').value.trim();
-  if(!code || !person) return;
-  const { data, error } = await sb.from('project_roles').insert({
-    produkt_id: activeProjectId, role_code: code, role_label: ROLE_LABEL[code], person,
-    sort_order: ROLE_ORDER.indexOf(code)
+async function addProjectAssignment(code, appUserId){
+  const { data, error } = await sb.from('project_assignments').insert({
+    produkt_id: activeProjectId, role_code: code, role_label: ROLE_LABEL[code],
+    app_user_id: appUserId, sort_order: ROLE_ORDER.indexOf(code)
   }).select().single();
   if(error){ setStatus('Fehler: '+error.message); return; }
   if(!projectRoles[activeProjectId]) projectRoles[activeProjectId] = {};
-  projectRoles[activeProjectId][code] = data;
-  document.getElementById('pdNewRolePerson').value = '';
+  if(!projectRoles[activeProjectId][code]) projectRoles[activeProjectId][code] = [];
+  projectRoles[activeProjectId][code].push(data);
   renderProjectRolesEdit();
   renderRoleMatrix();
   renderCrewList();
 }
 
-async function removeProjectRole(id){
-  const { error } = await sb.from('project_roles').delete().eq('id', id);
+async function removeProjectAssignment(id){
+  const { error } = await sb.from('project_assignments').delete().eq('id', id);
   if(error){ setStatus('Fehler: '+error.message); return; }
   for(const pid in projectRoles){
     for(const code in projectRoles[pid]){
-      if(projectRoles[pid][code].id === id){ delete projectRoles[pid][code]; }
+      projectRoles[pid][code] = projectRoles[pid][code].filter(r=>r.id!==id);
     }
   }
   renderProjectRolesEdit();
@@ -1208,12 +1208,11 @@ function switchTab(name){
 
 /* ===== CREW (built on app_users + project_roles) ===== */
 function personProjectAssignments(person){
-  const firstToken = (person.name || person.email.split('@')[0]).split(' ')[0].toLowerCase();
   const out = [];
   for(const pid in projectRoles){
     for(const code in projectRoles[pid]){
-      const cell = projectRoles[pid][code];
-      if(cell.person && cell.person.toLowerCase().includes(firstToken)){
+      const rows = projectRoles[pid][code];
+      if(rows.some(r => r.app_user_id === person.id)){
         const prod = products.find(x=>x.id===pid);
         if(prod) out.push({ produktId: pid, produktName: prod.name, code });
       }
