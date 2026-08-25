@@ -5,36 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AAICC</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
 :root{
-  --bg:#F5F5F7;
-  --surface:#FFFFFF;
+  --bg:#F1EEE6;
+  --surface:#FBFAF6;
   --surface-raised:#FFFFFF;
-  --border:#E5E5EA;
-  --border-strong:#D2D2D7;
+  --border:#E0DACA;
+  --border-strong:#C9C0A8;
 
-  --text:#1D1D1F;
-  --text-dim:#6E6E73;
-  --text-faint:#98989D;
+  --text:#26231D;
+  --text-dim:#6F6A5A;
+  --text-faint:#9C9584;
 
-  --accent:#0071E3;
-  --accent-hover:#0077ED;
-  --accent-soft:#EAF3FE;
+  --accent:#2B3A5C;
+  --accent-hover:#374971;
+  --accent-soft:#E6E9F0;
 
-  --status-a:#FF9F0A;
-  --status-b:#0071E3;
-  --status-c:#34C759;
-  --danger:#FF3B30;
+  --signal:#B8791A;
+  --signal-soft:#F5E9D2;
 
-  --radius:14px;
-  --radius-sm:9px;
-  --shadow-sm:0 1px 2px rgba(0,0,0,0.04),0 1px 1px rgba(0,0,0,0.035);
-  --shadow-md:0 8px 24px rgba(0,0,0,0.08);
+  --status-a:#B8791A;
+  --status-b:#3D5A80;
+  --status-c:#4C7A5B;
+  --danger:#AE3B34;
 
-  --font-sans:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  --font-mono:ui-monospace,'SF Mono','Menlo','Consolas',monospace;
-  --font-display:'Manrope',-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow-sm:0 1px 2px rgba(38,35,29,0.06),0 1px 1px rgba(38,35,29,0.05);
+  --shadow-md:0 10px 26px rgba(38,35,29,0.14);
+
+  --font-sans:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono','Menlo',monospace;
+  --font-display:'Archivo','Public Sans',-apple-system,sans-serif;
 
   font-family:var(--font-sans);
 }
@@ -139,10 +142,10 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
   position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   padding:18px 18px 18px 22px;box-shadow:var(--shadow-sm);overflow:hidden;
 }
-.role-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);}
+.role-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--signal);}
 .role-card .eyebrow{
   font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:4px;
+  color:var(--signal);margin-bottom:4px;
 }
 .role-card .name{font-family:var(--font-display);font-weight:800;font-size:16.5px;letter-spacing:-0.005em;margin-bottom:8px;}
 .role-card .desc{font-size:12.5px;color:var(--text-dim);line-height:1.55;}
@@ -188,18 +191,26 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .reaction-btn .count{color:var(--accent);font-weight:600;}
 
 /* ===== PRIORITY MATRIX ===== */
-.matrix-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:26px;background:var(--surface);box-shadow:var(--shadow-sm);}
-.matrix{width:100%;border-collapse:collapse;min-width:640px;}
-.matrix th,.matrix td{border-bottom:1px solid var(--border);padding:11px 14px;text-align:left;vertical-align:middle;}
-.matrix th{border-right:1px solid var(--border);}
-.matrix td{border-right:1px solid var(--border);}
-.matrix th:last-child,.matrix td:last-child{border-right:none;}
-.matrix thead th{background:var(--bg);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-dim);white-space:nowrap;}
-.matrix td.role-label{font-size:12.5px;font-weight:700;white-space:nowrap;background:var(--bg);color:var(--text-dim);}
-.matrix td.role-label.role-mm{color:var(--accent);}
-.matrix td.empty-cell{color:var(--text-faint);font-size:12.5px;}
-.matrix td.person-cell{font-size:13px;color:var(--text);}
-.prio-badge{font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:2px 9px;border-radius:100px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;}
+.matrix-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:26px;}
+.matrix-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+.matrix-tile-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg);
+}
+.matrix-tile-head .mt-name{font-family:var(--font-display);font-weight:800;font-size:13.5px;letter-spacing:-0.005em;}
+.matrix-tile-body{padding:4px 14px;}
+.matrix-tile-row{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:9px 0;border-bottom:1px solid var(--border);
+}
+.matrix-tile-row:last-child{border-bottom:none;}
+.matrix-tile-row .mt-role{
+  font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:0.04em;
+  color:var(--text-dim);flex-shrink:0;
+}
+.matrix-tile-row.mt-mm .mt-role{color:var(--signal);}
+.matrix-tile-row .mt-person{font-size:12.5px;color:var(--text);text-align:right;}
+.prio-badge{font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:2px 9px;border-radius:100px;background:var(--signal-soft);color:var(--signal);white-space:nowrap;}
 
 /* ===== AUTH ===== */
 .auth-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}
@@ -284,7 +295,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 
 .role-assign-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;}
 .role-assign-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:9px;color:var(--text-dim);}
-.role-assign-label.role-mm{color:var(--accent);}
+.role-assign-label.role-mm{color:var(--signal);}
 .role-assign-chips{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
 .person-chip{
   display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);
@@ -881,24 +892,33 @@ function renderRoleMatrix(){
     wrap.innerHTML = '<div class="empty">Keine priorisierten Projekte.</div>';
     return;
   }
-  const rolesPresent = ROLE_ORDER.filter(code => prioProducts.some(p => projectRoles[p.id] && projectRoles[p.id][code]));
   wrap.innerHTML = `
-    <div class="matrix-wrap">
-    <table class="matrix">
-      <thead><tr><th></th>${prioProducts.map(p=>`<th>${escapeHtml(p.name)}</th>`).join('')}</tr></thead>
-      <tbody>
-        ${rolesPresent.map(code => `
-          <tr>
-            <td class="role-label ${ROLE_CLASS[code]}">${ROLE_LABEL[code]}</td>
-            ${prioProducts.map(p => {
-              const rows = projectRoles[p.id] && projectRoles[p.id][code];
-              if(!rows || rows.length===0) return '<td class="empty-cell">—</td>';
-              return `<td class="person-cell">${rows.map(r=>escapeHtml(personName(r.app_user_id))).join(', ')}</td>`;
-            }).join('')}
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
+    <div class="matrix-tiles">
+      ${prioProducts.map(p => {
+        const rolesForProject = ROLE_ORDER.filter(code => projectRoles[p.id] && projectRoles[p.id][code] && projectRoles[p.id][code].length);
+        return `
+          <div class="matrix-tile">
+            <div class="matrix-tile-head">
+              <span class="mt-name">${escapeHtml(p.name)}</span>
+              <span class="prio-badge">PRIO ${p.priority_order}</span>
+            </div>
+            <div class="matrix-tile-body">
+              ${rolesForProject.length === 0
+                ? '<div class="empty" style="border:none;padding:14px 0;">Noch keine Rollen.</div>'
+                : rolesForProject.map(code => {
+                    const rows = projectRoles[p.id][code];
+                    return `
+                      <div class="matrix-tile-row ${code==='MM'?'mt-mm':''}">
+                        <span class="mt-role">${ROLE_LABEL[code]}</span>
+                        <span class="mt-person">${rows.map(r=>escapeHtml(personName(r.app_user_id))).join(', ')}</span>
+                      </div>
+                    `;
+                  }).join('')
+              }
+            </div>
+          </div>
+        `;
+      }).join('')}
     </div>
   `;
 }
