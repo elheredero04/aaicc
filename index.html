@@ -191,8 +191,13 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .reaction-btn .count{color:var(--accent);font-weight:600;}
 
 /* ===== PRIORITY MATRIX ===== */
-.matrix-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:26px;}
-.matrix-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+.matrix-tiles{display:flex;align-items:stretch;gap:12px;overflow-x:auto;padding-bottom:8px;margin-bottom:26px;}
+.matrix-tile{
+  flex:0 0 250px;display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);overflow:hidden;
+}
+.matrix-tile-body{flex:1;}
 .matrix-tile-head{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
   padding:12px 14px;border-bottom:1px solid var(--border);background:var(--bg);
@@ -472,7 +477,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
       <div class="role-cards" id="roleCards"></div>
 
       <div class="section-label">
-        <h2>Prioritäts-Matrix</h2>
+        <h2>Hotlist</h2>
       </div>
       <div id="roleMatrixWrap"></div>
 
@@ -900,7 +905,7 @@ function renderRoleMatrix(){
           <div class="matrix-tile">
             <div class="matrix-tile-head">
               <span class="mt-name">${escapeHtml(p.name)}</span>
-              <span class="prio-badge">PRIO ${p.priority_order}</span>
+              <span class="prio-badge">#${p.priority_order}</span>
             </div>
             <div class="matrix-tile-body">
               ${rolesForProject.length === 0
@@ -1013,7 +1018,7 @@ function renderProjectList(){
       <div class="status-light ${p.phase}"></div>
       <div class="project-num">${String(p.num).padStart(2,'0')}</div>
       <div class="project-name">${escapeHtml(p.name)||'(ohne Namen)'}</div>
-      ${p.priority_order!=null ? `<div class="prio-badge">PRIO ${p.priority_order}</div>` : ''}
+      ${p.priority_order!=null ? `<div class="prio-badge">#${p.priority_order}</div>` : ''}
       <div class="project-owner">${escapeHtml(p.po)||'— kein Owner —'}</div>
       <div class="project-ticket-count">${count} Ticket${count===1?'':'s'}</div>
       <div class="phase-readout ${p.phase}">${phaseLabel(p.phase)}</div>
@@ -1067,7 +1072,7 @@ function renderProjectDetail(){
   document.getElementById('pdOwner').value = p.po;
   document.getElementById('pdTask').value = p.task;
   document.getElementById('pdNotes').value = p.notes;
-  document.getElementById('pdNumLabel').textContent = 'Projekt #' + String(p.num).padStart(2,'0') + (p.priority_order!=null ? ' · PRIO '+p.priority_order : '');
+  document.getElementById('pdNumLabel').textContent = 'Projekt #' + String(p.num).padStart(2,'0') + (p.priority_order!=null ? ' · Hotlist #'+p.priority_order : '');
   document.getElementById('pdPhaseRow').innerHTML = `
     <div class="phase-btn ${p.phase==='a'?'active a':''}" onclick="setPhase('${p.id}','a')">Übergabe</div>
     <div class="phase-btn ${p.phase==='b'?'active b':''}" onclick="setPhase('${p.id}','b')">Begleitet</div>
