@@ -129,11 +129,18 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .page-title{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-0.01em;margin:0 0 20px;}
 
 /* ===== ROLE CARDS ===== */
-.role-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:28px;}
-.role-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);}
-.role-card .tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:0.03em;padding:2px 8px;border-radius:100px;margin-bottom:8px;}
-.role-card .name{font-family:var(--font-display);font-weight:700;font-size:14.5px;margin-bottom:6px;}
-.role-card .desc{font-size:12px;color:var(--text-dim);line-height:1.5;}
+.role-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:28px;}
+.role-card{
+  position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 18px 18px 22px;box-shadow:var(--shadow-sm);overflow:hidden;
+}
+.role-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--role-accent,var(--accent));}
+.role-card .eyebrow{
+  font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;
+  color:var(--role-accent,var(--accent));margin-bottom:4px;
+}
+.role-card .name{font-family:var(--font-display);font-weight:800;font-size:16.5px;letter-spacing:-0.005em;margin-bottom:8px;}
+.role-card .desc{font-size:12.5px;color:var(--text-dim);line-height:1.55;}
 
 /* ===== SECTION LABEL ===== */
 .section-label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:32px 0 12px;}
@@ -649,13 +656,19 @@ const ROLE_LABEL = {MM:'MM',PO:'PO',EDT:'EDT',PM:'PM',SALES:'Sales',INFRA:'Infra
 const ROLE_CLASS = {MM:'role-mm',PO:'role-po',EDT:'role-edt',PM:'role-pm',SALES:'role-sales',INFRA:'role-infra',INFRA_BU:'role-infra'};
 
 const GLOBAL_ROLE_DESC = {
-  mastermind: {label:'Mastermind', desc:'Trägt die fachliche Tiefe und die volle Verantwortung. Legt an, überschreibt, räumt auf — wer hier reinkommt, hat das letzte Wort.'},
-  po: {label:'Product Owner', desc:'Der Kopf hinter dem Projekt. Entscheidet, was als Nächstes dran ist, und bringt die eigenen Tickets ins Ziel.'},
-  dev: {label:'Entwickler', desc:'Macht aus Tickets Ergebnisse. Zieht sie durchs Board und trackt ehrlich, wie lange es wirklich gedauert hat.'},
-  pm: {label:'Project Manager', desc:'Behält den Überblick über alle Projekte gleichzeitig, ohne sich in jedes einzelne einzumischen. Kein Löschrecht — dafür der beste Blick aufs große Ganze.'},
-  sales: {label:'Sales', desc:'Schaut rein, ohne anzufassen. Immer im Bild, wann etwas live geht, und der direkte Draht zum Team, wenn Kunden fragen.'}
+  mastermind: {label:'Mastermind', eyebrow:'Letzte Instanz', color:'#FF3B30',
+    desc:'Trägt die volle Verantwortung für das Projekt. Nichts Kritisches passiert ohne sein Ja — und niemand sonst darf löschen.'},
+  po: {label:'Product Owner', eyebrow:'Entscheidet die Reihenfolge', color:'#0071E3',
+    desc:'Verantwortet, was als Nächstes drankommt. Wenn ein Projekt an den falschen Prioritäten arbeitet, liegt das hier.'},
+  dev: {label:'Entwickler', eyebrow:'Setzt um', color:'#AF52DE',
+    desc:'Verantwortet das Ergebnis. Was im Board steht, wird hier real — inklusive ehrlicher Angabe, wie lange es wirklich gedauert hat.'},
+  pm: {label:'Project Manager', eyebrow:'Behält den Überblick', color:'#248A3D',
+    desc:'Verantwortet, dass nichts durchs Raster fällt. Sieht als Einzige:r alle Projekte gleichzeitig — mit Eingriffsrecht, aber ohne Löschrecht.'},
+  sales: {label:'Sales', eyebrow:'Vertritt nach außen', color:'#32ADE6',
+    desc:'Verantwortet die Auskunftsfähigkeit. Weiß jederzeit, wo ein Projekt steht, ohne selbst ins Projekt einzugreifen.'},
+  infra: {label:'Infrastruktur', eyebrow:'Hält es am Laufen', color:'#FF9F0A',
+    desc:'Verantwortet das Fundament, auf dem alle anderen Rollen arbeiten. Unsichtbar, wenn es läuft — entscheidend, wenn nicht.'}
 };
-const ADMIN_DESC = {label:'Admin', desc:'Kein eigener Rang, sondern ein Extra-Schlüssel: darf unabhängig von der Rolle das Team verwalten — einladen, Rollen vergeben, Zugänge zurücksetzen.'};
 
 function onSearchInput(value){
   searchQuery = value.trim().toLowerCase();
@@ -759,8 +772,9 @@ async function loadProjectRoles(){
 function renderRoleCards(){
   const wrap = document.getElementById('roleCards');
   wrap.innerHTML = Object.entries(GLOBAL_ROLE_DESC).map(([code, r]) => `
-    <div class="role-card">
-      <span class="tag" style="background:var(--accent-soft);color:var(--accent);">${r.label}</span>
+    <div class="role-card" style="--role-accent:${r.color};">
+      <div class="eyebrow">${r.eyebrow}</div>
+      <div class="name">${r.label}</div>
       <div class="desc">${r.desc}</div>
     </div>
   `).join('');
