@@ -649,12 +649,13 @@ const ROLE_LABEL = {MM:'MM',PO:'PO',EDT:'EDT',PM:'PM',SALES:'Sales',INFRA:'Infra
 const ROLE_CLASS = {MM:'role-mm',PO:'role-po',EDT:'role-edt',PM:'role-pm',SALES:'role-sales',INFRA:'role-infra',INFRA_BU:'role-infra'};
 
 const GLOBAL_ROLE_DESC = {
-  mastermind: {label:'Mastermind', desc:'Volle Kontrolle: erstellt, editiert und löscht überall, weist Rollen zu.'},
-  po: {label:'Product Owner', desc:'Erstellt und priorisiert Tickets für die eigenen Projekte, editiert eigene Tickets.'},
-  dev: {label:'Entwickler', desc:'Sieht zugewiesene Tickets, bewegt sie durch die Spalten, trackt geplante vs. erledigte Stunden.'},
-  pm: {label:'Project Manager', desc:'Timeline-Überblick über alle Projekte, kann überall eingreifen, kein Löschrecht.'},
-  sales: {label:'Sales', desc:'Nur-Lese-Zugriff auf Status und Timeline, kommentiert über den Chat.'}
+  mastermind: {label:'Mastermind', desc:'Trägt die fachliche Tiefe und die volle Verantwortung. Legt an, überschreibt, räumt auf — wer hier reinkommt, hat das letzte Wort.'},
+  po: {label:'Product Owner', desc:'Der Kopf hinter dem Projekt. Entscheidet, was als Nächstes dran ist, und bringt die eigenen Tickets ins Ziel.'},
+  dev: {label:'Entwickler', desc:'Macht aus Tickets Ergebnisse. Zieht sie durchs Board und trackt ehrlich, wie lange es wirklich gedauert hat.'},
+  pm: {label:'Project Manager', desc:'Behält den Überblick über alle Projekte gleichzeitig, ohne sich in jedes einzelne einzumischen. Kein Löschrecht — dafür der beste Blick aufs große Ganze.'},
+  sales: {label:'Sales', desc:'Schaut rein, ohne anzufassen. Immer im Bild, wann etwas live geht, und der direkte Draht zum Team, wenn Kunden fragen.'}
 };
+const ADMIN_DESC = {label:'Admin', desc:'Kein eigener Rang, sondern ein Extra-Schlüssel: darf unabhängig von der Rolle das Team verwalten — einladen, Rollen vergeben, Zugänge zurücksetzen.'};
 
 function onSearchInput(value){
   searchQuery = value.trim().toLowerCase();
