@@ -84,6 +84,18 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
   content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);
   color:var(--text-faint);font-size:14px;pointer-events:none;
 }
+.search-results{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-md);max-height:400px;overflow-y:auto;z-index:40;display:none;
+}
+.search-results.open{display:block;}
+.search-result-group{padding:9px 12px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-faint);}
+.search-result-item{padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;gap:1px;}
+.search-result-item:hover{background:var(--bg);}
+.search-result-item .srtitle{font-size:13px;color:var(--text);font-weight:500;}
+.search-result-item .srmeta{font-size:11px;color:var(--text-faint);}
+.search-empty{padding:16px 12px;font-size:12.5px;color:var(--text-faint);text-align:center;}
 
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;}
 .nav-item{
@@ -425,7 +437,8 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
     </div>
 
     <div class="sidebar-search">
-      <input id="globalSearch" placeholder="Suchen…" oninput="onSearchInput(this.value)">
+      <input id="globalSearch" placeholder="Suchen…" oninput="onSearchInput(this.value)" onfocus="if(searchQuery) renderSearchResults()" onblur="setTimeout(closeSearchResults, 150)">
+      <div class="search-results" id="searchResults"></div>
     </div>
 
     <div class="sidebar-nav">
@@ -672,9 +685,97 @@ const GLOBAL_ROLE_DESC = {
 
 function onSearchInput(value){
   searchQuery = value.trim().toLowerCase();
-  renderProjectList();
-  renderCrewList();
-  renderKanban();
+  renderSearchResults();
+}
+
+function closeSearchResults(){
+  const box = document.getElementById('searchResults');
+  box.classList.remove('open');
+}
+
+function renderSearchResults(){
+  const box = document.getElementById('searchResults');
+  const q = searchQuery;
+  if(!q){ box.classList.remove('open'); box.innerHTML = ''; return; }
+
+  const projectMatches = products.filter(p =>
+    (p.name||'').toLowerCase().includes(q) || (p.po||'').toLowerCase().includes(q) ||
+    (p.notes||'').toLowerCase().includes(q) || (p.task||'').toLowerCase().includes(q)
+  ).slice(0, 6);
+
+  const ticketMatches = (typeof ticketsList !== 'undefined' ? ticketsList : []).filter(t =>
+    (t.title||'').toLowerCase().includes(q) || (t.description||'').toLowerCase().includes(q)
+  ).slice(0, 6);
+
+  const crewMatches = (typeof appUsers !== 'undefined' ? appUsers : []).filter(u =>
+    (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q)
+  ).slice(0, 6);
+
+  if(projectMatches.length===0 && ticketMatches.length===0 && crewMatches.length===0){
+    box.innerHTML = `<div class="search-empty">Keine Treffer für "${escapeHtml(q)}"</div>`;
+    box.classList.add('open');
+    return;
+  }
+
+  let html = '';
+  if(projectMatches.length){
+    html += '<div class="search-result-group">Projekte</div>';
+    html += projectMatches.map(p => `
+      <div class="search-result-item" onmousedown="jumpToProject('${p.id}')">
+        <span class="srtitle">${escapeHtml(p.name)}</span>
+        <span class="srmeta">${phaseLabel(p.phase)}${p.po ? ' · '+escapeHtml(p.po) : ''}</span>
+      </div>
+    `).join('');
+  }
+  if(ticketMatches.length){
+    html += '<div class="search-result-group">Tickets</div>';
+    html += ticketMatches.map(t => {
+      const prod = products.find(x=>x.id===t.produkt_id);
+      return `
+        <div class="search-result-item" onmousedown="jumpToTicket('${t.id}','${t.produkt_id}')">
+          <span class="srtitle">${escapeHtml(t.title) || '(ohne Titel)'}</span>
+          <span class="srmeta">${prod ? escapeHtml(prod.name) : ''} · ${t.status}</span>
+        </div>
+      `;
+    }).join('');
+  }
+  if(crewMatches.length){
+    html += '<div class="search-result-group">Crew</div>';
+    html += crewMatches.map(u => `
+      <div class="search-result-item" onmousedown="jumpToCrew()">
+        <span class="srtitle">${escapeHtml(u.name || u.email)}</span>
+        <span class="srmeta">${GLOBAL_ROLE_LABEL[u.global_role] || u.global_role}</span>
+      </div>
+    `).join('');
+  }
+  box.innerHTML = html;
+  box.classList.add('open');
+}
+
+function clearSearch(){
+  searchQuery = '';
+  const input = document.getElementById('globalSearch');
+  if(input) input.value = '';
+  closeSearchResults();
+}
+
+function jumpToProject(id){
+  switchTab('projekte');
+  openProjectDetail(id);
+  clearSearch();
+}
+
+function jumpToTicket(ticketId, produktId){
+  switchTab('projekte');
+  openProjectDetail(produktId);
+  switchProjectSubtab('board');
+  openTicketModal(ticketId);
+  clearSearch();
+}
+
+function jumpToCrew(){
+  switchTab('crew');
+  clearSearch();
 }
 
 async function loadComments(){
@@ -887,17 +988,9 @@ function renderProjectList(){
   const list = document.getElementById('projectList');
   if(!list) return;
   let visible = sortedProducts();
-  if(searchQuery){
-    visible = visible.filter(p =>
-      (p.name||'').toLowerCase().includes(searchQuery) ||
-      (p.po||'').toLowerCase().includes(searchQuery) ||
-      (p.task||'').toLowerCase().includes(searchQuery) ||
-      (p.notes||'').toLowerCase().includes(searchQuery)
-    );
-  }
   document.getElementById('projectListCount').textContent = visible.length + (visible.length===1 ? ' Projekt' : ' Projekte');
   if(visible.length===0){
-    list.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Keine Projekte angelegt.'}</div>`;
+    list.innerHTML = '<div class="empty">Keine Projekte angelegt.</div>';
     return;
   }
   list.innerHTML = visible.map(p => {
@@ -1133,14 +1226,8 @@ function renderCrewList(){
   const wrap = document.getElementById('crewList');
   if(!wrap) return;
   let visible = appUsers;
-  if(searchQuery){
-    visible = visible.filter(u =>
-      (u.name||'').toLowerCase().includes(searchQuery) ||
-      (u.email||'').toLowerCase().includes(searchQuery)
-    );
-  }
   if(visible.length===0){
-    wrap.innerHTML = `<div class="empty">${searchQuery ? 'Keine Treffer.' : 'Noch niemand im Team.'}</div>`;
+    wrap.innerHTML = '<div class="empty">Noch niemand im Team.</div>';
     return;
   }
   wrap.innerHTML = visible.map(u => {
@@ -1404,13 +1491,7 @@ function canEditTicket(t){
 function renderKanban(){
   const wrap = document.getElementById('kanbanWrap');
   if(!wrap || !activeProjectId) return;
-  let filtered = ticketsList.filter(t => t.produkt_id === activeProjectId);
-  if(searchQuery){
-    filtered = filtered.filter(t =>
-      (t.title||'').toLowerCase().includes(searchQuery) ||
-      (t.description||'').toLowerCase().includes(searchQuery)
-    );
-  }
+  const filtered = ticketsList.filter(t => t.produkt_id === activeProjectId);
   wrap.innerHTML = KANBAN_COLUMNS.map(col => {
     const colTickets = filtered.filter(t => t.status === col.code);
     return `
