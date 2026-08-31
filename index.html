@@ -1682,10 +1682,20 @@ function renderTeamList(){
         ${!u.auth_user_id
           ? `<span class="remove-link" onclick="copyInviteLink('${u.id}')">Link kopieren</span> · `
           : `<span class="remove-link" onclick="createResetLink('${u.id}')">Passwort zurücksetzen</span> · `}
+        <span class="remove-link" onclick="toggleAppUserAdmin('${u.id}', ${!u.is_admin})">${u.is_admin ? 'Admin entfernen' : 'Admin machen'}</span> ·
         <span class="remove-link" onclick="removeAppUser('${u.id}')">entfernen</span>
       </span>
     </div>
   `).join('');
+}
+
+async function toggleAppUserAdmin(userId, makeAdmin){
+  const { error } = await sb.from('app_users').update({ is_admin: makeAdmin }).eq('id', userId);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  const u = appUsers.find(x=>x.id===userId);
+  if(u) u.is_admin = makeAdmin;
+  renderTeamList();
+  setStatus('gespeichert');
 }
 
 /* --- Tickets / Kanban (scoped to activeProjectId) --- */
