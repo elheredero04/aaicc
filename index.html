@@ -162,28 +162,20 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .btn.secondary{background:var(--surface);color:var(--accent);border:1px solid var(--border-strong);}
 .btn.secondary:hover{background:var(--accent-soft);}
 
-/* ===== TASKS ===== */
-.tasklist{margin-top:14px;}
-.taskrow{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
-.taskrow:last-child{border-bottom:none;}
-.task-check{
-  width:17px;height:17px;border-radius:50%;border:1.5px solid var(--border-strong);
-  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  font-size:10px;color:#fff;
-}
-.task-check.done{background:var(--status-c);border-color:var(--status-c);}
-.task-text{flex:1;font-size:13px;font-family:var(--font-sans);background:transparent;border:none;color:var(--text);padding:2px 0;}
-.task-text.done{color:var(--text-faint);text-decoration:line-through;}
-.task-text:focus{outline:none;}
-.task-due{
-  font-size:11.5px;font-family:var(--font-mono);color:var(--text-faint);
-  background:transparent;border:none;width:108px;flex-shrink:0;
-}
-.task-due:focus{outline:none;color:var(--text);}
-.task-del{color:var(--text-faint);cursor:pointer;font-size:13px;}
-.task-del:hover{color:var(--danger);}
-.task-add{font-size:12.5px;color:var(--accent);cursor:pointer;margin-top:8px;font-weight:500;}
-.task-add:hover{text-decoration:underline;}
+/* ===== CHAT ===== */
+.chat-list{max-height:420px;overflow-y:auto;margin-bottom:14px;padding-right:4px;}
+.chat-message{padding:9px 0;border-bottom:1px solid var(--border);}
+.chat-message:last-child{border-bottom:none;}
+.chat-message-head{display:flex;align-items:baseline;gap:8px;margin-bottom:3px;}
+.chat-author{font-size:12.5px;font-weight:700;}
+.chat-time{font-size:10.5px;color:var(--text-faint);font-family:var(--font-mono);}
+.chat-text{font-size:13px;line-height:1.5;white-space:pre-wrap;}
+.chat-divider{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:var(--signal);text-transform:uppercase;letter-spacing:0.04em;margin:10px 0;}
+.chat-divider::after{content:'';flex:1;height:1px;background:var(--signal);opacity:0.35;}
+.chat-input-row{display:flex;gap:10px;align-items:flex-end;}
+.chat-input-row textarea{flex:1;font-family:var(--font-sans);font-size:13px;padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);resize:vertical;}
+.chat-input-row textarea:focus{outline:none;border-color:var(--accent);}
+.subtab-badge{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--signal);margin-left:6px;vertical-align:middle;}
 
 /* ===== REACTIONS ===== */
 .reactions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
@@ -270,7 +262,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .status-light.c{background:var(--status-c);}
 .project-num{font-family:var(--font-mono);font-size:11px;color:var(--text-faint);width:22px;flex-shrink:0;}
 .project-name{font-family:var(--font-display);font-weight:700;font-size:14.5px;flex:1;min-width:100px;}
-.project-owner{font-size:12.5px;color:var(--text-dim);min-width:100px;}
 .phase-readout{font-size:10.5px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;padding:4px 10px;border-radius:100px;}
 .phase-readout.a{color:var(--status-a);background:rgba(255,159,10,0.12);}
 .phase-readout.b{color:var(--status-b);background:var(--accent-soft);}
@@ -551,25 +542,13 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
           <div class="subtab active" data-sub="uebersicht" onclick="switchProjectSubtab('uebersicht')">Übersicht</div>
           <div class="subtab" data-sub="board" onclick="switchProjectSubtab('board')">Board</div>
           <div class="subtab" data-sub="rollen" onclick="switchProjectSubtab('rollen')">Rollen</div>
-          <div class="subtab" data-sub="aufgaben" onclick="switchProjectSubtab('aufgaben')">Aufgaben</div>
+          <div class="subtab" data-sub="chat" onclick="switchProjectSubtab('chat')">Chat<span class="subtab-badge" id="chatSubtabBadge" style="display:none;"></span></div>
           <div class="subtab" data-sub="formate" onclick="switchProjectSubtab('formate')">Formate</div>
         </div>
 
         <div class="subtabpanel" id="subtab-uebersicht">
           <div class="readout" id="pdBoardStats"></div>
           <div class="board-open-list" id="pdBoardOpenList"></div>
-          <div class="field">
-            <label>Owner</label>
-            <input id="pdOwner" oninput="updateActiveField('po',this.value)" placeholder="Name eintragen">
-          </div>
-          <div class="field">
-            <label>24h-Auftrag (aktuell)</label>
-            <textarea id="pdTask" oninput="updateActiveField('task',this.value)" placeholder="Wer macht bis morgen was"></textarea>
-          </div>
-          <div class="field">
-            <label>Notiz</label>
-            <textarea id="pdNotes" oninput="updateActiveField('notes',this.value)" placeholder="Blockaden, Kontext, offene Punkte"></textarea>
-          </div>
           <div class="row-actions">
             <span class="remove-link" onclick="removeProduct(activeProjectId); closeProjectDetail();">Projekt entfernen</span>
           </div>
@@ -586,9 +565,12 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
           <div id="pdRolesList"></div>
         </div>
 
-        <div class="subtabpanel" id="subtab-aufgaben" style="display:none;">
-          <div class="tasklist" id="pdTasklist"></div>
-          <div class="task-add" onclick="addTaskToActive()">+ Aufgabe</div>
+        <div class="subtabpanel" id="subtab-chat" style="display:none;">
+          <div class="chat-list" id="pdChatList"></div>
+          <div class="chat-input-row">
+            <textarea id="pdChatInput" placeholder="Nachricht an alle im Projekt…" rows="2"></textarea>
+            <button class="btn" onclick="sendChatMessage()">Senden</button>
+          </div>
         </div>
 
         <div class="subtabpanel" id="subtab-formate" style="display:none;">
@@ -707,7 +689,8 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let products = [];
 let log = [];
-let tasks = {};
+let chatReads = {};
+let chatSummary = {};
 let reactions = {};
 let comments = {};
 let projectRoles = {};
@@ -896,66 +879,79 @@ async function removeRitual(id, refreshFn){
   refreshFn();
 }
 
-async function loadTasks(){
-  const { data, error } = await sb.from('tasks').select('*').order('created_at', {ascending:true});
-  if(error){ setStatus('Ladefehler Tasks: '+error.message); return; }
-  tasks = {};
-  (data||[]).forEach(t => {
-    if(!tasks[t.produkt_id]) tasks[t.produkt_id] = [];
-    tasks[t.produkt_id].push(t);
+/* --- Chat (per Projekt, mit Unread-Tracking) --- */
+async function loadChatReads(){
+  const { data, error } = await sb.from('chat_reads').select('*').eq('app_user_id', currentAppUser.id);
+  if(error){ setStatus('Ladefehler Chat: '+error.message); return; }
+  chatReads = {};
+  (data||[]).forEach(r => { chatReads[r.produkt_id] = r.last_read_at; });
+}
+
+async function loadChatSummary(){
+  const { data, error } = await sb.from('chat_messages').select('produkt_id, created_at');
+  if(error){ setStatus('Ladefehler Chat: '+error.message); return; }
+  chatSummary = {};
+  (data||[]).forEach(m => {
+    const cur = chatSummary[m.produkt_id];
+    if(!cur || m.created_at > cur) chatSummary[m.produkt_id] = m.created_at;
   });
 }
 
-function renderTasksList(produktId, targetEl){
-  const list = tasks[produktId] || [];
-  targetEl.innerHTML = list.length===0
-    ? '<div class="empty">Keine Aufgaben.</div>'
-    : list.map(t => `
-      <div class="taskrow">
-        <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}','${produktId}')">${t.done?'✓':''}</div>
-        <input class="task-text ${t.done?'done':''}" value="${escapeAttr(t.text)}" oninput="updateTaskText('${t.id}','${produktId}',this.value)">
-        <input class="task-due" type="date" value="${t.due_date||''}" oninput="updateTaskDue('${t.id}','${produktId}',this.value)">
-        <div class="task-del" onclick="deleteTask('${t.id}','${produktId}')">×</div>
-      </div>
-    `).join('');
+function hasUnreadChat(produktId){
+  const last = chatSummary[produktId];
+  if(!last) return false;
+  const read = chatReads[produktId];
+  return !read || last > read;
 }
 
-async function updateTaskDue(id, produktId, value){
-  const t = tasks[produktId].find(x=>x.id===id);
-  t.due_date = value || null;
-  const { error } = await sb.from('tasks').update({ due_date: t.due_date }).eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
+async function openProjectChat(produktId){
+  const { data, error } = await sb.from('chat_messages').select('*').eq('produkt_id', produktId).order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Chat: '+error.message); return; }
+  const prevRead = chatReads[produktId] || null;
+  renderChatList(data||[], prevRead);
+  const nowIso = new Date().toISOString();
+  const { error: upErr } = await sb.from('chat_reads').upsert({ produkt_id: produktId, app_user_id: currentAppUser.id, last_read_at: nowIso });
+  if(!upErr){
+    chatReads[produktId] = nowIso;
+    renderProjectList();
+    updateChatSubtabBadge();
+  }
 }
 
-async function addTaskToActive(){
-  if(!activeProjectId) return;
-  const { data, error } = await sb.from('tasks').insert({ produkt_id:activeProjectId, text:'Neue Aufgabe', done:false }).select().single();
+function renderChatList(messages, prevRead){
+  const wrap = document.getElementById('pdChatList');
+  if(!wrap) return;
+  if(messages.length===0){ wrap.innerHTML = '<div class="empty">Noch keine Nachrichten.</div>'; return; }
+  let dividerShown = false;
+  wrap.innerHTML = messages.map(m => {
+    const author = appUsers.find(u => u.id === m.author_id);
+    const isNew = !dividerShown && prevRead && m.created_at > prevRead;
+    const divider = isNew ? (dividerShown = true, '<div class="chat-divider">Neu</div>') : '';
+    const ts = new Date(m.created_at).toLocaleString('de-AT', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `${divider}<div class="chat-message">
+      <div class="chat-message-head"><span class="chat-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span><span class="chat-time">${ts}</span></div>
+      <div class="chat-text">${escapeHtml(m.message)}</div>
+    </div>`;
+  }).join('');
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+async function sendChatMessage(){
+  const input = document.getElementById('pdChatInput');
+  const text = input.value.trim();
+  if(!text || !activeProjectId) return;
+  const { error } = await sb.from('chat_messages').insert({ produkt_id: activeProjectId, author_id: currentAppUser.id, message: text });
   if(error){ setStatus('Fehler: '+error.message); return; }
-  if(!tasks[activeProjectId]) tasks[activeProjectId] = [];
-  tasks[activeProjectId].push(data);
-  renderTasksList(activeProjectId, document.getElementById('pdTasklist'));
+  input.value = '';
+  await loadChatSummary();
+  await openProjectChat(activeProjectId);
 }
 
-async function toggleTask(id, produktId){
-  const t = tasks[produktId].find(x=>x.id===id);
-  t.done = !t.done;
-  const { error } = await sb.from('tasks').update({ done:t.done }).eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); }
-  if(activeProjectId===produktId) renderTasksList(produktId, document.getElementById('pdTasklist'));
-}
-
-async function updateTaskText(id, produktId, value){
-  const t = tasks[produktId].find(x=>x.id===id);
-  t.text = value;
-  const { error } = await sb.from('tasks').update({ text:value }).eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); } else { setStatus('gespeichert'); }
-}
-
-async function deleteTask(id, produktId){
-  const { error } = await sb.from('tasks').delete().eq('id', id);
-  if(error){ setStatus('Fehler: '+error.message); return; }
-  tasks[produktId] = tasks[produktId].filter(t=>t.id!==id);
-  if(activeProjectId===produktId) renderTasksList(produktId, document.getElementById('pdTasklist'));
+function updateChatSubtabBadge(){
+  const badge = document.getElementById('chatSubtabBadge');
+  if(!badge || !activeProjectId) return;
+  const unread = hasUnreadChat(activeProjectId);
+  badge.style.display = unread ? 'inline-block' : 'none';
 }
 
 async function loadReactions(){
@@ -1133,8 +1129,8 @@ function renderProjectList(){
       <div class="project-num">${String(p.num).padStart(2,'0')}</div>
       <div class="project-name">${escapeHtml(p.name)||'(ohne Namen)'}</div>
       ${p.priority_order!=null ? `<div class="prio-badge">#${p.priority_order}</div>` : ''}
-      <div class="project-owner">${escapeHtml(p.po)||'— kein Owner —'}</div>
       <div class="project-ticket-count">${count} Ticket${count===1?'':'s'}</div>
+      ${hasUnreadChat(p.id) ? '<span class="subtab-badge" title="Neue Chat-Nachrichten"></span>' : ''}
       <div class="phase-readout ${p.phase}">${phaseLabel(p.phase)}</div>
       <div class="caret-right">›</div>
     </div>
@@ -1170,6 +1166,7 @@ function openProjectDetail(id){
   document.getElementById('projectDetailView').style.display = 'block';
   renderProjectDetail();
   switchProjectSubtab('uebersicht');
+  updateChatSubtabBadge();
 }
 
 function closeProjectDetail(){
@@ -1183,16 +1180,12 @@ function renderProjectDetail(){
   const p = products.find(x=>x.id===activeProjectId);
   if(!p) return;
   document.getElementById('pdName').value = p.name;
-  document.getElementById('pdOwner').value = p.po;
-  document.getElementById('pdTask').value = p.task;
-  document.getElementById('pdNotes').value = p.notes;
   document.getElementById('pdNumLabel').textContent = 'Projekt #' + String(p.num).padStart(2,'0') + (p.priority_order!=null ? ' · Hotlist #'+p.priority_order : '');
   document.getElementById('pdPhaseRow').innerHTML = `
     <div class="phase-btn ${p.phase==='a'?'active a':''}" onclick="setPhase('${p.id}','a')">Übergabe</div>
     <div class="phase-btn ${p.phase==='b'?'active b':''}" onclick="setPhase('${p.id}','b')">Begleitet</div>
     <div class="phase-btn ${p.phase==='c'?'active c':''}" onclick="setPhase('${p.id}','c')">Eigenständig</div>
   `;
-  renderTasksList(activeProjectId, document.getElementById('pdTasklist'));
   renderProjectRolesEdit();
   renderProjectBoardSummary();
 }
@@ -1200,11 +1193,12 @@ function renderProjectDetail(){
 function switchProjectSubtab(name){
   projectSubtab = name;
   document.querySelectorAll('.subtab').forEach(t => t.classList.toggle('active', t.dataset.sub===name));
-  ['uebersicht','board','rollen','aufgaben','formate'].forEach(s => {
+  ['uebersicht','board','rollen','chat','formate'].forEach(s => {
     document.getElementById('subtab-'+s).style.display = (s===name) ? 'block' : 'none';
   });
   if(name==='board') renderKanban();
   if(name==='formate') renderProjectRituals();
+  if(name==='chat') openProjectChat(activeProjectId);
 }
 
 function updateActiveField(field, value){
@@ -1316,10 +1310,6 @@ async function addLog(){
 function escapeHtml(str){
   if(!str) return '';
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function escapeAttr(str){
-  if(!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
 }
 
 function switchTab(name){
@@ -1483,7 +1473,8 @@ async function handleAuthChange(){
     await loadProjectRoles();
     await loadRituals();
     await loadAll();
-    loadTasks();
+    await loadChatReads();
+    loadChatSummary().then(renderProjectList);
     loadReactions().then(renderLog);
   }
 
