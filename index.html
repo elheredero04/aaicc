@@ -169,7 +169,12 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .chat-message-head{display:flex;align-items:baseline;gap:8px;margin-bottom:3px;}
 .chat-author{font-size:12.5px;font-weight:700;}
 .chat-time{font-size:10.5px;color:var(--text-faint);font-family:var(--font-mono);}
+.chat-msg-actions{margin-left:auto;font-size:11px;}
+.chat-msg-actions .remove-link{font-size:11px;}
 .chat-text{font-size:13px;line-height:1.5;white-space:pre-wrap;}
+.chat-reactions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.chat-edit-input{width:100%;font-family:var(--font-sans);font-size:13px;padding:7px 9px;border:1px solid var(--accent);border-radius:var(--radius);background:var(--surface);color:var(--text);resize:vertical;margin-top:2px;}
+.chat-edit-actions{display:flex;gap:12px;margin-top:6px;}
 .chat-divider{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;color:var(--signal);text-transform:uppercase;letter-spacing:0.04em;margin:10px 0;}
 .chat-divider::after{content:'';flex:1;height:1px;background:var(--signal);opacity:0.35;}
 .chat-input-row{display:flex;gap:10px;align-items:flex-end;}
@@ -904,11 +909,29 @@ function hasUnreadChat(produktId){
   return !read || last > read;
 }
 
+const CHAT_EMOJI = ['🔥','👍','🎉'];
+let currentChatMessages = [];
+let currentChatPrevRead = null;
+let currentChatReactions = {};
+let editingChatMessageId = null;
+
 async function openProjectChat(produktId){
   const { data, error } = await sb.from('chat_messages').select('*').eq('produkt_id', produktId).order('created_at', {ascending:true});
   if(error){ setStatus('Ladefehler Chat: '+error.message); return; }
-  const prevRead = chatReads[produktId] || null;
-  renderChatList(data||[], prevRead);
+  currentChatMessages = data || [];
+  currentChatPrevRead = chatReads[produktId] || null;
+  editingChatMessageId = null;
+  const ids = currentChatMessages.map(m=>m.id);
+  currentChatReactions = {};
+  if(ids.length){
+    const { data: rx, error: rxErr } = await sb.from('chat_message_reactions').select('*').in('message_id', ids);
+    if(rxErr){ setStatus('Ladefehler Reactions: '+rxErr.message); }
+    (rx||[]).forEach(r => {
+      if(!currentChatReactions[r.message_id]) currentChatReactions[r.message_id] = {};
+      currentChatReactions[r.message_id][r.emoji] = (currentChatReactions[r.message_id][r.emoji]||0) + 1;
+    });
+  }
+  renderChatList();
   const nowIso = new Date().toISOString();
   const { error: upErr } = await sb.from('chat_reads').upsert({ produkt_id: produktId, app_user_id: currentAppUser.id, last_read_at: nowIso });
   if(!upErr){
@@ -918,19 +941,40 @@ async function openProjectChat(produktId){
   }
 }
 
-function renderChatList(messages, prevRead){
+function renderChatList(){
   const wrap = document.getElementById('pdChatList');
   if(!wrap) return;
-  if(messages.length===0){ wrap.innerHTML = '<div class="empty">Noch keine Nachrichten.</div>'; return; }
+  if(currentChatMessages.length===0){ wrap.innerHTML = '<div class="empty">Noch keine Nachrichten.</div>'; return; }
   let dividerShown = false;
-  wrap.innerHTML = messages.map(m => {
+  wrap.innerHTML = currentChatMessages.map(m => {
     const author = appUsers.find(u => u.id === m.author_id);
-    const isNew = !dividerShown && prevRead && m.created_at > prevRead;
+    const isNew = !dividerShown && currentChatPrevRead && m.created_at > currentChatPrevRead;
     const divider = isNew ? (dividerShown = true, '<div class="chat-divider">Neu</div>') : '';
     const ts = new Date(m.created_at).toLocaleString('de-AT', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const mine = m.author_id === currentAppUser.id;
+
+    if(m.id === editingChatMessageId){
+      return `${divider}<div class="chat-message">
+        <div class="chat-message-head"><span class="chat-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span><span class="chat-time">${ts}</span></div>
+        <textarea class="chat-edit-input" id="chatEditInput-${m.id}" rows="2">${escapeHtml(m.message)}</textarea>
+        <div class="chat-edit-actions">
+          <span class="remove-link" onclick="saveEditChatMessage('${m.id}')">Speichern</span>
+          <span class="remove-link" onclick="cancelEditChatMessage()">Abbrechen</span>
+        </div>
+      </div>`;
+    }
+
+    const rxCounts = currentChatReactions[m.id] || {};
     return `${divider}<div class="chat-message">
-      <div class="chat-message-head"><span class="chat-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span><span class="chat-time">${ts}</span></div>
+      <div class="chat-message-head">
+        <span class="chat-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span>
+        <span class="chat-time">${ts}${m.edited_at ? ' · bearbeitet' : ''}</span>
+        ${mine ? `<span class="chat-msg-actions"><span class="remove-link" onclick="startEditChatMessage('${m.id}')">bearbeiten</span> · <span class="remove-link" onclick="deleteChatMessage('${m.id}')">löschen</span></span>` : ''}
+      </div>
       <div class="chat-text">${escapeHtml(m.message)}</div>
+      <div class="chat-reactions">
+        ${CHAT_EMOJI.map(emo => `<div class="reaction-btn" onclick="addChatReaction('${m.id}','${emo}')">${emo} <span class="count">${rxCounts[emo]||0}</span></div>`).join('')}
+      </div>
     </div>`;
   }).join('');
   wrap.scrollTop = wrap.scrollHeight;
@@ -945,6 +989,41 @@ async function sendChatMessage(){
   input.value = '';
   await loadChatSummary();
   await openProjectChat(activeProjectId);
+}
+
+function startEditChatMessage(id){
+  editingChatMessageId = id;
+  renderChatList();
+}
+
+function cancelEditChatMessage(){
+  editingChatMessageId = null;
+  renderChatList();
+}
+
+async function saveEditChatMessage(id){
+  const input = document.getElementById('chatEditInput-'+id);
+  const text = input.value.trim();
+  if(!text) return;
+  const { error } = await sb.from('chat_messages').update({ message: text, edited_at: new Date().toISOString() }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  editingChatMessageId = null;
+  await openProjectChat(activeProjectId);
+}
+
+async function deleteChatMessage(id){
+  const { error } = await sb.from('chat_messages').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  await loadChatSummary();
+  await openProjectChat(activeProjectId);
+}
+
+async function addChatReaction(messageId, emoji){
+  const { error } = await sb.from('chat_message_reactions').insert({ message_id: messageId, emoji });
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  if(!currentChatReactions[messageId]) currentChatReactions[messageId] = {};
+  currentChatReactions[messageId][emoji] = (currentChatReactions[messageId][emoji]||0) + 1;
+  renderChatList();
 }
 
 function updateChatSubtabBadge(){
@@ -1371,7 +1450,7 @@ const KANBAN_COLUMNS = [
   {code:'deployed', label:'Deployed'}
 ];
 const GLOBAL_ROLE_LABEL = {mastermind:'Mastermind', po:'PO', dev:'Dev', pm:'PM', sales:'Sales'};
-const FORMAT_LABEL = {feature:'Feature', bug:'Bug', research:'Research', design:'Design', docs:'Docs', debt:'Tech Debt', integration:'Integration'};
+const FORMAT_LABEL = {frontend:'Frontend', backend:'Backend', migration:'Migration', integration:'Integration'};
 
 let authSession = null;
 let appUsers = [];
@@ -1690,7 +1769,7 @@ function openTicketModal(id){
   document.getElementById('ticketModalTitle').textContent = isNew ? 'Neues Ticket' : ('Ticket #' + t.id.slice(0,8).toUpperCase());
   document.getElementById('tmTitle').value = t ? t.title : '';
   document.getElementById('tmStatus').value = t ? t.status : 'backlog';
-  document.getElementById('tmFormat').value = t ? t.format_type : 'feature';
+  document.getElementById('tmFormat').value = t ? t.format_type : 'backend';
   document.getElementById('tmPriority').value = t ? t.priority : 'P2';
   document.getElementById('tmRole').value = t ? (t.assigned_role || '') : '';
   document.getElementById('tmAssignee').value = t ? (t.assigned_user_id || '') : (currentAppUser.global_role === 'dev' ? currentAppUser.id : '');
