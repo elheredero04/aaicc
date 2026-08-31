@@ -183,7 +183,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .subtab-badge{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--signal);margin-left:6px;vertical-align:middle;}
 
 /* ===== REACTIONS ===== */
-.reactions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 .reaction-btn{
   font-size:12px;border:1px solid var(--border);background:var(--bg);color:var(--text-dim);
   border-radius:100px;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;
@@ -238,19 +237,6 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 }
 .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
 .field textarea{min-height:48px;}
-
-.log-add{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:8px;box-shadow:var(--shadow-sm);}
-.log-add label{display:block;font-size:11.5px;font-weight:600;color:var(--text-dim);margin-bottom:8px;}
-.log-add textarea{
-  width:100%;font-family:var(--font-sans);font-size:13.5px;border:1px solid var(--border);border-radius:9px;padding:9px 11px;min-height:54px;background:var(--bg);color:var(--text);
-}
-.log-add textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
-.log-add-row{display:flex;justify-content:flex-end;margin-top:10px;}
-
-/* ===== LOG ===== */
-.log-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:8px;box-shadow:var(--shadow-sm);}
-.log-date{font-size:11px;color:var(--accent);font-weight:600;}
-.log-text{font-size:13px;margin-top:5px;line-height:1.5;color:var(--text);}
 
 .empty{font-size:13px;color:var(--text-faint);padding:20px;border:1px dashed var(--border-strong);border-radius:var(--radius);text-align:center;}
 .status-note{font-size:11px;color:var(--text-faint);text-align:center;margin-top:40px;}
@@ -502,24 +488,17 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
       <div id="roleMatrixWrap"></div>
 
       <div class="section-label">
-        <h2>Formate</h2>
+        <h2>Meine Tickets</h2>
       </div>
-      <div class="crew-hint">Übergreifende Formate für alle Projekte, z.B. der Bi-Weekly-Austausch.</div>
-      <div id="globalRitualsList"></div>
-      <div class="add-role-row" style="grid-template-columns:1fr 1.5fr auto;margin-bottom:26px;">
-        <input id="newGlobalRitualName" placeholder="Name, z.B. Bi-Weekly">
-        <input id="newGlobalRitualSchedule" placeholder="Wann, z.B. jeden 2. Montag 10:00">
-        <button class="btn" onclick="addRitual(null, 'newGlobalRitualName', 'newGlobalRitualSchedule', renderGlobalRituals)">+ Format</button>
-      </div>
+      <div class="board-open-list" id="myTicketsList"></div>
 
       <div class="section-label">
-        <h2>Lead Log</h2>
+        <h2>Chat</h2>
       </div>
-      <div id="logList"></div>
-      <div class="log-add">
-        <label>Neuer Eintrag</label>
-        <textarea id="logInput" placeholder="z.B. Produkt 3: Exit-Kriterium erreicht, Owner übernimmt, weil ..."></textarea>
-        <div class="log-add-row"><button class="btn" onclick="addLog()">Eintragen</button></div>
+      <div class="chat-list" id="globalChatList"></div>
+      <div class="chat-input-row">
+        <textarea id="globalChatInput" placeholder="Nachricht an alle…" rows="2"></textarea>
+        <button class="btn" onclick="sendGlobalChatMessage()">Senden</button>
       </div>
     </div>
 
@@ -693,10 +672,8 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let products = [];
-let log = [];
 let chatReads = {};
 let chatSummary = {};
-let reactions = {};
 let comments = {};
 let projectRoles = {};
 let searchQuery = '';
@@ -833,20 +810,6 @@ async function loadRituals(){
   const { data, error } = await sb.from('rituals').select('*').order('sort_order', {ascending:true});
   if(error){ setStatus('Ladefehler Formate: '+error.message); return; }
   rituals = data || [];
-}
-
-function renderGlobalRituals(){
-  const wrap = document.getElementById('globalRitualsList');
-  if(!wrap) return;
-  const list = rituals.filter(r => r.produkt_id === null);
-  wrap.innerHTML = list.length===0
-    ? '<div class="empty">Noch kein übergreifendes Format.</div>'
-    : list.map(r => `
-      <div class="ritual-row">
-        <span><span class="rname">${escapeHtml(r.name)}</span><span class="rschedule">${escapeHtml(r.schedule_info)}</span></span>
-        <span class="remove-link" onclick="removeRitual('${r.id}', renderGlobalRituals)">entfernen</span>
-      </div>
-    `).join('');
 }
 
 function renderProjectRituals(){
@@ -1033,22 +996,114 @@ function updateChatSubtabBadge(){
   badge.style.display = unread ? 'inline-block' : 'none';
 }
 
-async function loadReactions(){
-  const { data, error } = await sb.from('log_reactions').select('*');
-  if(error){ setStatus('Ladefehler Reactions: '+error.message); return; }
-  reactions = {};
-  (data||[]).forEach(r => {
-    if(!reactions[r.log_id]) reactions[r.log_id] = {};
-    reactions[r.log_id][r.emoji] = (reactions[r.log_id][r.emoji]||0) + 1;
-  });
+/* --- Global Chat (Übersicht, alle Projekte übergreifend) --- */
+let currentGlobalChatMessages = [];
+let currentGlobalChatPrevRead = null;
+let currentGlobalChatReactions = {};
+let editingGlobalChatMessageId = null;
+
+async function openGlobalChat(){
+  if(!currentAppUser) return;
+  const { data, error } = await sb.from('global_chat_messages').select('*').order('created_at', {ascending:true});
+  if(error){ setStatus('Ladefehler Chat: '+error.message); return; }
+  currentGlobalChatMessages = data || [];
+  const { data: readRow } = await sb.from('global_chat_reads').select('*').eq('app_user_id', currentAppUser.id).maybeSingle();
+  currentGlobalChatPrevRead = readRow ? readRow.last_read_at : null;
+  editingGlobalChatMessageId = null;
+  const ids = currentGlobalChatMessages.map(m=>m.id);
+  currentGlobalChatReactions = {};
+  if(ids.length){
+    const { data: rx } = await sb.from('global_chat_message_reactions').select('*').in('message_id', ids);
+    (rx||[]).forEach(r => {
+      if(!currentGlobalChatReactions[r.message_id]) currentGlobalChatReactions[r.message_id] = {};
+      currentGlobalChatReactions[r.message_id][r.emoji] = (currentGlobalChatReactions[r.message_id][r.emoji]||0) + 1;
+    });
+  }
+  renderGlobalChatList();
+  await sb.from('global_chat_reads').upsert({ app_user_id: currentAppUser.id, last_read_at: new Date().toISOString() });
 }
 
-async function addReaction(logId, emoji){
-  const { error } = await sb.from('log_reactions').insert({ log_id:logId, emoji });
+function renderGlobalChatList(){
+  const wrap = document.getElementById('globalChatList');
+  if(!wrap) return;
+  if(currentGlobalChatMessages.length===0){ wrap.innerHTML = '<div class="empty">Noch keine Nachrichten.</div>'; return; }
+  let dividerShown = false;
+  wrap.innerHTML = currentGlobalChatMessages.map(m => {
+    const author = appUsers.find(u => u.id === m.author_id);
+    const isNew = !dividerShown && currentGlobalChatPrevRead && m.created_at > currentGlobalChatPrevRead;
+    const divider = isNew ? (dividerShown = true, '<div class="chat-divider">Neu</div>') : '';
+    const ts = new Date(m.created_at).toLocaleString('de-AT', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const mine = m.author_id === currentAppUser.id;
+
+    if(m.id === editingGlobalChatMessageId){
+      return `${divider}<div class="chat-message">
+        <div class="chat-message-head"><span class="chat-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span><span class="chat-time">${ts}</span></div>
+        <textarea class="chat-edit-input" id="globalChatEditInput-${m.id}" rows="2">${escapeHtml(m.message)}</textarea>
+        <div class="chat-edit-actions">
+          <span class="remove-link" onclick="saveEditGlobalChatMessage('${m.id}')">Speichern</span>
+          <span class="remove-link" onclick="cancelEditGlobalChatMessage()">Abbrechen</span>
+        </div>
+      </div>`;
+    }
+
+    const rxCounts = currentGlobalChatReactions[m.id] || {};
+    return `${divider}<div class="chat-message">
+      <div class="chat-message-head">
+        <span class="chat-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span>
+        <span class="chat-time">${ts}${m.edited_at ? ' · bearbeitet' : ''}</span>
+        ${mine ? `<span class="chat-msg-actions"><span class="remove-link" onclick="startEditGlobalChatMessage('${m.id}')">bearbeiten</span> · <span class="remove-link" onclick="deleteGlobalChatMessage('${m.id}')">löschen</span></span>` : ''}
+      </div>
+      <div class="chat-text">${escapeHtml(m.message)}</div>
+      <div class="chat-reactions">
+        ${CHAT_EMOJI.map(emo => `<div class="reaction-btn" onclick="addGlobalChatReaction('${m.id}','${emo}')">${emo} <span class="count">${rxCounts[emo]||0}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+async function sendGlobalChatMessage(){
+  const input = document.getElementById('globalChatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const { error } = await sb.from('global_chat_messages').insert({ author_id: currentAppUser.id, message: text });
   if(error){ setStatus('Fehler: '+error.message); return; }
-  if(!reactions[logId]) reactions[logId] = {};
-  reactions[logId][emoji] = (reactions[logId][emoji]||0) + 1;
-  renderLog();
+  input.value = '';
+  await openGlobalChat();
+}
+
+function startEditGlobalChatMessage(id){
+  editingGlobalChatMessageId = id;
+  renderGlobalChatList();
+}
+
+function cancelEditGlobalChatMessage(){
+  editingGlobalChatMessageId = null;
+  renderGlobalChatList();
+}
+
+async function saveEditGlobalChatMessage(id){
+  const input = document.getElementById('globalChatEditInput-'+id);
+  const text = input.value.trim();
+  if(!text) return;
+  const { error } = await sb.from('global_chat_messages').update({ message: text, edited_at: new Date().toISOString() }).eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  editingGlobalChatMessageId = null;
+  await openGlobalChat();
+}
+
+async function deleteGlobalChatMessage(id){
+  const { error } = await sb.from('global_chat_messages').delete().eq('id', id);
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  await openGlobalChat();
+}
+
+async function addGlobalChatReaction(messageId, emoji){
+  const { error } = await sb.from('global_chat_message_reactions').insert({ message_id: messageId, emoji });
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  if(!currentGlobalChatReactions[messageId]) currentGlobalChatReactions[messageId] = {};
+  currentGlobalChatReactions[messageId][emoji] = (currentGlobalChatReactions[messageId][emoji]||0) + 1;
+  renderGlobalChatList();
 }
 
 async function loadProjectRoles(){
@@ -1121,16 +1176,6 @@ async function loadAll(){
   if(prodErr){ setStatus('Ladefehler: '+prodErr.message); }
   products = prodData || [];
 
-  const { data: logData, error: logErr } = await sb.from('log').select('*').order('entry_date', {ascending:false});
-  if(logErr){ setStatus('Ladefehler: '+logErr.message); }
-  log = (logData || []).map(e => ({
-    id:e.id,
-    ts:new Date(e.entry_date).getTime(),
-    date:new Date(e.entry_date).toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + new Date(e.entry_date).toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'}),
-    text:e.text,
-    author:e.author
-  }));
-
   if(products.length === 0){
     const seed = Array.from({length:10}).map((_,i)=>({
       num:i+1, name:'Produkt '+(i+1), po:'', phase:'a', task:'', notes:''
@@ -1161,12 +1206,11 @@ function render(){
   renderTally();
   renderRoleCards();
   renderRoleMatrix();
-  renderGlobalRituals();
-  renderLog();
   renderProjectList();
   if(typeof currentAppUser !== 'undefined' && currentAppUser){
     populateTicketModalSelects();
     renderCrewList();
+    renderMyTickets();
     if(activeProjectId) renderKanban();
   }
 }
@@ -1349,41 +1393,33 @@ async function removeProjectAssignment(id){
   renderCrewList();
 }
 
-function renderLog(){
-  const list = document.getElementById('logList');
-  if(log.length===0){
-    list.innerHTML = '<div class="empty">Noch keine Einträge.</div>';
-    return;
-  }
-  const sorted = [...log].sort((a,b)=> b.ts - a.ts);
-  list.innerHTML = sorted.map(e => `
-    <div class="log-entry">
-      <div class="log-date">${e.date}${e.author ? ' · <span style="color:var(--accent);">'+escapeHtml(e.author)+'</span>' : ''}</div>
-      <div class="log-text">${escapeHtml(e.text)}</div>
-      <div class="reactions">
-        ${['🔥','👍','🎉'].map(emo => `<div class="reaction-btn" onclick="addReaction('${e.id}','${emo}')">${emo} <span class="count">${(reactions[e.id]&&reactions[e.id][emo])||0}</span></div>`).join('')}
+function renderMyTickets(){
+  const wrap = document.getElementById('myTicketsList');
+  if(!wrap || !currentAppUser) return;
+  const mine = ticketsList.filter(t => t.assigned_user_id === currentAppUser.id && t.status !== 'deployed').sort((a,b) => {
+    if(a.priority !== b.priority) return a.priority.localeCompare(b.priority);
+    if(!a.due_date && !b.due_date) return 0;
+    if(!a.due_date) return 1;
+    if(!b.due_date) return -1;
+    return a.due_date.localeCompare(b.due_date);
+  });
+  wrap.innerHTML = mine.length===0
+    ? '<div class="empty">Keine Tickets zugewiesen.</div>'
+    : mine.map(t => {
+      const p = products.find(x=>x.id===t.produkt_id);
+      return `
+      <div class="board-open-row" onclick="openMyTicket('${t.produkt_id}','${t.id}')">
+        <span class="priority-badge ${t.priority}">${t.priority}</span>
+        <span class="board-open-title">${escapeHtml(t.title) || '(ohne Titel)'}</span>
+        <span class="board-open-status">${escapeHtml(p ? p.name : '—')}</span>
       </div>
-    </div>
-  `).join('');
+    `;
+    }).join('');
 }
 
-async function addLog(){
-  const el = document.getElementById('logInput');
-  const text = el.value.trim();
-  if(!text) return;
-  const author = currentAppUser ? (currentAppUser.name || currentAppUser.email) : '';
-  const { data, error } = await sb.from('log').insert({ text, author }).select().single();
-  if(error){ setStatus('Fehler: '+error.message); return; }
-  const now = new Date(data.entry_date);
-  log.push({
-    id:data.id,
-    ts: now.getTime(),
-    date: now.toLocaleDateString('de-AT', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'}),
-    text,
-    author
-  });
-  el.value='';
-  renderLog();
+function openMyTicket(produktId, ticketId){
+  openProjectDetail(produktId);
+  openTicketModal(ticketId);
 }
 
 function escapeHtml(str){
@@ -1554,7 +1590,7 @@ async function handleAuthChange(){
     await loadAll();
     await loadChatReads();
     loadChatSummary().then(renderProjectList);
-    loadReactions().then(renderLog);
+    openGlobalChat();
   }
 
   populateTicketModalSelects();
@@ -1662,6 +1698,7 @@ async function loadTickets(){
   renderProjectList();
   if(activeProjectId && projectSubtab==='board') renderKanban();
   if(activeProjectId) renderProjectBoardSummary();
+  renderMyTickets();
 }
 
 function ticketTimeline(t){
@@ -1757,6 +1794,7 @@ async function onTicketDrop(ev, statusCode){
   t.status = statusCode;
   renderKanban();
   renderProjectBoardSummary();
+  renderMyTickets();
   const { error } = await sb.from('tickets').update({ status: statusCode, updated_at: new Date().toISOString() }).eq('id', id);
   if(error){ setStatus('Fehler: '+error.message); await loadTickets(); } else { setStatus('gespeichert'); }
 }
