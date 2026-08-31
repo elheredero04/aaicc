@@ -1396,7 +1396,7 @@ async function removeProjectAssignment(id){
 function renderMyTickets(){
   const wrap = document.getElementById('myTicketsList');
   if(!wrap || !currentAppUser) return;
-  const mine = ticketsList.filter(t => t.assigned_user_id === currentAppUser.id && t.status !== 'deployed').sort((a,b) => {
+  const mine = ticketsList.filter(t => t.assigned_user_id === currentAppUser.id && t.status !== 'done').sort((a,b) => {
     if(a.priority !== b.priority) return a.priority.localeCompare(b.priority);
     if(!a.due_date && !b.due_date) return 0;
     if(!a.due_date) return 1;
@@ -1479,11 +1479,9 @@ function renderCrewList(){
 /* ===== TICKETS MODULE ===== */
 const KANBAN_COLUMNS = [
   {code:'backlog', label:'Backlog'},
-  {code:'design', label:'Design'},
-  {code:'development', label:'Development'},
-  {code:'testing', label:'Testing'},
-  {code:'review', label:'Review'},
-  {code:'deployed', label:'Deployed'}
+  {code:'todo', label:'To Do'},
+  {code:'in_progress', label:'In Progress'},
+  {code:'done', label:'Done'}
 ];
 const GLOBAL_ROLE_LABEL = {mastermind:'Mastermind', po:'PO', dev:'Dev', pm:'PM', sales:'Sales'};
 const FORMAT_LABEL = {frontend:'Frontend', backend:'Backend', migration:'Migration', integration:'Integration'};
@@ -1745,7 +1743,7 @@ function renderProjectBoardSummary(){
   statsEl.innerHTML = KANBAN_COLUMNS.map(col => `
     <div class="readout-cell"><div class="readout-num">${filtered.filter(t=>t.status===col.code).length}</div><div class="readout-label">${col.label}</div></div>
   `).join('');
-  const open = filtered.filter(t => t.status !== 'deployed').sort((a,b) => {
+  const open = filtered.filter(t => t.status !== 'done').sort((a,b) => {
     if(a.priority !== b.priority) return a.priority.localeCompare(b.priority);
     if(!a.due_date && !b.due_date) return 0;
     if(!a.due_date) return 1;
