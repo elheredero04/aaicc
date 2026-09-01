@@ -346,11 +346,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .ticket-title{font-size:13px;font-weight:600;margin-bottom:5px;}
 .ticket-desc{font-size:11.5px;color:var(--text-dim);margin-bottom:7px;line-height:1.4;}
 .ticket-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text-faint);}
-.ticket-timeline{height:4px;background:var(--border);margin-top:8px;border-radius:2px;overflow:hidden;}
-.ticket-timeline-fill{height:100%;}
-.ticket-timeline-fill.ontrack{background:var(--status-c);}
-.ticket-timeline-fill.atrisk{background:var(--status-a);}
-.ticket-timeline-fill.overdue{background:var(--danger);}
+.ticket-due{font-family:var(--font-mono);}
 
 /* ===== TICKET MODAL ===== */
 .modal-overlay{
@@ -630,20 +626,8 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
         <select id="tmAssignee" class="tm-field"><option value="">— niemand —</option></select>
       </div>
       <div class="field">
-        <label>Start</label>
-        <input id="tmStart" type="date" class="tm-field">
-      </div>
-      <div class="field">
         <label>Fällig</label>
         <input id="tmDue" type="date" class="tm-field">
-      </div>
-      <div class="field">
-        <label>Geplante Stunden</label>
-        <input id="tmEstimate" type="number" min="0" step="0.5" class="tm-field">
-      </div>
-      <div class="field">
-        <label>Erledigte Stunden</label>
-        <input id="tmElapsed" type="number" min="0" step="0.5" class="tm-field">
       </div>
     </div>
     <div class="field">
@@ -656,7 +640,10 @@ Nächster Schritt danach: ..."></textarea>
     </div>
     <div class="row-actions" style="justify-content:space-between;">
       <span class="remove-link" id="tmDeleteBtn" onclick="deleteTicket()">Ticket löschen</span>
-      <button class="btn" id="tmSaveBtn" onclick="saveTicket()">Speichern</button>
+      <span>
+        <button class="btn secondary" id="tmDoneBtn" onclick="markTicketDone()">✓ Erledigt</button>
+        <button class="btn" id="tmSaveBtn" onclick="saveTicket()">Speichern</button>
+      </span>
     </div>
     <div id="tmNotesSection" style="margin-top:18px;">
       <div class="field"><label>Notizen</label></div>
@@ -1713,16 +1700,6 @@ async function loadTickets(){
   renderMyTickets();
 }
 
-function ticketTimeline(t){
-  if(!t.estimated_hours || t.estimated_hours <= 0) return null;
-  const pct = Math.min(100, Math.round((t.elapsed_hours / t.estimated_hours) * 100));
-  let cls = 'ontrack';
-  const overdue = t.due_date && new Date(t.due_date) < new Date(new Date().toDateString());
-  if(overdue) cls = 'overdue';
-  else if(pct >= 75) cls = 'atrisk';
-  return { pct, cls };
-}
-
 function canEditTicket(t){
   if(!currentAppUser) return false;
   const r = currentAppUser.global_role;
@@ -1777,7 +1754,6 @@ function renderProjectBoardSummary(){
 }
 
 function renderTicketCard(t){
-  const tl = ticketTimeline(t);
   const assignee = appUsers.find(u => u.id === t.assigned_user_id);
   const desc = (t.description || '').slice(0, 60);
   return `
@@ -1790,8 +1766,8 @@ function renderTicketCard(t){
       ${desc ? `<div class="ticket-desc">${escapeHtml(desc)}${t.description.length>60?'…':''}</div>` : ''}
       <div class="ticket-meta">
         <span>${assignee ? escapeHtml(assignee.name || assignee.email) : (t.assigned_role ? GLOBAL_ROLE_LABEL[t.assigned_role] : '—')}</span>
+        ${t.due_date ? `<span class="ticket-due">${new Date(t.due_date).toLocaleDateString('de-AT',{day:'2-digit',month:'2-digit'})}</span>` : ''}
       </div>
-      ${tl ? `<div class="ticket-timeline"><div class="ticket-timeline-fill ${tl.cls}" style="width:${tl.pct}%;"></div></div>` : ''}
     </div>
   `;
 }
@@ -1823,15 +1799,13 @@ function openTicketModal(id){
   document.getElementById('tmPriority').value = t ? t.priority : 'P2';
   document.getElementById('tmRole').value = t ? (t.assigned_role || '') : '';
   document.getElementById('tmAssignee').value = t ? (t.assigned_user_id || '') : (currentAppUser.global_role === 'dev' ? currentAppUser.id : '');
-  document.getElementById('tmStart').value = t ? (t.start_date || '') : '';
   document.getElementById('tmDue').value = t ? (t.due_date || '') : '';
-  document.getElementById('tmEstimate').value = t ? (t.estimated_hours ?? '') : '';
-  document.getElementById('tmElapsed').value = t ? (t.elapsed_hours ?? 0) : 0;
   document.getElementById('tmDescription').value = t ? t.description : '';
 
   const editable = isNew || canEditTicket(t);
   document.querySelectorAll('.tm-field').forEach(el => el.disabled = !editable);
   document.getElementById('tmSaveBtn').style.display = editable ? '' : 'none';
+  document.getElementById('tmDoneBtn').style.display = (!isNew && editable && t.status !== 'done') ? '' : 'none';
   document.getElementById('tmDeleteBtn').style.display = (!isNew && currentAppUser.global_role === 'mastermind') ? '' : 'none';
 
   const canNote = currentAppUser.global_role !== 'sales';
@@ -1859,10 +1833,7 @@ async function saveTicket(){
     priority: document.getElementById('tmPriority').value,
     assigned_role: document.getElementById('tmRole').value || null,
     assigned_user_id: document.getElementById('tmAssignee').value || null,
-    start_date: document.getElementById('tmStart').value || null,
     due_date: document.getElementById('tmDue').value || null,
-    estimated_hours: document.getElementById('tmEstimate').value || null,
-    elapsed_hours: document.getElementById('tmElapsed').value || 0,
     description: document.getElementById('tmDescription').value
   };
   if(!payload.title){ setStatus('Titel fehlt.'); return; }
@@ -1875,6 +1846,15 @@ async function saveTicket(){
     const { error } = await sb.from('tickets').insert(payload);
     if(error){ setStatus('Fehler: '+error.message); return; }
   }
+  setStatus('gespeichert');
+  closeTicketModal();
+  await loadTickets();
+}
+
+async function markTicketDone(){
+  if(!activeTicketId) return;
+  const { error } = await sb.from('tickets').update({ status:'done', updated_at:new Date().toISOString() }).eq('id', activeTicketId);
+  if(error){ setStatus('Fehler: '+error.message); return; }
   setStatus('gespeichert');
   closeTicketModal();
   await loadTickets();
