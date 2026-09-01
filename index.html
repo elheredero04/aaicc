@@ -617,7 +617,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
       </div>
       <div class="field">
         <label>Rolle</label>
-        <select id="tmRole" class="tm-field"></select>
+        <select id="tmRole" class="tm-field" onchange="updateTmAssigneeOptions()"></select>
       </div>
       <div class="field">
         <label>Person</label>
@@ -1591,7 +1591,15 @@ function populateTicketModalSelects(){
   document.getElementById('tmStatus').innerHTML = KANBAN_COLUMNS.map(c => `<option value="${c.code}">${c.label}</option>`).join('');
   document.getElementById('tmFormat').innerHTML = Object.entries(FORMAT_LABEL).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
   document.getElementById('tmRole').innerHTML = '<option value="">—</option>' + Object.entries(GLOBAL_ROLE_LABEL).map(([k,v]) => `<option value="${k}">${v}</option>`).join('');
-  document.getElementById('tmAssignee').innerHTML = '<option value="">— niemand —</option>' + appUsers.map(u => `<option value="${u.id}">${escapeHtml(u.name || u.email)}</option>`).join('');
+  updateTmAssigneeOptions();
+}
+
+function updateTmAssigneeOptions(){
+  const role = document.getElementById('tmRole').value;
+  const prevSelected = document.getElementById('tmAssignee').value;
+  const filtered = role ? appUsers.filter(u => u.global_role === role) : appUsers;
+  document.getElementById('tmAssignee').innerHTML = '<option value="">— niemand —</option>' + filtered.map(u => `<option value="${u.id}">${escapeHtml(u.name || u.email)}</option>`).join('');
+  if(filtered.some(u => u.id === prevSelected)) document.getElementById('tmAssignee').value = prevSelected;
 }
 
 /* --- Team admin (Mastermind pre-provisioning) --- */
@@ -1797,6 +1805,7 @@ function openTicketModal(id){
   document.getElementById('tmFormat').value = t ? t.format_type : 'understand';
   document.getElementById('tmPriority').value = t ? t.priority : 'normal';
   document.getElementById('tmRole').value = t ? (t.assigned_role || '') : '';
+  updateTmAssigneeOptions();
   document.getElementById('tmAssignee').value = t ? (t.assigned_user_id || '') : (currentAppUser.global_role === 'dev' ? currentAppUser.id : '');
   document.getElementById('tmDue').value = t ? (t.due_date || '') : '';
   document.getElementById('tmDescription').value = t ? t.description : '';
