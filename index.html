@@ -1605,6 +1605,11 @@ function updateTmAssigneeOptions(){
     const rows = (projectRoles[activeProjectId] && projectRoles[activeProjectId][code]) || [];
     const ids = rows.map(r => r.app_user_id);
     filtered = appUsers.filter(u => ids.includes(u.id));
+    if(filtered.length === 0){
+      const projRoles = projectRoles[activeProjectId] || {};
+      const allProjectIds = Object.values(projRoles).flat().map(r => r.app_user_id);
+      filtered = allProjectIds.length ? appUsers.filter(u => allProjectIds.includes(u.id)) : appUsers;
+    }
   }
   document.getElementById('tmAssignee').innerHTML = '<option value="">— niemand —</option>' + filtered.map(u => `<option value="${u.id}">${escapeHtml(u.name || u.email)}</option>`).join('');
   if(filtered.some(u => u.id === prevSelected)) document.getElementById('tmAssignee').value = prevSelected;
