@@ -333,10 +333,8 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .ticket-card-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:7px;}
 .ticket-id{font-family:var(--font-mono);font-size:10px;color:var(--text-faint);}
 .priority-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
-.priority-badge.P0{color:#fff;background:var(--danger);}
-.priority-badge.P1{color:#fff;background:var(--status-a);}
-.priority-badge.P2{color:var(--accent);background:var(--accent-soft);}
-.priority-badge.P3{color:var(--text-faint);background:var(--bg);}
+.priority-badge.urgent{color:#fff;background:var(--danger);}
+.priority-badge.normal{color:var(--text-faint);background:var(--bg);}
 .board-open-list{margin:18px 0 22px;}
 .board-open-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;}
 .board-open-row:last-child{border-bottom:none;}
@@ -615,7 +613,7 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
       </div>
       <div class="field">
         <label>Priorität</label>
-        <select id="tmPriority" class="tm-field"><option>P0</option><option>P1</option><option selected>P2</option><option>P3</option></select>
+        <select id="tmPriority" class="tm-field"><option value="normal" selected>Normal</option><option value="urgent">Dringend</option></select>
       </div>
       <div class="field">
         <label>Rolle</label>
@@ -1388,7 +1386,7 @@ function renderMyTickets(){
   const wrap = document.getElementById('myTicketsList');
   if(!wrap || !currentAppUser) return;
   const mine = ticketsList.filter(t => t.assigned_user_id === currentAppUser.id && t.status !== 'done').sort((a,b) => {
-    if(a.priority !== b.priority) return a.priority.localeCompare(b.priority);
+    if(a.priority !== b.priority) return a.priority === 'urgent' ? -1 : 1;
     if(!a.due_date && !b.due_date) return 0;
     if(!a.due_date) return 1;
     if(!b.due_date) return -1;
@@ -1400,7 +1398,7 @@ function renderMyTickets(){
       const p = products.find(x=>x.id===t.produkt_id);
       return `
       <div class="board-open-row" onclick="openMyTicket('${t.produkt_id}','${t.id}')">
-        <span class="priority-badge ${t.priority}">${t.priority}</span>
+        <span class="priority-badge ${t.priority}">${PRIORITY_LABEL[t.priority]}</span>
         <span class="board-open-title">${escapeHtml(t.title) || '(ohne Titel)'}</span>
         <span class="board-open-status">${escapeHtml(p ? p.name : '—')}</span>
       </div>
@@ -1476,6 +1474,7 @@ const KANBAN_COLUMNS = [
 ];
 const GLOBAL_ROLE_LABEL = {mastermind:'Mastermind', po:'PO', dev:'Dev', pm:'PM', sales:'Sales'};
 const FORMAT_LABEL = {understand:'Understand', build:'Build', validate:'Validate'};
+const PRIORITY_LABEL = {normal:'Normal', urgent:'Dringend'};
 
 let authSession = null;
 let appUsers = [];
@@ -1735,7 +1734,7 @@ function renderProjectBoardSummary(){
     <div class="readout-cell"><div class="readout-num">${filtered.filter(t=>t.status===col.code).length}</div><div class="readout-label">${col.label}</div></div>
   `).join('');
   const open = filtered.filter(t => t.status !== 'done').sort((a,b) => {
-    if(a.priority !== b.priority) return a.priority.localeCompare(b.priority);
+    if(a.priority !== b.priority) return a.priority === 'urgent' ? -1 : 1;
     if(!a.due_date && !b.due_date) return 0;
     if(!a.due_date) return 1;
     if(!b.due_date) return -1;
@@ -1746,7 +1745,7 @@ function renderProjectBoardSummary(){
     ? '<div class="empty">Keine offenen Tickets im Board.</div>'
     : open.map(t => `
       <div class="board-open-row" onclick="openTicketModal('${t.id}')">
-        <span class="priority-badge ${t.priority}">${t.priority}</span>
+        <span class="priority-badge ${t.priority}">${PRIORITY_LABEL[t.priority]}</span>
         <span class="board-open-title">${escapeHtml(t.title) || '(ohne Titel)'}</span>
         <span class="board-open-status">${colLabel(t.status)}</span>
       </div>
@@ -1760,7 +1759,7 @@ function renderTicketCard(t){
     <div class="ticket-card" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${t.id}')" onclick="openTicketModal('${t.id}')">
       <div class="ticket-card-top">
         <span class="ticket-id">#${t.id.slice(0,8).toUpperCase()}</span>
-        <span class="priority-badge ${t.priority}">${t.priority}</span>
+        <span class="priority-badge ${t.priority}">${PRIORITY_LABEL[t.priority]}</span>
       </div>
       <div class="ticket-title">${escapeHtml(t.title) || '(ohne Titel)'}</div>
       ${desc ? `<div class="ticket-desc">${escapeHtml(desc)}${t.description.length>60?'…':''}</div>` : ''}
@@ -1796,7 +1795,7 @@ function openTicketModal(id){
   document.getElementById('tmTitle').value = t ? t.title : '';
   document.getElementById('tmStatus').value = t ? t.status : 'backlog';
   document.getElementById('tmFormat').value = t ? t.format_type : 'understand';
-  document.getElementById('tmPriority').value = t ? t.priority : 'P2';
+  document.getElementById('tmPriority').value = t ? t.priority : 'normal';
   document.getElementById('tmRole').value = t ? (t.assigned_role || '') : '';
   document.getElementById('tmAssignee').value = t ? (t.assigned_user_id || '') : (currentAppUser.global_role === 'dev' ? currentAppUser.id : '');
   document.getElementById('tmDue').value = t ? (t.due_date || '') : '';
