@@ -1594,10 +1594,18 @@ function populateTicketModalSelects(){
   updateTmAssigneeOptions();
 }
 
+const GLOBAL_ROLE_TO_PROJECT_CODE = {mastermind:'MM', po:'PO', dev:'EDT', pm:'PM', sales:'SALES'};
+
 function updateTmAssigneeOptions(){
   const role = document.getElementById('tmRole').value;
   const prevSelected = document.getElementById('tmAssignee').value;
-  const filtered = role ? appUsers.filter(u => u.global_role === role) : appUsers;
+  let filtered = appUsers;
+  if(role && activeProjectId){
+    const code = GLOBAL_ROLE_TO_PROJECT_CODE[role];
+    const rows = (projectRoles[activeProjectId] && projectRoles[activeProjectId][code]) || [];
+    const ids = rows.map(r => r.app_user_id);
+    filtered = appUsers.filter(u => ids.includes(u.id));
+  }
   document.getElementById('tmAssignee').innerHTML = '<option value="">— niemand —</option>' + filtered.map(u => `<option value="${u.id}">${escapeHtml(u.name || u.email)}</option>`).join('');
   if(filtered.some(u => u.id === prevSelected)) document.getElementById('tmAssignee').value = prevSelected;
 }
