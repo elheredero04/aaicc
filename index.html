@@ -306,13 +306,15 @@ body{margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:anti
 .remove-link:hover{color:var(--danger);}
 
 /* ===== RITUALS / FORMATE ===== */
-.ritual-row{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
-  padding:11px 14px;margin-bottom:8px;
-}
+.ritual-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:12px;}
+.ritual-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .ritual-row .rname{font-family:var(--font-display);font-weight:700;font-size:13.5px;}
 .ritual-row .rschedule{font-size:12.5px;color:var(--text-dim);margin-left:10px;}
+.ritual-notes-list{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.ritual-note-item{padding:6px 0;}
+.ritual-note-item .chat-text{font-size:12.5px;}
+.ritual-notes-add{display:flex;gap:8px;align-items:flex-end;margin-top:10px;}
+.ritual-notes-add textarea{flex:1;font-family:var(--font-sans);font-size:12.5px;padding:7px 9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);resize:vertical;}
 .add-role-row{display:grid;gap:8px;margin-top:8px;margin-bottom:16px;}
 .add-role-row input{
   font-size:13px;color:var(--text);background:var(--bg);border:1px solid var(--border);
@@ -810,11 +812,47 @@ function renderProjectRituals(){
   wrap.innerHTML = list.length===0
     ? '<div class="empty">Noch kein Format für dieses Projekt.</div>'
     : list.map(r => `
-      <div class="ritual-row">
-        <span><span class="rname">${escapeHtml(r.name)}</span><span class="rschedule">${escapeHtml(r.schedule_info)}</span></span>
-        <span class="remove-link" onclick="removeRitual('${r.id}', renderProjectRituals)">entfernen</span>
+      <div class="ritual-card">
+        <div class="ritual-row">
+          <span><span class="rname">${escapeHtml(r.name)}</span><span class="rschedule">${escapeHtml(r.schedule_info)}</span></span>
+          <span class="remove-link" onclick="removeRitual('${r.id}', renderProjectRituals)">entfernen</span>
+        </div>
+        <div class="ritual-notes-list" id="ritualNotes-${r.id}"></div>
+        <div class="ritual-notes-add">
+          <textarea id="ritualNoteInput-${r.id}" placeholder="Notiz zu ${escapeHtml(r.name)} von heute…" rows="2"></textarea>
+          <button class="btn secondary" onclick="addRitualNote('${r.id}')">+ Notiz</button>
+        </div>
       </div>
     `).join('');
+  list.forEach(r => loadRitualNotes(r.id));
+}
+
+async function loadRitualNotes(ritualId){
+  const { data, error } = await sb.from('ritual_notes').select('*').eq('ritual_id', ritualId).order('created_at', {ascending:false});
+  if(error){ setStatus('Ladefehler Notizen: '+error.message); return; }
+  const wrap = document.getElementById('ritualNotes-'+ritualId);
+  if(!wrap) return;
+  wrap.innerHTML = (data||[]).length===0
+    ? '<div class="empty">Noch keine Notizen.</div>'
+    : data.map(n => {
+      const author = appUsers.find(u=>u.id===n.author_id);
+      const ts = new Date(n.created_at).toLocaleString('de-AT', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+      return `<div class="ritual-note-item">
+        <div class="chat-message-head"><span class="chat-author">${escapeHtml(author ? (author.name||author.email) : '—')}</span><span class="chat-time">${ts}</span></div>
+        <div class="chat-text">${escapeHtml(n.text)}</div>
+      </div>`;
+    }).join('');
+}
+
+async function addRitualNote(ritualId){
+  const input = document.getElementById('ritualNoteInput-'+ritualId);
+  const text = input.value.trim();
+  if(!text) return;
+  const { error } = await sb.from('ritual_notes').insert({ ritual_id: ritualId, produkt_id: activeProjectId, author_id: currentAppUser.id, text });
+  if(error){ setStatus('Fehler: '+error.message); return; }
+  input.value = '';
+  await loadRitualNotes(ritualId);
+  setStatus('gespeichert');
 }
 
 async function addRitual(produktId, nameInputId, scheduleInputId, refreshFn){
